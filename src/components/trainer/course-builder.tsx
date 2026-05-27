@@ -1,0 +1,200 @@
+"use client";
+
+import { useState } from "react";
+import { LearningBlock, Module, Course } from "@/types";
+import { Button } from "@/components/ui/button";
+import { createBlockAction, updateBlockAction, deleteBlockAction, reorderBlocksAction } from "@/app/actions/store";
+import { generateBlockAction } from "@/app/actions/ai";
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { SortableBlock } from "./sortable-block";
+import { BlockEditor } from "./block-editor";
+import { GenerateBlockModal } from "./generate-block-modal";
+import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
+
+export function CourseBuilder({ 
+  course, 
+  module, 
+  blocks,
+  setBlocks
+}: { 
+  course: Course; 
+  module: Module; 
+  blocks: LearningBlock[];
+  setBlocks: React.Dispatch<React.SetStateAction<LearningBlock[]>>;
+}) {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [editingBlockId, setEditingBlockId] = useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    // ... existing drag logic ...
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setBlocks((items) => {
+        const oldIndex = items.findIndex(item => item.id === active.id);
+        const newIndex = items.findIndex(item => item.id === over.id);
+        const newOrder = arrayMove(items, oldIndex, newIndex);
+        reorderBlocksAction(module.id, newOrder.map(b => b.id), course.id);
+        return newOrder;
+      });
+    }
+  };
+
+  const handleGenerateBlock = async (type: LearningBlock["type"], prompt: string) => {
+    const toastId = toast.loading("Generating block with AI...");
+    try {
+      const context = blocks.length > 0 ? blocks[blocks.length - 1].content : "";
+      const partialBlock = await generateBlockAction({
+        type,
+        courseTopic: course.title,
+        moduleObjective: module.learningObjectives?.[0] || module.title,
+        context,
+        prompt,
+      });
+
+      const newBlock = await createBlockAction(course.id, {
+        moduleId: module.id,
+        type: partialBlock.type || type,
+        title: partialBlock.title || 'Generated Block',
+        content: partialBlock.content || '',
+        learningMode: partialBlock.learningMode || 'understand',
+        source: 'ai_assisted',
+      });
+
+      setBlocks([...blocks, newBlock]);
+      toast.success("Block generated successfully!", { id: toastId });
+    } catch (error) {
+      console.error("Failed to generate block:", error);
+      toast.error("Failed to generate block", { id: toastId });
+    }
+  };
+
+  const handleAddManualBlock = async () => {
+    const newBlock = await createBlockAction(course.id, {
+      moduleId: module.id,
+      type: 'text',
+      title: 'New Block',
+      content: 'Write your content here...',
+      source: 'trainer',
+      learningMode: 'understand'
+    });
+    setBlocks([...blocks, newBlock]);
+    setEditingBlockId(newBlock.id);
+  };
+
+  const handleSaveEdit = async (id: string, content: string, title?: string) => {
+    const updateData: any = { content };
+    if (title) updateData.title = title;
+    const updated = await updateBlockAction(course.id, module.id, id, updateData);
+    setBlocks(blocks.map(b => b.id === id ? updated : b));
+    setEditingBlockId(null);
+    toast.success("Changes saved");
+  };
+
+  const handleDelete = async (id: string) => {
+    if (confirm("Are you sure you want to delete this block?")) {
+      await deleteBlockAction(course.id, module.id, id);
+      setBlocks(blocks.filter(b => b.id !== id));
+      toast.success("Block deleted");
+    }
+  };
+
+  const contextPreview = blocks.length > 0 ? blocks[blocks.length - 1].content : "";
+
+  return (
+    <div className="space-y-4">
+      <DndContext id="course-builder-dnd-context" sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={blocks.map(b => b.id)} strategy={verticalListSortingStrategy}>
+          {blocks.map(block => (
+            <SortableBlock key={block.id} id={block.id}>
+              <div className="p-6 bg-white rounded-lg shadow-sm border border-slate-200 group">
+                <div className="absolute top-4 right-4 flex items-center space-x-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 bg-slate-100 text-slate-500 rounded">
+                    {block.type}
+                  </span>
+                  {block.source === "ai_assisted" && (
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 bg-emerald-green/10 text-emerald-green rounded">
+                      ✨ AI Generated
+                    </span>
+                  )}
+                </div>
+
+                <h3 className="font-heading font-semibold text-lg text-slate-800 mb-2">{block.title}</h3>
+                
+                {editingBlockId === block.id ? (
+                  <BlockEditor 
+                    block={block} 
+                    onSave={handleSaveEdit} 
+                    onCancel={() => setEditingBlockId(null)} 
+                  />
+                ) : (
+                  <div className="text-slate-600 prose prose-sm max-w-none">
+                    {block.type === 'quiz' || block.type === 'reflection' || block.type === 'code' || block.type === 'project_task' || block.type === 'punk_game' ? (
+                       <pre className="p-4 bg-slate-50 rounded text-xs overflow-x-auto">
+                         {block.content}
+                       </pre>
+                    ) : block.type === 'video' ? (
+                      <div className="aspect-video bg-slate-100 flex items-center justify-center rounded-md border border-slate-200">
+                        <span className="text-slate-400">Video Embed: {block.content}</span>
+                      </div>
+                    ) : (
+                      block.content
+                    )}
+                  </div>
+                )}
+
+                {editingBlockId !== block.id && (
+                  <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex space-x-2">
+                      <Button variant="outline" size="sm" onClick={() => setEditingBlockId(block.id)}>
+                        Edit
+                      </Button>
+                    </div>
+                    <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-50" onClick={() => handleDelete(block.id)}>
+                      <Trash2 size={16} />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </SortableBlock>
+          ))}
+        </SortableContext>
+      </DndContext>
+      
+      {blocks.length === 0 && (
+        <div className="p-12 text-center border-2 border-dashed border-slate-300 rounded-xl bg-slate-50">
+          <p className="text-slate-500 mb-4">This module is empty. Add your first learning block.</p>
+        </div>
+      )}
+      
+      <div className="pt-4 flex items-center justify-center space-x-4">
+        <Button variant="outline" className="border-dashed border-2" onClick={handleAddManualBlock}>
+          + Add Block
+        </Button>
+        <Button 
+          variant="outline" 
+          className="border-dashed border-2 text-emerald-green border-emerald-green/50 hover:bg-emerald-green/5"
+          onClick={() => setIsGenerateModalOpen(true)}
+        >
+          ✨ Generate Block
+        </Button>
+      </div>
+
+      <GenerateBlockModal 
+        isOpen={isGenerateModalOpen} 
+        onClose={() => setIsGenerateModalOpen(false)} 
+        onGenerate={handleGenerateBlock}
+        moduleObjective={module.learningObjectives?.[0] || module.title}
+        contextPreview={contextPreview}
+      />
+    </div>
+  );
+}

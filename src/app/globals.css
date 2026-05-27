@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --color-emerald-green: #00A676;
+  --color-royal-blue: #205E9F;
+  --color-plum: #672F6C;
+  --color-warm-white: #F5F1E3;
+  --color-light-grey: #D6D6D6;
+  
+  --font-sans: var(--font-open-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+}

@@ -1,0 +1,1169 @@
+{
+  "courses": [
+    {
+      "id": "course-1779465011215",
+      "title": "Scrum",
+      "description": "Eine kurze einfü",
+      "targetGroup": "General",
+      "status": "published",
+      "createdAt": "2026-05-22T15:50:11.215Z",
+      "updatedAt": "2026-05-24T16:33:43.563Z",
+      "category": "Agile, Leadership",
+      "imageUrl": "/uploads/1779640423517-216.png"
+    },
+    {
+      "id": "course-1779465420191",
+      "title": "hvhjvhvj",
+      "description": "gggggg",
+      "targetGroup": "General",
+      "createdBy": "Trainer",
+      "status": "draft",
+      "createdAt": "2026-05-22T15:57:00.192Z",
+      "updatedAt": "2026-05-22T15:57:00.192Z"
+    },
+    {
+      "id": "course-1779465937058",
+      "title": "agile",
+      "description": "a short intro\r\n",
+      "targetGroup": "General",
+      "createdBy": "Trainer",
+      "status": "draft",
+      "createdAt": "2026-05-22T16:05:37.058Z",
+      "updatedAt": "2026-05-22T16:05:37.058Z"
+    },
+    {
+      "id": "course-1779639078220",
+      "title": "Agile & AI",
+      "description": "How can we connect Agile (humencentred) and AI",
+      "targetGroup": "General",
+      "category": "Leadership",
+      "imageUrl": "https://picsum.photos/id/244/4288/2848",
+      "createdBy": "Trainer",
+      "status": "published",
+      "createdAt": "2026-05-24T16:11:18.221Z",
+      "updatedAt": "2026-05-24T16:15:35.728Z"
+    },
+    {
+      "id": "course-1779647404400",
+      "title": "creativity",
+      "description": "how to be creative in an ai world",
+      "targetGroup": "General",
+      "category": "AI",
+      "imageUrl": "https://picsum.photos/id/364/5000/2917",
+      "createdBy": "Trainer",
+      "status": "draft",
+      "createdAt": "2026-05-24T18:30:04.400Z",
+      "updatedAt": "2026-05-24T18:30:04.400Z"
+    },
+    {
+      "id": "course-1779647412449",
+      "title": "creativity",
+      "description": "how to be creative in an ai world",
+      "targetGroup": "General",
+      "category": "AI",
+      "imageUrl": "https://picsum.photos/id/364/5000/2917",
+      "createdBy": "Trainer",
+      "status": "published",
+      "createdAt": "2026-05-24T18:30:12.449Z",
+      "updatedAt": "2026-05-24T18:32:27.768Z"
+    },
+    {
+      "id": "course-1779649520298",
+      "title": "Kanban",
+      "description": "A short introdution to the fantastic world of Kanban",
+      "targetGroup": "General",
+      "category": "Leadership",
+      "imageUrl": "https://picsum.photos/id/104/3840/2160",
+      "createdBy": "Trainer",
+      "status": "published",
+      "createdAt": "2026-05-24T19:05:20.298Z",
+      "updatedAt": "2026-05-24T19:08:09.685Z"
+    },
+    {
+      "id": "course-1779798725861",
+      "title": "review",
+      "description": "esfsegr",
+      "targetGroup": "General",
+      "category": "Uncategorized",
+      "createdBy": "Trainer",
+      "status": "draft",
+      "createdAt": "2026-05-26T12:32:05.861Z",
+      "updatedAt": "2026-05-26T12:32:05.861Z"
+    },
+    {
+      "id": "course-1779882386754",
+      "title": "Kreativ werden – Ideen entwickeln, ausprobieren, weiterdenken",
+      "description": "Die Teilnehmenden sollen Kreativität nicht nur verstehen, sondern direkt erleben. Es geht nicht darum, „kreative Genies“ zu werden, sondern darum, die eigene Wahrnehmung zu öffnen, gewohnte Denkmuster zu verlassen und Ideen mutig in erste kleine Formen zu bringen.",
+      "targetGroup": "General",
+      "category": "Creativity",
+      "imageUrl": "/uploads/1779882386742-8755.png",
+      "createdBy": "Trainer",
+      "status": "published",
+      "createdAt": "2026-05-27T11:46:26.755Z",
+      "updatedAt": "2026-05-27T11:53:03.399Z"
+    },
+    {
+      "id": "course-1779884050305",
+      "title": "creativity",
+      "description": "how to get creative",
+      "category": "Uncategorized",
+      "targetGroup": "General",
+      "createdBy": "Trainer",
+      "status": "published",
+      "createdAt": "2026-05-27T12:14:10.305Z",
+      "updatedAt": "2026-05-27T12:14:31.442Z"
+    },
+    {
+      "id": "course-1779885899263",
+      "title": "Entdeckung fremder Planeten",
+      "description": "Die Teilnehmenden sollen in die Lage versetzt werden mit Raumschiffen erdähnliche Planeten zu entdecken. Der Kurs sollte ein reiseähnliches Format haben.",
+      "category": "Sonstiges",
+      "targetGroup": "General",
+      "createdBy": "Trainer",
+      "status": "published",
+      "createdAt": "2026-05-27T12:44:59.263Z",
+      "updatedAt": "2026-05-27T12:45:14.945Z"
+    }
+  ],
+  "modules": [
+    {
+      "id": "module-1779465011248",
+      "courseId": "course-1779465011215",
+      "title": "Introduction",
+      "description": "Welcome to the course. This is your first module.",
+      "order": 0
+    },
+    {
+      "id": "module-1779465420199",
+      "courseId": "course-1779465420191",
+      "title": "Introduction",
+      "description": "Welcome to the course. This is your first module.",
+      "learningObjectives": [
+        "Understand the basics of the course"
+      ],
+      "order": 0
+    },
+    {
+      "id": "module-1779465937068",
+      "courseId": "course-1779465937058",
+      "title": "Introduction",
+      "description": "Welcome to the course. This is your first module.",
+      "learningObjectives": [
+        "Understand the basics of the course"
+      ],
+      "order": 0
+    },
+    {
+      "id": "module-1779639078230",
+      "courseId": "course-1779639078220",
+      "title": "Introduction",
+      "description": "Welcome to the course. This is your first module.",
+      "learningObjectives": [
+        "Understand the basics of the course"
+      ],
+      "order": 0
+    },
+    {
+      "id": "module-1779643974085",
+      "courseId": "course-1779465011215",
+      "title": "New Module 2",
+      "description": "Description for the new module",
+      "learningObjectives": [
+        "New Objective"
+      ],
+      "order": 1
+    },
+    {
+      "id": "module-1779647404420",
+      "courseId": "course-1779647404400",
+      "title": "Introduction",
+      "description": "Welcome to the course. This is your first module.",
+      "learningObjectives": [
+        "Understand the basics of the course"
+      ],
+      "order": 0
+    },
+    {
+      "id": "module-1779647412455",
+      "courseId": "course-1779647412449",
+      "title": "Introduction",
+      "description": "Welcome to the course. This is your first module.",
+      "learningObjectives": [
+        "Understand the basics of the course"
+      ],
+      "order": 0
+    },
+    {
+      "id": "module-1779647447580",
+      "courseId": "course-1779647412449",
+      "title": "New Module 2",
+      "description": "Description for the new module",
+      "learningObjectives": [
+        "New Objective"
+      ],
+      "order": 1
+    },
+    {
+      "id": "module-1779649520309",
+      "courseId": "course-1779649520298",
+      "title": "Introduction",
+      "description": "Welcome to the course. This is your first module.",
+      "learningObjectives": [
+        "Understand the basics of the course"
+      ],
+      "order": 0
+    },
+    {
+      "id": "module-1779798725872",
+      "courseId": "course-1779798725861",
+      "title": "Introduction",
+      "description": "Welcome to the course. This is your first module.",
+      "learningObjectives": [
+        "Understand the basics of the course"
+      ],
+      "order": 0
+    },
+    {
+      "id": "module-1779881607637",
+      "courseId": "course-1779465011215",
+      "title": "New Module 3",
+      "description": "Description for the new module",
+      "learningObjectives": [
+        "New Objective"
+      ],
+      "order": 2
+    },
+    {
+      "id": "module-1779881609695",
+      "courseId": "course-1779465011215",
+      "title": "New Module 4",
+      "description": "Description for the new module",
+      "learningObjectives": [
+        "New Objective"
+      ],
+      "order": 3
+    },
+    {
+      "id": "module-1779882386761",
+      "courseId": "course-1779882386754",
+      "title": "Introduction",
+      "description": "Welcome to the course. This is your first module.",
+      "learningObjectives": [
+        "Understand the basics of the course"
+      ],
+      "order": 0
+    },
+    {
+      "id": "module-1779882490345",
+      "courseId": "course-1779882386754",
+      "title": "Kreativität als aufmerksames Sehen",
+      "description": "",
+      "learningObjectives": [
+        "New Objective"
+      ],
+      "order": 1
+    },
+    {
+      "id": "module-1779882669344",
+      "courseId": "course-1779882386754",
+      "title": "Ideen entstehen durch Verbindung",
+      "description": "Description for the new module",
+      "learningObjectives": [
+        "New Objective"
+      ],
+      "order": 2
+    },
+    {
+      "id": "module-1779884050313",
+      "courseId": "course-1779884050305",
+      "title": "The Anatomy of Creativity: Demystifying the Creative Process",
+      "description": "Dive into the true nature of creativity, debunk common myths, and understand that it's a skill accessible to everyone, not just a select few. Explore the underlying mechanisms that drive innovative thinking.",
+      "learningObjectives": [
+        "Define creativity beyond artistic talent and understand its multi-faceted nature.",
+        "Identify and challenge common misconceptions about creativity and creative people.",
+        "Recognize creativity as a learnable and developable skill applicable across all domains."
+      ],
+      "order": 0
+    },
+    {
+      "id": "module-1779884050358",
+      "courseId": "course-1779884050305",
+      "title": "Unleashing Your Idea Generator: Techniques for Abundant Concepts",
+      "description": "Learn and apply powerful techniques designed to break through creative blocks and generate a high volume of novel ideas. This module focuses on practical tools and exercises to activate your divergent thinking.",
+      "learningObjectives": [
+        "Apply at least three distinct brainstorming and idea generation techniques effectively.",
+        "Practice divergent thinking to expand the scope of potential solutions.",
+        "Develop strategies to overcome common barriers to idea flow, such as self-censorship."
+      ],
+      "order": 1
+    },
+    {
+      "id": "module-1779884050396",
+      "courseId": "course-1779884050305",
+      "title": "Cultivating a Creative Environment & Mindset: Sustaining Innovation",
+      "description": "Discover how to foster a personal and professional environment conducive to creativity. This module focuses on developing a resilient, curious, and open mindset that embraces experimentation and learns from 'failure.'",
+      "learningObjectives": [
+        "Design a personal environment that supports and stimulates creative thought.",
+        "Adopt a growth mindset towards challenges and setbacks in the creative process.",
+        "Integrate daily practices that nurture curiosity, observation, and imaginative play."
+      ],
+      "order": 2
+    },
+    {
+      "id": "module-1779885899272",
+      "courseId": "course-1779885899263",
+      "title": "Modul 1: Der Ruf der Sterne - Vorbereitung zur Erkundung",
+      "description": "Dieses Modul führt Sie in die faszinierende Welt der Exoplanetenforschung ein und bereitet Sie auf Ihre erste interstellare Mission vor. Wir lernen die Grundlagen der Raumfahrt und die Bedeutung unserer Suche kennen.",
+      "learningObjectives": [
+        "Die Gründe und die Bedeutung der Exoplanetenforschung verstehen.",
+        "Grundlegende Konzepte der interstellaren Raumfahrt kennenlernen.",
+        "Die wichtigsten Komponenten eines Erkundungsraumschiffs identifizieren."
+      ],
+      "order": 0
+    },
+    {
+      "id": "module-1779885899329",
+      "courseId": "course-1779885899263",
+      "title": "Modul 2: Navigieren im Kosmos - Kurs auf unbekannte Welten",
+      "description": "Unsere Reise beginnt! In diesem Modul lernen wir, wie man durch die unendlichen Weiten des Weltraums navigiert, vielversprechende Zielsterne auswählt und die Herausforderungen einer interstellaren Expedition meistert.",
+      "learningObjectives": [
+        "Die Prinzipien der interstellaren Navigation erklären können.",
+        "Methoden zur Auswahl potenziell erdähnlicher Zielplaneten kennen.",
+        "Die Herausforderungen und Risiken einer Langzeitmission im Weltraum einschätzen."
+      ],
+      "order": 1
+    },
+    {
+      "id": "module-1779885899388",
+      "courseId": "course-1779885899263",
+      "title": "Modul 3: Erstkontakt - Exoplaneten aufspüren",
+      "description": "An Bord unseres Raumschiffs richten wir unsere hochsensiblen Instrumente auf die ausgewählten Sterne. In diesem Modul lernen Sie die modernsten Detektionsmethoden kennen, um verborgene Welten um ferne Sterne zu enthüllen.",
+      "learningObjectives": [
+        "Die Funktionsweise der wichtigsten Exoplaneten-Detektionsmethoden (Transitmethode, Radialgeschwindigkeitsmethode) erklären.",
+        "Die gesammelten Daten von potentiellen Exoplaneten interpretieren.",
+        "Herausforderungen bei der Bestätigung und Charakterisierung von Exoplaneten verstehen."
+      ],
+      "order": 2
+    },
+    {
+      "id": "module-1779885899442",
+      "courseId": "course-1779885899263",
+      "title": "Modul 4: Die Suche nach Leben - Die bewohnbare Zone",
+      "description": "Wir haben Planeten entdeckt! Nun konzentrieren wir uns darauf, die Anzeichen von Leben zu entschlüsseln und die Kriterien der Bewohnbarkeit jenseits der Erde zu verstehen. Das ist der Höhepunkt unserer Reise.",
+      "learningObjectives": [
+        "Die Kriterien für die bewohnbare Zone eines Sterns benennen.",
+        "Potenzielle Biosignaturen in Exoplanetenatmosphären identifizieren.",
+        "Die ethischen Überlegungen bei der Entdeckung von extraterrestrischem Leben reflektieren."
+      ],
+      "order": 3
+    },
+    {
+      "id": "module-1779886469450",
+      "courseId": "course-1779885899263",
+      "title": "New Module 5",
+      "description": "Description for the new module",
+      "learningObjectives": [
+        "New Objective"
+      ],
+      "order": 4
+    },
+    {
+      "id": "module-1779886586378",
+      "courseId": "course-1779885899263",
+      "title": "New Module 6",
+      "description": "Description for the new module",
+      "learningObjectives": [
+        "New Objective"
+      ],
+      "order": 5
+    },
+    {
+      "id": "module-1779886589371",
+      "courseId": "course-1779885899263",
+      "title": "New Module 7",
+      "description": "Description for the new module",
+      "learningObjectives": [
+        "New Objective"
+      ],
+      "order": 6
+    },
+    {
+      "id": "module-1779890156383",
+      "courseId": "course-1779465011215",
+      "title": "New Module 5",
+      "description": "Description for the new module",
+      "learningObjectives": [
+        "New Objective"
+      ],
+      "order": 4
+    },
+    {
+      "id": "module-1779890749804",
+      "courseId": "course-1779884050305",
+      "title": "Kreativität leben: Von der Idee zur Tat",
+      "description": "Dieser Modul fokussiert darauf, Kreativität nicht nur als Konzept zu verstehen, sondern aktiv zu leben und in den Alltag zu integrieren. Durch praktische Übungen und Reflexion erkennen die Teilnehmenden ihre eigene kreative Kraft und lernen, diese gezielt einzusetzen, um am Ende das Gefühl zu haben: Ja, ich bin kreativ.",
+      "learningObjectives": [
+        "Teilnehmende können gängige Missverständnisse über Kreativität identifizieren und widerlegen.",
+        "Teilnehmende sind in der Lage, einfache kreative Techniken anzuwenden, um neue Ideen zu generieren.",
+        "Teilnehmende entwickeln ein gestärktes Selbstvertrauen in ihre eigene kreative Fähigkeit."
+      ],
+      "order": 3
+    }
+  ],
+  "blocks": [
+    {
+      "id": "block-1779465068701218",
+      "moduleId": "module-1779465011248",
+      "type": "text",
+      "title": "New Block",
+      "content": "Writekhvuclcl your content here...",
+      "source": "trainer",
+      "learningMode": "understand",
+      "order": 0
+    },
+    {
+      "id": "block-1779465164214985",
+      "moduleId": "module-1779465011248",
+      "type": "reflection",
+      "title": "Pause and Reflect",
+      "content": "{\"reflectionPrompt\":\"Think of a time when you solved a problem, only for it to return later. Did you address a symptom or the root cause?\",\"followUpQuestions\":[\"Why did it return?\",\"What was the actual root cause?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-177946517803569",
+      "moduleId": "module-1779465011248",
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "content": "{\"question\":\"What is the primary difference between a symptom and a root cause?\",\"options\":[\"A symptom is visible, a root cause is hidden\",\"They are the same thing\",\"Symptoms cause root problems\"],\"correctAnswer\":\"A symptom is visible, a root cause is hidden\",\"explanation\":\"Symptoms are the visible manifestations of a deeper, underlying issue (the root cause).\"}",
+      "learningMode": "test",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1779465183438739",
+      "moduleId": "module-1779465011248",
+      "type": "text",
+      "title": "AI Suggested Content",
+      "content": "This is a fallback mock block generated by AI.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1779465438215591",
+      "moduleId": "module-1779465420199",
+      "type": "text",
+      "title": "AI Suggested Content",
+      "content": "This is a fallback mock block generated by AI.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-177946544376436",
+      "moduleId": "module-1779465420199",
+      "type": "text",
+      "title": "New Block",
+      "content": "ipse lorum",
+      "source": "trainer",
+      "learningMode": "understand",
+      "order": 1
+    },
+    {
+      "id": "block-1779465554749108",
+      "moduleId": "module-1779465420199",
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "content": "{\"question\":\"What is the primary difference between a symptom and a root cause?\",\"options\":[\"A symptom is visible, a root cause is hidden\",\"They are the same thing\",\"Symptoms cause root problems\"],\"correctAnswer\":\"A symptom is visible, a root cause is hidden\",\"explanation\":\"Symptoms are the visible manifestations of a deeper, underlying issue (the root cause).\"}",
+      "learningMode": "test",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-177946594439743",
+      "moduleId": "module-1779465937068",
+      "type": "text",
+      "title": "New Block",
+      "content": "Write your content here...",
+      "source": "trainer",
+      "learningMode": "understand",
+      "order": 0
+    },
+    {
+      "id": "block-177946643290776",
+      "moduleId": "module-1779465937068",
+      "type": "video",
+      "title": "Video Resource",
+      "content": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1779466543276522",
+      "moduleId": "module-1779465937068",
+      "type": "text",
+      "title": "AI Suggested Content",
+      "content": "[Generated from: \"mache ein paar schwierige fragen zum thema\n\"]\n\nThis is a fallback mock block generated by AI.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1779466562777465",
+      "moduleId": "module-1779465937068",
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "content": "{\"question\":\"(Based on: mache ein paar schwierige fragen zum thema) What is the primary difference?\",\"options\":[\"A symptom is visible, a root cause is hidden\",\"They are the same thing\",\"Symptoms cause root problems\"],\"correctAnswer\":\"A symptom is visible, a root cause is hidden\",\"explanation\":\"Symptoms are the visible manifestations of a deeper, underlying issue (the root cause).\"}",
+      "learningMode": "test",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1779639099032431",
+      "moduleId": "module-1779639078230",
+      "type": "text",
+      "title": "Module 1: Introduction to Agile & AI",
+      "content": "This module provides a foundational understanding of the 'Agile & AI' course. We will explore the core concepts of Agile methodologies and the fundamentals of Artificial Intelligence. You will learn what Agile is, what AI entails, and why the integration of these two powerful domains is crucial for modern project development and innovation.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1779639113295117",
+      "moduleId": "module-1779639078230",
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "content": "{\"question\":\"Which of the following best describes how Artificial Intelligence (AI) can augment an Agile software development team?\",\"options\":[\"By automating the entire development lifecycle, removing the need for human intervention.\",\"By providing real-time data analytics for backlog refinement, sprint planning, and identifying impediments.\",\"By replacing the Scrum Master and Product Owner roles with AI-driven management systems.\",\"By enforcing a fixed scope and budget from the project's inception, reducing iterative changes.\"],\"correctAnswer\":\"By providing real-time data analytics for backlog refinement, sprint planning, and identifying impediments.\",\"explanation\":\"AI can analyze vast amounts of data (e.g., user feedback, code metrics, project progress, market trends) to provide actionable insights. This capability significantly enhances an Agile team's ability to make data-driven decisions for backlog prioritization, optimize sprint planning by predicting effort or identifying dependencies, and proactively flag potential risks or impediments. This augments human roles and Agile principles, rather than replacing them. Automating the entire lifecycle or replacing key human roles is currently unrealistic and undesirable, as it would diminish the human element of creativity, empathy, and complex problem-solving. Enforcing a fixed scope and budget from inception directly contradicts Agile's core principle of adaptability and iterative development.\"}",
+      "learningMode": "test",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1779639131538300",
+      "moduleId": "module-1779639078230",
+      "type": "reflection",
+      "title": "Pause and Reflect",
+      "content": "{\"reflectionPrompt\":\"Reflect on how the foundational understanding of Agile and AI concepts gained in this module will serve as a crucial future skill in your professional journey. Consider its applicability across various roles and industries, and how mastering these basics prepares you for more advanced future challenges and innovations.\",\"followUpQuestions\":[\"What specific basic concepts from Agile or AI do you foresee being most impactful in your future work?\",\"How might a lack of understanding in these foundational areas hinder your ability to adapt to future technological shifts?\",\"What steps will you take to deepen your foundational knowledge beyond this module?\",\"Can you identify a current or emerging industry trend where the combined basic understanding of Agile and AI is already proving essential?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1779642168517155",
+      "moduleId": "module-1779465011248",
+      "type": "text",
+      "title": "New Block",
+      "content": "Write your content here...",
+      "source": "trainer",
+      "learningMode": "understand",
+      "order": 4
+    },
+    {
+      "id": "block-1779642188957601",
+      "moduleId": "module-1779465011248",
+      "type": "punk_game",
+      "title": "Challenge: Punk Game",
+      "content": "{\"scenario\":\"Your 'Scrum Master' just quit mid-sprint, taking all documentation with them. The product owner is on a mandatory digital detox, and the dev team just received conflicting priorities from three different department heads. Your sprint goal, set just 2 days ago, is now utterly irrelevant.\",\"task\":\"In the next 5 minutes, outline the *bare minimum* steps you'd take to salvage the sprint, re-energize the team, and get clear direction, assuming you have *no* formal authority and minimal time.\",\"evaluationCriteria\":[\"Are the proposed actions immediately actionable?\",\"Does the plan prioritize direct communication and transparency?\",\"Does it demonstrate adaptive thinking under extreme pressure?\"]}",
+      "learningMode": "challenge",
+      "source": "ai_assisted",
+      "order": 5
+    },
+    {
+      "id": "block-1779642758535353",
+      "moduleId": "module-1779465011248",
+      "type": "punk_game",
+      "title": "Practical Challenge",
+      "content": "{\"scenario\":\"Your Scrum team has just completed a challenging Sprint, delivering the Sprint Goal but encountering significant technical debt and communication hurdles. The team morale is a bit low, and they need to reconnect and find a path forward. It's time for the Sprint Retrospective.\",\"task\":\"Design a 60-minute Sprint Retrospective agenda, including 3 distinct activities or discussion points, that helps the team reflect on the challenges, identify root causes, and commit to tangible improvements for the next Sprint. Briefly describe each activity.\",\"timeboxMinutes\":7,\"evaluationCriteria\":[\"Does the agenda clearly facilitate reflection on recent challenges?\",\"Are the proposed activities likely to generate actionable improvements?\",\"Is the structure suitable for a 60-minute timebox?\"]}",
+      "learningMode": "challenge",
+      "source": "ai_assisted",
+      "order": 6
+    },
+    {
+      "id": "block-1779642801275808",
+      "moduleId": "module-1779465011248",
+      "type": "punk_game",
+      "title": "Practical Challenge",
+      "content": "{\"scenario\":\"Your 8-person Scrum Team is 5 days into a 2-week Sprint. A critical production bug, impacting 20% of users, has just been reported. The current Sprint Goal is at risk if immediate action isn't taken.\",\"task\":\"Outline the immediate steps the Scrum Team should take to address this situation. This includes internal team actions, stakeholder communication, and how to protect the Sprint Goal (if possible).\",\"timeboxMinutes\":5,\"evaluationCriteria\":[\"Addresses bug resolution without derailing the Sprint Goal entirely.\",\"Proposes a clear internal communication and decision-making process.\",\"Defines a concise external stakeholder communication strategy.\"]}",
+      "learningMode": "challenge",
+      "source": "ai_assisted",
+      "order": 7
+    },
+    {
+      "id": "block-1779643994580208",
+      "moduleId": "module-1779643974085",
+      "type": "text",
+      "title": "Understanding Scrum Fundamentals",
+      "content": "This learning block serves as an introduction to Scrum, an iterative and incremental agile framework for managing product development. Our new objective is to equip you with a foundational understanding of Scrum's core principles, including its roles, events, and artifacts, enabling you to comprehend how Scrum teams deliver value in complex environments.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1779647472965812",
+      "moduleId": "module-1779647447580",
+      "type": "text",
+      "title": "New Block",
+      "content": "Write your content here...",
+      "source": "trainer",
+      "learningMode": "understand",
+      "order": 1
+    },
+    {
+      "id": "block-1779647526344952",
+      "moduleId": "module-1779647447580",
+      "type": "punk_game",
+      "title": "Practical Challenge",
+      "content": "{\"scenario\":\"Your company's flagship product, a well-established but somewhat staid enterprise software solution, is losing market share to newer, more agile competitors. The current marketing approach highlights features and reliability, but it's no longer resonating with potential new clients seeking innovation.\",\"task\":\"Develop three distinct, out-of-the-box marketing campaign concepts that focus on storytelling and emotional connection rather than technical specifications, aiming to reposition the product as cutting-edge and inspiring. Each concept should have a unique core message and a non-traditional delivery channel.\",\"timeboxMinutes\":7,\"evaluationCriteria\":[\"Originality and boldness of marketing concepts.\",\"Potential to evoke emotional resonance.\",\"Viability of suggested non-traditional delivery channels.\"]}",
+      "learningMode": "challenge",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1779649572914787",
+      "moduleId": "module-1779649520309",
+      "type": "text",
+      "title": "Kanban Basics: An Introduction",
+      "content": "Kanban ist ein visuelles System zur Steuerung von Arbeit, das den Workflow transparent macht und Engpässe aufzeigt. Es fördert die Begrenzung paralleler Aufgaben (Work in Progress) und die kontinuierliche Verbesserung des Prozesses. Ziel ist es, die Effizienz zu steigern, die Durchlaufzeiten zu verkürzen und eine bessere Vorhersehbarkeit der Arbeitsabläufe zu ermöglichen.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1779649604971706",
+      "moduleId": "module-1779649520309",
+      "type": "video",
+      "title": "Kanban Basics: A Short Introduction",
+      "content": "https://www.youtube.com/embed/Q0A2K4k-L_Q",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1779649627586332",
+      "moduleId": "module-1779649520309",
+      "type": "reflection",
+      "title": "Pause and Reflect",
+      "content": "{\"reflectionPrompt\":\"Considering the fundamental principles and practices of Kanban introduced in this module, how do you envision applying this foundational understanding to enhance your future work processes, personal projects, or team collaborations?\",\"followUpQuestions\":[\"What specific aspect of Kanban's basics do you anticipate will be most useful in your future role?\",\"How might a clear grasp of Kanban's core concepts help you identify and address bottlenecks in a workflow?\",\"In what ways could understanding Kanban principles improve communication and transparency within a team you're part of?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1779649645372985",
+      "moduleId": "module-1779649520309",
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "content": "{\"question\":\"In a Kanban system, what is the primary benefit of implementing Work In Progress (WIP) limits?\",\"options\":[\"To establish a fixed deadline for each work item, ensuring timely delivery.\",\"To prevent the system from becoming overloaded, thereby improving throughput and reducing lead time.\",\"To automatically assign tasks to available team members, balancing workload distribution.\",\"To prioritize tasks based on their business value, guiding the team on what to work on next.\"],\"correctAnswer\":\"To prevent the system from becoming overloaded, thereby improving throughput and reducing lead time.\",\"explanation\":\"WIP limits are a core practice in Kanban designed to restrict the number of work items in progress at any given time. This prevents overburdening the team and the system, which in turn helps to identify bottlenecks, reduce context switching, improve focus, and ultimately accelerate the flow of value (throughput) while decreasing the time it takes for an item to move from start to finish (lead time). The other options describe related but not primary benefits or misrepresent the core function of WIP limits: they don't primarily establish fixed deadlines per item, nor do they automate task assignment or directly prioritize work (though they enable better prioritization).\"}",
+      "learningMode": "test",
+      "source": "ai_assisted",
+      "order": 4
+    },
+    {
+      "id": "block-177964966393945",
+      "moduleId": "module-1779649520309",
+      "type": "punk_game",
+      "title": "Practical Challenge",
+      "content": "{\"scenario\":\"Your cross-functional product team is struggling with task prioritization and delivery predictability. Work items frequently stall at various stages, and stakeholders are complaining about a lack of transparency regarding progress and blockers.\",\"task\":\"Design a basic Kanban board (using text to describe columns and swimlanes if needed) for this team. Clearly define the stages of work, identify one potential WIP limit you would introduce, and explain its purpose.\",\"timeboxMinutes\":7,\"evaluationCriteria\":[\"Logical and relevant Kanban board stages defined.\",\"Appropriate WIP limit identified and justified.\",\"Solution addresses transparency or flow improvement.\"]}",
+      "learningMode": "challenge",
+      "source": "ai_assisted",
+      "order": 5
+    },
+    {
+      "id": "block-1779798986878785",
+      "moduleId": "module-1779465011248",
+      "type": "punk_game",
+      "title": "Practical Challenge",
+      "content": "{\"scenario\":\"A critical product increment is due next week, but the team's progress is significantly behind schedule. Key stakeholders are visibly angry and have escalated their concerns, demanding immediate answers and a revised plan. The team is feeling demotivated and overwhelmed by the pressure.\",\"task\":\"As the Scrum Master, you have 24 hours to address this crisis. Outline your immediate strategy to calm the angry stakeholders, re-energize the team, and regain control of the situation using core Scrum principles.\",\"timeboxMinutes\":7,\"evaluationCriteria\":[\"Effectively addresses stakeholder anger and provides transparency.\",\"Proposes concrete, actionable Scrum-based steps for the team.\",\"Demonstrates leadership in crisis management within a Scrum context.\"]}",
+      "learningMode": "challenge",
+      "source": "ai_assisted",
+      "order": 8
+    },
+    {
+      "id": "block-1779881733513444",
+      "moduleId": "module-1779881609695",
+      "type": "project_task",
+      "title": "Agile Feature Kick-off: Product Backlog for a New Social Sharing Feature",
+      "content": "{\"title\":\"Agile Feature Kick-off: Product Backlog for a New Social Sharing Feature\",\"scenario\":\"You've joined a nascent mobile app startup, 'ConnectSphere', which is building a community-focused platform. The leadership team has identified a critical 'social sharing' feature as the next big enhancement to drive user engagement. As the newly appointed Product Owner (or a Scrum Master assisting the PO), you're tasked with initiating the agile planning for this feature. Currently, there's only a high-level concept: 'Users should be able to share their posts/achievements on external social media platforms.' There are no existing user stories or detailed requirements for this specific feature.\",\"task\":\"Your task is to create an initial, prioritized Product Backlog for the 'social sharing' feature. This backlog should include a minimum of 5-7 user stories, each with clear acceptance criteria. You should also provide a preliminary effort estimation for each story (e.g., using T-shirt sizes: XS, S, M, L, XL or simple relative points) and justify your prioritization.\",\"deliverable\":\"A digital document (e.g., a spreadsheet, text file, or simple markdown file) containing the Product Backlog. Each user story must include: User Story, Description, Acceptance Criteria, Priority, and Estimated Effort.\",\"constraints\":[\"The Product Backlog must contain at least 5 distinct user stories related to the social sharing feature.\",\"Each user story must be written from the perspective of the user and include at least 3 clear acceptance criteria.\",\"User stories must be prioritized, with a brief justification for the top 3 priorities.\",\"Preliminary effort estimates (e.g., XS, S, M, L, XL or a 1-5 scale) must be assigned to each user story.\",\"Focus on delivering incremental value and the 'Minimum Viable Feature' concept for the initial release.\"],\"reflectionPrompt\":\"Reflect on the process of transforming a high-level feature concept into actionable user stories. What challenges did you face in defining clear acceptance criteria and assigning preliminary effort estimates, and how might these challenges impact a real-world sprint planning session?\"}",
+      "learningMode": "apply",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1779881739692235",
+      "moduleId": "module-1779881609695",
+      "type": "text",
+      "title": "New Block",
+      "content": "Write your content here...",
+      "source": "trainer",
+      "learningMode": "understand",
+      "order": 1
+    },
+    {
+      "id": "block-1779882399255716",
+      "moduleId": "module-1779882386761",
+      "type": "text",
+      "title": "Kreativität beginnt mit Wahrnehmung",
+      "content": "Write youKreativität beginnt selten mit einer großen Idee. Meistens beginnt sie viel kleiner: mit einem Blick, der etwas bemerkt. Mit einer Irritation. Mit einem „Moment mal, warum ist das eigentlich so?“\n\nViele Menschen glauben, Kreativität bedeute, aus dem Nichts etwas völlig Neues zu erschaffen. Das klingt beeindruckend, aber es setzt auch unter Druck. Denn wer wartet, bis aus dem Nichts eine brillante Idee auftaucht, wartet oft sehr lange.\n\nKreativität ist meistens keine Explosion. Sie ist eher eine Verschiebung der Aufmerksamkeit. Wir sehen etwas, das andere übersehen. Wir verbinden Dinge, die vorher getrennt wirkten. Wir nehmen eine Alltagssituation ernst, obwohl sie auf den ersten Blick belanglos erscheint.\n\nIn diesem ersten Modul geht es deshalb nicht darum, sofort große Ideen zu produzieren. Es geht darum, die eigene Wahrnehmung zu schärfen. Denn wer kreativer werden will, muss zuerst mehr Material sammeln: Eindrücke, Beobachtungen, Widersprüche, Stimmungen, kleine Probleme, ungewöhnliche Details.\n\nKreativität beginnt dort, wo wir aufhören, die Welt nur wiederzuerkennen – und anfangen, sie neu zu sehen.r content here...",
+      "source": "trainer",
+      "learningMode": "understand",
+      "order": 0
+    },
+    {
+      "id": "block-1779882477025703",
+      "moduleId": "module-1779882386761",
+      "type": "reflection",
+      "title": "Pause and Reflect",
+      "content": "{\"reflectionPrompt\":\"Considering the foundational concepts and basic principles introduced in the 'Kreativ werden – Ideen entwickeln, ausprobieren, weiterdenken' module, how do you foresee this fundamental understanding impacting your future ability to generate ideas, experiment, and develop solutions in new contexts or challenges?\",\"followUpQuestions\":[\"Which specific basic concept from this module do you anticipate being most crucial for your future creative work?\",\"How might a deeper understanding of these basics empower you to approach unfamiliar creative tasks with greater confidence?\",\"What potential difficulties might arise in future creative projects if your understanding of these core principles is not solid?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1779882540770741",
+      "moduleId": "module-1779882490345",
+      "type": "text",
+      "title": "New Block",
+      "content": "Kreativität wird oft mit Originalität verwechselt. Natürlich spielt Originalität eine Rolle. Aber originelle Ideen entstehen selten dadurch, dass jemand sich hinsetzt und sagt: „Jetzt bin ich originell.“\n\nViel häufiger entstehen sie aus genauer Beobachtung. Menschen, die kreativ arbeiten, sehen oft nicht grundsätzlich mehr als andere. Aber sie nehmen anders wahr. Sie bleiben an Dingen hängen. Sie stellen Fragen. Sie betrachten eine Situation nicht nur danach, wofür sie offensichtlich gedacht ist, sondern auch danach, was noch darin stecken könnte.\n\nEin Stuhl ist dann nicht nur ein Stuhl. Er ist vielleicht ein Zeichen dafür, wie wir arbeiten, warten, lernen oder ausgeschlossen werden. Eine Warteschlange ist nicht nur eine Warteschlange. Sie kann etwas über Geduld, Organisation, Macht oder schlechte Gestaltung erzählen. Ein leerer Raum ist nicht nur leer. Er kann eine Einladung sein.\n\nKreativität braucht also eine gewisse Offenheit gegenüber dem Unfertigen. Wir müssen bereit sein, Dinge nicht sofort einzuordnen. Unser Gehirn liebt schnelle Kategorien: bekannt, langweilig, nützlich, unwichtig, richtig, falsch. Diese schnellen Einordnungen helfen im Alltag, aber sie können kreative Möglichkeiten verschließen.\n\nEin kreativer Blick verzögert dieses Urteil. Er sagt nicht sofort: „Das kenne ich schon.“ Er fragt: „Was ist hier noch möglich?“\n\nDabei geht es nicht darum, alles künstlich spannend zu finden. Es geht darum, den automatischen Blick zu unterbrechen. Gerade im Alltag steckt viel kreatives Material, weil wir ihn so selten wirklich anschauen.\n\nEine gute kreative Grundhaltung besteht aus drei Bewegungen:\n\nErstens: bemerken. Was fällt mir auf? Was irritiert mich? Was wirkt ungewöhnlich, schön, störend, überflüssig oder interessant?\n\nZweitens: fragen. Warum ist das so? Für wen ist das gut? Für wen nicht? Was wäre, wenn es anders wäre?\n\nDrittens: umdeuten. Was könnte das noch sein? Wofür könnte man es zweckentfremden? Welche Geschichte steckt darin? Welche Möglichkeit?\n\nKreativität beginnt also nicht mit der perfekten Idee, sondern mit einer anderen Art von Aufmerksamkeit.",
+      "source": "trainer",
+      "learningMode": "understand",
+      "order": 0
+    },
+    {
+      "id": "block-1779882572046941",
+      "moduleId": "module-1779882490345",
+      "type": "text",
+      "title": "New Block",
+      "content": "Write your content here...",
+      "source": "trainer",
+      "learningMode": "understand",
+      "order": 1
+    },
+    {
+      "id": "block-1779882590912913",
+      "moduleId": "module-1779882490345",
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "content": "{\"question\":\"Welcher Ansatz beschreibt am besten einen effektiven Prozess zur Förderung von Innovation und zur Entwicklung nachhaltiger Lösungen im professionellen Umfeld?\",\"options\":[\"Fokus auf die sofortige Markteinführung einer einzigen, sorgfältig ausgearbeiteten Idee, um Risiken zu minimieren.\",\"Strikte Einhaltung vorgegebener Prozesse ohne Raum für spontane Ideen oder Experimente.\",\"Schnelles und iteratives Generieren, Erproben und Weiterentwickeln vielfältiger Ideen basierend auf kontinuierlichem Feedback.\",\"Delegation der Ideenentwicklung an externe Spezialisten, um interne Ressourcen zu schonen.\"],\"correctAnswer\":\"Schnelles und iteratives Generieren, Erproben und Weiterentwickeln vielfältiger Ideen basierend auf kontinuierlichem Feedback.\",\"explanation\":\"Die korrekte Antwort spiegelt das Konzept 'Kreativ werden – Ideen entwickeln, ausprobieren, weiterdenken' am besten wider. Sie betont die iterative Natur des Innovationsprozesses, bei dem das schnelle Generieren (Kreativ werden, Ideen entwickeln), das Ausprobieren (Erproben) und das Weiterdenken (Weiterentwickeln basierend auf Feedback) von entscheidender Bedeutung sind. Die anderen Optionen beschreiben Ansätze, die entweder zu starr, zu risikominimierend durch mangelnde Erprobung oder zu passiv (Delegation) sind, um kreative und nachhaltige Lösungen zu fördern.\"}",
+      "learningMode": "test",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-177988260892054",
+      "moduleId": "module-1779882490345",
+      "type": "punk_game",
+      "title": "Practical Challenge",
+      "content": "{\"scenario\":\"Ihr Team leidet unter monotonen wöchentlichen Check-in-Meetings, die Energie rauben und kaum zu konkreten Ergebnissen führen. Die Teilnehmenden sind oft unvorbereitet und uninspiriert.\",\"task\":\"Entwickeln Sie in 8 Minuten drei radikal neue Ansätze, um diese Meetings zu beleben. Wählen Sie den vielversprechendsten aus, skizzieren Sie kurz dessen Umsetzung und formulieren Sie einen ersten Testschritt.\",\"timeboxMinutes\":8,\"evaluationCriteria\":[\"Innovationsgrad der Ideen\",\"Praktikabilität des ausgewählten Ansatzes\",\"Klarheit des vorgeschlagenen Testschritts\"]}",
+      "learningMode": "challenge",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1779882654249816",
+      "moduleId": "module-1779882490345",
+      "type": "project_task",
+      "title": "Kreativitäts-Entdecker: Dein persönlicher Ideengarten",
+      "content": "{\"title\":\"Kreativitäts-Entdecker: Dein persönlicher Ideengarten\",\"scenario\":\"Stell dir vor, du sitzt zu Hause und bemerkst, wie bestimmte Gegenstände oder Tätigkeiten in deinem Alltag immer auf dieselbe Weise genutzt oder ausgeführt werden. Du möchtest etwas Neues ausprobieren, um deine Routine aufzubrechen und deine eigene Kreativität zu wecken, die du vielleicht bisher nicht beachtet hast.\",\"task\":\"Wähle einen beliebigen Alltagsgegenstand oder eine feste Routine in deinem Zuhause oder deiner Umgebung (z.B. eine Kaffeetasse, ein Lesezeichen, der Weg zur Arbeit, die Art, wie du deine E-Mails sortierst). Deine Aufgabe ist es, mindestens drei völlig neue, unerwartete oder spielerische Verwendungszwecke, Interaktionen oder Interpretationen für diesen Gegenstand/diese Routine zu entwickeln. Es geht nicht um Perfektion, sondern darum, über den Tellerrand zu blicken und deine Assoziationsfähigkeit zu trainieren.\",\"deliverable\":\"Ein 'Kreativitäts-Protokoll', das aus folgenden Elementen besteht:1. Eine kurze Beschreibung des ursprünglichen Gegenstands oder der Routine.2. Eine Vorstellung deiner drei (oder mehr) neuen Ideen. Dies kann in Form einer kurzen schriftlichen Beschreibung pro Idee, einer Skizze, einem Foto oder einem sehr kurzen Videoclip (max. 60 Sekunden gesamt) pro Idee erfolgen, der die Umsetzung oder Nutzung demonstriert. Erkläre kurz, wie du auf die Ideen gekommen bist.\",\"constraints\":[\"Nutze ausschließlich Materialien und Ressourcen, die dir bereits zur Verfügung stehen. Kein Kauf neuer Gegenstände.\",\"Die entwickelten Ideen müssen nicht 'praktisch' oder 'nützlich' sein; der Fokus liegt auf Originalität und spielerischer Kreativität.\",\"Beschränke deine Ideensammlung und -dokumentation auf maximal 60 Minuten.\",\"Die Ausarbeitung sollte keine professionellen Fähigkeiten erfordern, sondern deine persönliche Auseinandersetzung zeigen.\"],\"reflectionPrompt\":\"Welche neuen Erkenntnisse hast du über deine eigene Kreativität gewonnen, als du versucht hast, die Routinen oder Gegenstände neu zu interpretieren? War es einfacher oder schwieriger als erwartet, und warum?\"}",
+      "learningMode": "apply",
+      "source": "ai_assisted",
+      "order": 4
+    },
+    {
+      "id": "block-1779882693162193",
+      "moduleId": "module-1779882669344",
+      "type": "text",
+      "title": "Einleitung",
+      "content": "Write your Viele gute Ideen entstehen nicht dadurch, dass jemand etwas völlig Neues erfindet. Sie entstehen dadurch, dass Dinge neu miteinander verbunden werden.\n\nEin Smartphone ist nicht nur eine Erfindung, sondern eine Verbindung aus Telefon, Kamera, Kalender, Musikgerät, Landkarte, Notizbuch und Internetzugang. Ein Foodtruck verbindet Restaurant, Straße und Eventkultur. Ein Escape Room verbindet Spiel, Rätsel, Theater und Teamarbeit.\n\nKreativität bedeutet oft: Dinge zusammenbringen, die vorher nicht zusammengehörten.\n\nIn diesem Modul geht es darum, Verbindungen herzustellen. Nicht vorsichtig und vernünftig, sondern zunächst möglichst frei. Denn am Anfang einer kreativen Idee ist zu viel Vernunft oft hinderlich. Wenn jede Idee sofort darauf geprüft wird, ob sie realistisch, bezahlbar, effizient oder korrekt ist, entsteht selten etwas Überraschendes.\n\nDas bedeutet nicht, dass jede verrückte Idee gut ist. Aber viele gute Ideen brauchen zuerst einen geschützten Raum, in dem sie noch unfertig, seltsam oder übertrieben sein dürfen.\n\nDieses Modul lädt dazu ein, mit Kombinationen zu spielen. Denn Kreativität ist oft weniger ein Geistesblitz als ein mutiges Kombinieren.content here...",
+      "source": "trainer",
+      "learningMode": "understand",
+      "order": 0
+    },
+    {
+      "id": "block-1779882720445493",
+      "moduleId": "module-1779882669344",
+      "type": "text",
+      "title": "Kombination statt Genie",
+      "content": "Der Mythos vom kreativen Genie ist hartnäckig. Er erzählt uns, dass Kreativität eine besondere Gabe weniger Menschen sei. Manche haben sie, andere eben nicht. Diese Vorstellung ist bequem, aber wenig hilfreich.\n\nIn der Praxis lässt sich Kreativität trainieren. Nicht wie ein Muskel im rein mechanischen Sinn, aber wie eine Fähigkeit, die durch Anwendung stärker wird. Eine zentrale Fähigkeit dabei ist das Kombinieren.\n\nUnser Denken arbeitet häufig in gewohnten Bahnen. Wenn wir an „Schule“ denken, erscheinen schnell Begriffe wie Unterricht, Lehrer, Stundenplan, Noten, Klassenzimmer. Wenn wir an „Restaurant“ denken, kommen Speisekarte, Tische, Küche, Service, Rechnung. Diese Assoziationen sind nicht falsch. Aber sie sind vertraut.\n\nKreative Ideen entstehen, wenn wir vertraute Felder mit fremden Feldern kreuzen.\n\nWas wäre eine Schule, die wie ein Theater funktioniert?\nWas wäre ein Restaurant, das wie eine Bibliothek aufgebaut ist?\nWas wäre ein Meeting, das nach den Regeln eines Spiels funktioniert?\nWas wäre ein Museum, das sich wie ein Gespräch anfühlt?\nWas wäre eine Bewerbung, die wie ein ehrlicher Dialog statt wie ein Machtspiel gestaltet ist?\n\nSolche Fragen bringen unser Denken in Bewegung. Sie erzeugen Reibung. Und Reibung ist für Kreativität oft wertvoller als glatte Zustimmung.\n\nWichtig ist dabei die Trennung von zwei Phasen: Ideen erzeugen und Ideen bewerten.\n\nBeim Erzeugen geht es um Menge, Vielfalt und Überraschung. In dieser Phase dürfen Ideen übertrieben, unpraktisch oder seltsam sein. Man sollte sie nicht sofort zerstören, nur weil sie noch nicht funktionieren.\n\nBeim Bewerten geht es später um Auswahl, Schärfung und Umsetzung. Dann darf gefragt werden: Was ist daran brauchbar? Was müsste verändert werden? Für wen wäre das wertvoll? Was ist der kleinste nächste Schritt?\n\nViele kreative Prozesse scheitern, weil diese beiden Phasen vermischt werden. Eine Idee taucht auf und wird sofort bewertet. „Zu teuer.“ „Geht nicht.“ „Haben wir schon probiert.“ „Versteht keiner.“ Damit wird der kreative Raum geschlossen, bevor überhaupt etwas entstehen konnte.\n\nKreativität braucht deshalb zuerst Erlaubnis. Die Erlaubnis, Unsinn zu denken. Die Erlaubnis, Dinge zu kombinieren, die noch nicht zusammenpassen. Die Erlaubnis, nicht sofort recht zu haben.\n\nDenn manchmal ist eine scheinbar absurde Kombination der Umweg zu einer wirklich brauchbaren Idee.",
+      "source": "trainer",
+      "learningMode": "understand",
+      "order": 2
+    },
+    {
+      "id": "block-1779882772579296",
+      "moduleId": "module-1779882669344",
+      "type": "video",
+      "title": "Kreativität entfalten: Ideen entwickeln und neue Ziele erreichen",
+      "content": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1779884050321983",
+      "moduleId": "module-1779884050313",
+      "type": "text",
+      "title": "What is Creativity, Really?",
+      "content": "Creativity isn't just for artists or 'gifted' individuals. It's a fundamental human capacity to generate new ideas, solutions, or expressions. It involves seeing old problems in new ways, making connections between seemingly unrelated concepts, and transforming imagination into reality. At its core, creativity is about problem-solving, adaptation, and innovation. It's a process, not a singular event, often involving divergent thinking (generating many ideas) followed by convergent thinking (selecting and refining the best ones). This course will help you unlock and cultivate this powerful skill, regardless of your field or background.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1779884050331155",
+      "moduleId": "module-1779884050313",
+      "type": "video",
+      "title": "The Power of Divergent Thinking",
+      "content": "https://www.youtube.com/embed/9oF_D4sI194",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1779884050342616",
+      "moduleId": "module-1779884050313",
+      "type": "quiz",
+      "title": "Creativity Myths Debunked",
+      "content": "{\"question\": \"Which of the following is a common myth about creativity?\", \"options\": [\"Creativity is a skill that can be developed and improved.\", \"Creative people are born with a unique gift.\", \"Creativity often involves making connections between disparate ideas.\", \"Problem-solving requires creative thinking.\"], \"correctAnswer\": \"Creative people are born with a unique gift.\", \"explanation\": \"Many believe creativity is an innate talent, but research shows it's a skill that can be cultivated through practice and specific techniques. It's not exclusive to a select few.\"}",
+      "learningMode": "test",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1779884050350627",
+      "moduleId": "module-1779884050313",
+      "type": "reflection",
+      "title": "My Creative Self-Assessment",
+      "content": "{\"reflectionPrompt\": \"Think about a time you felt particularly creative. What were the circumstances, and what allowed you to generate new ideas or solutions? Conversely, describe a situation where you felt blocked or uninspired. What factors contributed to that feeling?\", \"followUpQuestions\": [\"What personal beliefs do you hold about your own creative abilities?\", \"How might these beliefs impact your willingness to explore new ideas?\", \"What is one small step you could take this week to challenge a self-limiting belief about your creativity?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1779884050364171",
+      "moduleId": "module-1779884050358",
+      "type": "text",
+      "title": "Brainstorming and Beyond: Core Techniques",
+      "content": "Traditional brainstorming is a powerful starting point: gather, define a problem, generate ideas without judgment, and aim for quantity. But creativity tools extend far beyond. Techniques like 'Brainwriting' (writing ideas individually before sharing) or 'Reverse Brainstorming' (identifying how to *cause* a problem, then reversing it) offer structured ways to overcome typical brainstorming pitfalls. The key is to suspend judgment during the idea generation phase and encourage wild, even absurd, ideas.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1779884050369345",
+      "moduleId": "module-1779884050358",
+      "type": "punk_game",
+      "title": "The 30 Ideas in 5 Minutes Challenge",
+      "content": "{\"scenario\": \"You're tasked with improving the morning commute experience for city dwellers, making it more enjoyable and less stressful.\", \"task\": \"Generate at least 30 unique, even outlandish, ideas to improve the morning commute within 5 minutes. Focus on quantity, not quality, and do not self-censor.\", \"timeboxMinutes\": 5, \"evaluationCriteria\": [\"Number of distinct ideas generated (aim for 30+)\", \"Absence of self-censorship (ideas are diverse and span different categories)\", \"Originality and playfulness of ideas (even if impractical)\"]}",
+      "learningMode": "practice",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1779884050383399",
+      "moduleId": "module-1779884050358",
+      "type": "text",
+      "title": "Mind Mapping and SCAMPER",
+      "content": "Mind mapping is a visual thinking tool that helps organize information, connect ideas, and stimulate new ones. Start with a central concept and branch out with related thoughts, using keywords, images, and colors. The SCAMPER technique is a powerful checklist for idea generation, encouraging you to: Substitute, Combine, Adapt, Modify (Magnify, Minify), Put to another use, Eliminate, and Reverse (or Rearrange) an existing product, service, or idea. Applying these prompts systematically can unveil innovative possibilities.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1779884050390125",
+      "moduleId": "module-1779884050358",
+      "type": "project_task",
+      "title": "Innovating the Everyday Object",
+      "content": "{\"title\": \"Innovating the Everyday Object: The Coffee Cup\", \"scenario\": \"Imagine you are a product designer challenged to reinvent a common, seemingly perfect object: the coffee cup. Your goal is to make it more functional, sustainable, enjoyable, or suitable for a niche market.\", \"task\": \"Using at least two idea generation techniques (e.g., mind mapping, SCAMPER, brainstorming), develop 3-5 innovative concepts for a new coffee cup. For each concept, describe its unique features, target user, and how it improves upon existing designs.\", \"deliverable\": \"A brief document (200-300 words) outlining your 3-5 innovative coffee cup concepts, including a description of the techniques used and a rationale for each concept.\", \"constraints\": [\"Concepts must be feasible with current or near-future technology.\", \"Focus on genuine innovation, not just aesthetic changes.\"], \"reflectionPrompt\": \"Which idea generation technique proved most effective for you during this task, and why? How did you push past initial, obvious solutions to find more innovative ones?\"}",
+      "learningMode": "apply",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1779884050401696",
+      "moduleId": "module-1779884050396",
+      "type": "text",
+      "title": "The Creative Environment: Space, Time & Input",
+      "content": "Your physical and mental environment profoundly impacts your creativity. A stimulating physical space (tidy or messy, depending on your preference, but organized for tools), dedicated 'thinking time' free from distractions, and a rich diet of diverse inputs (books, art, nature, conversations) are crucial. Actively seek out novelty and expose yourself to different perspectives. Also, embrace solitude for deep work, and collaboration for synergistic idea development.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-177988405041280",
+      "moduleId": "module-1779884050396",
+      "type": "reflection",
+      "title": "Embracing Imperfection and Iteration",
+      "content": "{\"reflectionPrompt\": \"Reflect on a time you hesitated to share an idea or project because you feared it wasn't 'perfect.' What was the outcome of that hesitation? How might embracing imperfection and iteration (the idea of continuous improvement rather than a perfect first draft) change your approach to creative endeavors?\", \"followUpQuestions\": [\"What is your biggest fear related to creative 'failure' or criticism?\", \"How can you reframe 'failure' as a learning opportunity?\", \"Identify one recent creative attempt you can now view through an 'iteration' lens, identifying areas for small improvements rather than viewing it as a finished success or failure.\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1779884050423857",
+      "moduleId": "module-1779884050396",
+      "type": "video",
+      "title": "Why Play is Essential for Creativity",
+      "content": "https://www.youtube.com/embed/K_B1iY9v_0w",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1779884050428460",
+      "moduleId": "module-1779884050396",
+      "type": "punk_game",
+      "title": "Daily Creative Habit Challenge",
+      "content": "{\"scenario\": \"You want to integrate creativity into your daily life to make it a consistent practice, not just an occasional spark.\", \"task\": \"Design and commit to a 7-day 'Micro-Creative Habit' challenge. This habit should take no more than 15 minutes per day and should involve actively observing, questioning, or creating something small. Examples include sketching for 5 minutes, writing 10 absurd sentences, identifying 5 problems in your surroundings, or consciously finding 3 new uses for an object.\", \"timeboxMinutes\": 10, \"evaluationCriteria\": [\"Clarity and specificity of the chosen micro-habit\", \"Feasibility and consistency for 7 days (self-assessment)\", \"Potential for the habit to foster new insights or skills\", \"Reflection on the experience at the end of the 7 days (not submitted, but encouraged)\"]}",
+      "learningMode": "challenge",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1779885899280589",
+      "moduleId": "module-1779885899272",
+      "type": "text",
+      "title": "Die unendlichen Weiten: Warum wir suchen",
+      "content": "Seit jeher blickt die Menschheit zu den Sternen und fragt sich, ob wir allein sind. Die Suche nach Exoplaneten – Planeten außerhalb unseres Sonnensystems – ist der Schlüssel zu dieser Frage. Sie hilft uns nicht nur, die Entstehung und Entwicklung von Planetensystemen besser zu verstehen, sondern auch die Bedingungen, unter denen Leben entstehen und gedeihen kann. Unsere Mission ist es, erdähnliche Planeten zu finden, die möglicherweise Leben beherbergen. Eine interstellare Reise ist jedoch eine monumentale Aufgabe, die immense technologische Fortschritte und eine sorgfältige Planung erfordert. Begleiten Sie uns auf dieser epischen Reise, um die Geheimnisse des Universums zu lüften.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1779885899298935",
+      "moduleId": "module-1779885899272",
+      "type": "video",
+      "title": "Reise zu den Sternen: Technologie und Herausforderungen",
+      "content": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-177988589931350",
+      "moduleId": "module-1779885899272",
+      "type": "quiz",
+      "title": "Raumschiff-Checkliste: Bereit für den Start?",
+      "content": "{\"question\": \"Welche der folgenden Komponenten ist NICHT unbedingt erforderlich für eine interstellare Erkundungsmission zur Entdeckung erdähnlicher Planeten?\",\"options\": [\"Lebenserhaltungssysteme\", \"Warp-Antrieb\", \"Teleskope zur Exoplanetensuche\", \"Navigationssysteme\"],\"correctAnswer\": \"Warp-Antrieb\",\"explanation\": \"Während ein Warp-Antrieb die Reisezeit drastisch verkürzen würde, ist er technologisch noch nicht realisierbar und daher nicht 'unbedingt erforderlich' für eine konzeptionelle Missionsplanung, im Gegensatz zu Lebenserhaltung, Teleskopen und Navigation.\"}",
+      "learningMode": "test",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1779885899321437",
+      "moduleId": "module-1779885899272",
+      "type": "reflection",
+      "title": "Meine Rolle als Entdecker",
+      "content": "{\"reflectionPrompt\": \"Stellen Sie sich vor, Sie sind der Kommandant der ersten Mission, die einen bewohnbaren Exoplaneten erreicht. Welche Gefühle würden Sie in diesem Moment erleben, und welche Verantwortung würden Sie spüren?\",\"followUpQuestions\": [\"Was würde die größte Herausforderung bei der Vorbereitung auf eine solche Mission sein?\",\"Wie würden Sie Ihr Team motivieren, angesichts der immensen Distanzen und Risiken?\",\"Welche Informationen wären Ihnen am wichtigsten, um der Erde zu übermitteln?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1779885899336487",
+      "moduleId": "module-1779885899329",
+      "type": "text",
+      "title": "Sternenkarten und Routenplanung: Der Weg zum Ziel",
+      "content": "Die Entfernungen im Weltraum sind unvorstellbar groß, und die Navigation erfordert Präzision auf höchstem Niveau. Wir verlassen uns auf detaillierte Sternenkataloge, Himmelskoordinatensysteme und komplexe Flugbahnberechnungen, um unser Raumschiff sicher durch interstellare Räume zu steuern. Die Auswahl des richtigen Zielsterns ist entscheidend. Wir suchen nach Sternen, die stabil genug sind, um Planeten in ihrer bewohnbaren Zone zu beherbergen, und deren Strahlungsumgebung günstig für die Entstehung von Leben ist. Dabei müssen wir Faktoren wie Sternentyp, Alter, Metallizität und potenzielle disruptive Ereignisse berücksichtigen.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-177988589934643",
+      "moduleId": "module-1779885899329",
+      "type": "code",
+      "title": "Zielstern-Filter: Python-Skript zur Datenanalyse",
+      "content": "# Python-Skript zur Filterung potenzieller Zielsterne\n# Dieses Skript ist eine vereinfachte Darstellung und würde in der Realität umfangreichere Daten und Algorithmen verwenden.\n\nsterne = [\n    {\"Name\": \"Alpha Centauri A\", \"Spektraltyp\": \"G2V\", \"Entfernung_LJ\": 4.37, \"Metallizität\": 0.2, \"Alter_Mrd_J\": 5.5, \"Aktivität\": \"niedrig\"},\n    {\"Name\": \"Trappist-1\", \"Spektraltyp\": \"M8V\", \"Entfernung_LJ\": 40.7, \"Metallizität\": 0.05, \"Alter_Mrd_J\": 7.6, \"Aktivität\": \"mittel\"},\n    {\"Name\": \"Kepler-186\", \"Spektraltyp\": \"M1V\", \"Entfernung_LJ\": 500, \"Metallizität\": -0.2, \"Alter_Mrd_J\": 4.0, \"Aktivität\": \"niedrig\"},\n    {\"Name\": \"Proxima Centauri\", \"Spektraltyp\": \"M5.5V\", \"Entfernung_LJ\": 4.24, \"Metallizität\": 0.21, \"Alter_Mrd_J\": 4.85, \"Aktivität\": \"hoch\"},\n]\n\ndef filtere_zielsterne(sterne_liste):\n    potenzielle_zielsterne = []\n    for stern in sterne_liste:\n        # Kriterien für potenziell bewohnbare Planeten:\n        # - Spektraltyp G, K, M (aber Vorsicht bei M-Zwergen wegen Flares)\n        # - Niedrige bis mittlere Sternenaktivität\n        # - Ausreichendes Alter für Lebensentwicklung\n        # - Nicht zu hohe oder niedrige Metallizität\n        \n        if (\"G\" in stern[\"Spektraltyp\"] or \"K\" in stern[\"Spektraltyp\"] or \"M\" in stern[\"Spektraltyp\"])\n           and stern[\"Aktivität\"] != \"hoch\"\n           and stern[\"Alter_Mrd_J\"] > 3.0:\n            potenzielle_zielsterne.append(stern)\n    return potenzielle_zielsterne\n\nprint(\"Potenzielle Zielsterne für die Entdeckung erdähnlicher Planeten:\")\nfor stern in filtere_zielsterne(sterne):\n    print(f\"- {stern['Name']} ({stern['Spektraltyp']}, {stern['Entfernung_LJ']} Lichtjahre)\")",
+      "learningMode": "practice",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1779885899365843",
+      "moduleId": "module-1779885899329",
+      "type": "punk_game",
+      "title": "Asteroidenfeld-Ausweichmanöver",
+      "content": "{\"scenario\": \"Ihr Raumschiff durchquert ein unvorhergesehenes Asteroidenfeld. Die Sensoren sind überlastet, und Sie müssen manuell manövrieren.\",\"task\": \"Weichen Sie den Asteroiden aus, indem Sie die Schubdüsen präzise steuern. Ihr Ziel ist es, in 60 Sekunden so viele Asteroiden wie möglich zu umgehen, ohne mit mehr als drei zu kollidieren.\",\"timeboxMinutes\": 1,\"evaluationCriteria\": [\"Anzahl der vermiedenen Kollisionen\",\"Schaden am Raumschiff (max. 3 Treffer erlaubt)\",\"Abgeschlossene Zeit\"]}",
+      "learningMode": "challenge",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1779885899378507",
+      "moduleId": "module-1779885899329",
+      "type": "project_task",
+      "title": "Missionsbriefing: Mein erster Zielstern",
+      "content": "{\"title\": \"Missionsbriefing: Mein erster Zielstern\",\"scenario\": \"Sie sind Teil des interstellaren Explorationsprogramms 'Horizont'. Ihre Aufgabe ist es, einen potenziellen Zielstern für eine zukünftige Erkundungsmission zu identifizieren und zu begründen. Ihnen stehen begrenzte Daten (Größe, Spektraltyp, Entfernung, potenzielle Sternenaktivität) von drei Kandidatensternen zur Verfügung.\",\"task\": \"Wählen Sie einen der drei fiktiven Sterne aus und erstellen Sie ein kurzes Briefing, in dem Sie Ihre Wahl begründen. Erklären Sie, warum dieser Stern die besten Chancen für die Entdeckung erdähnlicher Planeten bietet und welche potenziellen Herausforderungen mit diesem Sternsystem verbunden sein könnten.\",\"deliverable\": \"Ein 250-Wörter-Bericht, der die Wahl des Sterns begründet und potenzielle Risiken oder Besonderheiten hervorhebt.\",\"constraints\": [\"Verwenden Sie nur die bereitgestellten (hypothetischen) Daten.\",\"Fokus auf Faktoren, die die Planetenbildung und -bewohnbarkeit beeinflussen.\",\"Berücksichtigen Sie die Reisedauer und Treibstoffeffizienz.\"],\"reflectionPrompt\": \"Wie hat die Notwendigkeit, einen einzigen Zielstern auszuwählen, Ihre Perspektive auf die Komplexität der Missionsplanung verändert?\"}",
+      "learningMode": "apply",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-177988589939756",
+      "moduleId": "module-1779885899388",
+      "type": "video",
+      "title": "Wie wir Exoplaneten finden: Transits und Wackler",
+      "content": "https://www.youtube.com/embed/nLz0f6tL7pM",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1779885899409736",
+      "moduleId": "module-1779885899388",
+      "type": "text",
+      "title": "Exoplaneten-Spektroskopie: Die Sprache des Lichts",
+      "content": "Nachdem ein potenzieller Exoplanet entdeckt wurde, wollen wir mehr über ihn erfahren. Ein mächtiges Werkzeug dafür ist die Spektroskopie. Indem wir das Licht eines Sterns analysieren, das durch die Atmosphäre eines transierenden Planeten gefiltert wurde, können wir die chemische Zusammensetzung dieser Atmosphäre entschlüsseln. Dies ermöglicht uns, nach wichtigen Molekülen wie Wasser, Sauerstoff, Methan oder Kohlendioxid zu suchen – allesamt potenzielle Indikatoren für Bewohnbarkeit oder sogar Biosignaturen, die auf die Existenz von Leben hindeuten könnten. Die genaue Analyse dieser ",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-177988589942085",
+      "moduleId": "module-1779885899388",
+      "type": "quiz",
+      "title": "Detektionsmethoden im Vergleich",
+      "content": "{\"question\": \"Welche Detektionsmethode ist am besten geeignet, um die Größe eines Exoplaneten zu bestimmen?\",\"options\": [\"Radialgeschwindigkeitsmethode\", \"Transitmethode\", \"Direkte Abbildung\", \"Astrometrie\"],\"correctAnswer\": \"Transitmethode\",\"explanation\": \"Die Transitmethode misst den Helligkeitsabfall eines Sterns, wenn ein Planet vor ihm vorbeizieht. Die Größe dieses Helligkeitsabfalls korreliert direkt mit der Größe des Planeten im Verhältnis zum Stern.\"}",
+      "learningMode": "test",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1779885899432570",
+      "moduleId": "module-1779885899388",
+      "type": "punk_game",
+      "title": "Datendekodierer: Transit-Signal identifizieren",
+      "content": "{\"scenario\": \"Sie sitzen an der Konsole Ihres Raumschiffs und überwachen die Helligkeit eines fernen Sterns. Ihre Aufgabe ist es, einen potenziellen Transiten zu identifizieren, der auf einen Exoplaneten hindeuten könnte, inmitten von Sensorrauschen und Sternschwankungen.\",\"task\": \"Analysieren Sie die bereitgestellten Helligkeitsdatenkurven. Identifizieren Sie schnell (innerhalb von 90 Sekunden) die Kurve, die das charakteristische Signal eines planetaren Transits zeigt.\",\"timeboxMinutes\": 1.5,\"evaluationCriteria\": [\"Korrekte Identifizierung des Transitsignals\",\"Bearbeitungszeit\",\"Fehlalarme\"]}",
+      "learningMode": "challenge",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1779885899450388",
+      "moduleId": "module-1779885899442",
+      "type": "text",
+      "title": "Die Goldlöckchen-Zone: Wo Leben möglich ist",
+      "content": "Die ",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1779885899459781",
+      "moduleId": "module-1779885899442",
+      "type": "reflection",
+      "title": "Leben jenseits der Erde: Was, wenn wir es finden?",
+      "content": "{\"reflectionPrompt\": \"Die Entdeckung von intelligentem oder primitivem Leben auf einem anderen Planeten hätte tiefgreifende Auswirkungen auf die Menschheit. Wie würden Sie persönlich auf eine solche Nachricht reagieren, und welche ethischen Dilemmata könnten sich daraus ergeben?\",\"followUpQuestions\": [\"Sollten wir versuchen, Kontakt aufzunehmen, oder wäre es sicherer, zu beobachten?\",\"Welche Botschaft würden wir senden, um die Menschheit bestmöglich zu repräsentieren?\",\"Wie könnte eine solche Entdeckung unsere Weltanschauung und Gesellschaft verändern?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1779885899468597",
+      "moduleId": "module-1779885899442",
+      "type": "project_task",
+      "title": "Bericht zur Bewohnbarkeit: Mein Kandidat für Leben",
+      "content": "{\"title\": \"Bericht zur Bewohnbarkeit: Mein Kandidat für Leben\",\"scenario\": \"Sie haben Daten von einem neu entdeckten Exoplaneten gesammelt, der sich in der bewohnbaren Zone seines Sterns befindet. Die Daten umfassen atmosphärische Zusammensetzung (fiktiv: Stickstoff, Kohlendioxid, Spuren von Sauerstoff), Oberflächentemperatur, Anzeichen von flüssigem Wasser (indirekt), und geologische Aktivität (indirekt).\",\"task\": \"Erstellen Sie einen wissenschaftlichen Bericht, in dem Sie die Bewohnbarkeit dieses Planeten bewerten. Diskutieren Sie die Pro- und Kontra-Argumente für die Existenz von Leben und formulieren Sie Empfehlungen für weiterführende Beobachtungen oder Missionen.\",\"deliverable\": \"Ein 300-Wörter-Bericht, der die Bewohnbarkeitskriterien analysiert und Empfehlungen ausspricht.\",\"constraints\": [\"Basieren Sie Ihre Schlussfolgerungen ausschließlich auf den bereitgestellten (hypothetischen) Daten.\",\"Erklären Sie, wie jede Datenkomponente zur Bewertung der Bewohnbarkeit beiträgt.\",\"Halten Sie den Ton wissenschaftlich und objektiv.\"],\"reflectionPrompt\": \"Wie schwer war es, objektiv zu bleiben, wenn man nach Anzeichen von Leben sucht? Welche persönlichen Vorurteile könnten eine solche Analyse beeinflussen?\"}",
+      "learningMode": "create",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1779885899477871",
+      "moduleId": "module-1779885899442",
+      "type": "quiz",
+      "title": "Zukunft der Exoplanetenforschung: Nächste Schritte",
+      "content": "{\"question\": \"Welche zukünftige Technologie könnte die Suche nach Exoplaneten erheblich verbessern?\",\"options\": [\"Größere bodengestützte Teleskope\", \"Weltraumteleskope der nächsten Generation mit verbesserter Koronagraphie\", \"Neue Algorithmen zur Datenanalyse von bestehenden Observatorien\", \"Alle der oben genannten\"],\"correctAnswer\": \"Alle der oben genannten\",\"explanation\": \"Die Exoplanetenforschung profitiert von Fortschritten in allen Bereichen: von größerer Sammelkraft und präziseren Instrumenten bis hin zu intelligenteren Wegen, die riesigen Datenmengen zu interpretieren.\"}",
+      "learningMode": "test",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1779886497605174",
+      "moduleId": "module-1779886469450",
+      "type": "text",
+      "title": "New Block",
+      "content": "Write your content here...",
+      "source": "trainer",
+      "learningMode": "understand",
+      "order": 0
+    },
+    {
+      "id": "block-1779890749811880",
+      "moduleId": "module-1779890749804",
+      "type": "text",
+      "title": "Kreativität entmystifiziert: Jeder ist kreativ",
+      "content": "Viele Menschen denken, Kreativität sei nur etwas für Künstler oder Genies. Doch das ist ein großer Irrtum! Kreativität ist keine angeborene Eigenschaft, die nur wenige besitzen, sondern eine Fähigkeit, die jeder von uns trainieren und entwickeln kann. Es geht nicht darum, Meisterwerke zu schaffen, sondern darum, neue Wege zu finden, Probleme zu lösen, bestehende Dinge neu zu kombinieren oder originelle Ideen zu entwickeln – sei es im Beruf, im Haushalt oder in sozialen Interaktionen. Kreativität zeigt sich im täglichen Leben: beim Planen einer ungewöhnlichen Mahlzeit, beim Finden einer Lösung für einen Konflikt oder beim Gestalten eines persönlichen Geschenks. Vergiss den Mythos vom einsamen Genie; Kreativität ist oft ein kollaborativer Prozess und gedeiht in vielfältigen Umgebungen. Erkenne, dass deine einzigartige Perspektive und deine Erfahrungen die Rohstoffe für deine ganz persönliche Form der Kreativität sind.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1779890749818646",
+      "moduleId": "module-1779890749804",
+      "type": "reflection",
+      "title": "Meine kreative Landkarte",
+      "content": "{\"reflectionPrompt\": \"Denke an Situationen in deinem Leben, in denen du dich kreativ gefühlt hast – sei es beim Lösen eines Problems im Alltag, beim Planen einer Reise oder beim Gestalten von etwas Neuem. Was waren die Umstände, die deine Kreativität beflügelt haben? Und wann hattest du das Gefühl, sie war blockiert?\", \"followUpQuestions\": [\"Welche 'Kreativitäts-Mythen' hast du in dir selbst oder bei anderen schon beobachtet?\", \"In welchen Bereichen deines Lebens siehst du bereits kreative Ansätze, die du vielleicht nicht als solche benannt hast?\", \"Was wäre ein kleiner Schritt, den du heute unternehmen könntest, um deine Kreativität bewusster einzusetzen?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-177989074982451",
+      "moduleId": "module-1779890749804",
+      "type": "punk_game",
+      "title": "Der 5-Minuten-Ideen-Sprint",
+      "content": "{\"scenario\": \"Stell dir vor, du bist für das Abendessen verantwortlich, hast aber nur 30 Minuten Zeit, 3 spezifische Zutaten im Kühlschrank (z.B. Kartoffeln, eine Dose Bohnen, ein Apfel) und möchtest etwas Ungewöhnliches und Leckeres zaubern. Die Herausforderung ist, die begrenzten Mittel maximal kreativ einzusetzen.\", \"task\": \"Entwickle in genau 5 Minuten so viele originelle und essbare Rezeptideen wie möglich, die diese drei Zutaten (Kartoffeln, Bohnen, Apfel) integrieren. Ziel ist es, Quantität und Originalität zu maximieren, nicht Perfektion. Schreibe jede Idee schnell auf, ohne sie zu bewerten.\", \"timeboxMinutes\": 5, \"evaluationCriteria\": [\"Anzahl der generierten Ideen\", \"Originalität der Ideen (ungewöhnliche Kombinationen werden bevorzugt)\", \"Umsetzbarkeit der Ideen (müssen prinzipiell essbar sein, auch wenn es abenteuerlich klingt)\"]}",
+      "learningMode": "apply",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1779890749830127",
+      "moduleId": "module-1779890749804",
+      "type": "reflection",
+      "title": "Mein kreativer Durchbruch",
+      "content": "{\"reflectionPrompt\": \"Nach dem '5-Minuten-Ideen-Sprint', wie fühlst du dich jetzt? War es einfacher oder schwieriger als erwartet, Ideen zu generieren? Welche Einsichten hast du über deine eigene Fähigkeit, schnell und originell zu denken, gewonnen?\", \"followUpQuestions\": [\"Was hat dir während des Sprints geholfen, Ideen zu entwickeln?\", \"Gab es Momente, in denen du dich 'festgefahren' gefühlt hast, und wie bist du damit umgegangen?\", \"Wie könntest du die Erkenntnisse aus dieser Übung in deinen Alltag oder Berufsalltag integrieren, um deine Kreativität bewusster zu nutzen?\", \"Nimmst du jetzt stärker wahr: 'Ja, ich bin kreativ'?\", \"Welche Art von Unterstützung oder Umgebung hilft dir am meisten, kreativ zu sein?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 3
+    }
+  ],
+  "progress": [
+    {
+      "userId": "learner-1",
+      "courseId": "course-1779465011215",
+      "completedBlocks": [
+        "block-1779465164214985",
+        "block-1779465068701218",
+        "block-177946517803569",
+        "block-1779465183438739",
+        "block-1779643994580208"
+      ]
+    },
+    {
+      "userId": "learner-1",
+      "courseId": "course-1779649520298",
+      "completedBlocks": [
+        "block-177964966393945",
+        "block-1779649645372985",
+        "block-1779649627586332",
+        "block-1779649604971706",
+        "block-1779649572914787"
+      ]
+    },
+    {
+      "userId": "learner-1",
+      "courseId": "course-1779882386754",
+      "completedBlocks": [
+        "block-1779882540770741",
+        "block-1779882572046941",
+        "block-1779882590912913",
+        "block-1779882654249816"
+      ]
+    }
+  ]
+}
