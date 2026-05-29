@@ -13,13 +13,6 @@ export function ImagePicker() {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Load stock images when switching to stock tab
-  useEffect(() => {
-    if (tab === "stock" && stockImages.length === 0) {
-      loadStockImages();
-    }
-  }, [tab]);
-
   const loadStockImages = async () => {
     setIsLoadingStock(true);
     try {
@@ -33,6 +26,13 @@ export function ImagePicker() {
       setIsLoadingStock(false);
     }
   };
+
+  // Load stock images when switching to stock tab
+  useEffect(() => {
+    if (tab === "stock" && stockImages.length === 0) {
+      loadStockImages();
+    }
+  }, [tab]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
