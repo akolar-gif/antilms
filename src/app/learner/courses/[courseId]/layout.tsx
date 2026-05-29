@@ -32,23 +32,23 @@ export default async function LearnerCourseLayout({
     : 0;
 
   return (
-    <div className="flex h-[calc(100vh-4rem)]">
-      {/* Learner Sidebar (Optional, maybe collapsible later) */}
-      <aside className="w-64 border-r border-slate-200 bg-white flex flex-col h-full hidden md:flex">
-        <div className="p-6 border-b border-slate-100">
-          <Link href="/learner" className="text-sm text-slate-500 hover:text-royal-blue mb-4 inline-block">
+    <div className="flex h-screen bg-paper overflow-hidden">
+      {/* Learner Sidebar */}
+      <aside className="w-64 border-r border-line bg-paper-2 flex flex-col h-full hidden md:flex">
+        <div className="p-6 border-b border-line">
+          <Link href="/learner" className="text-xs font-mono uppercase tracking-wider text-ink-3 hover:text-ink mb-4 inline-block">
             ← Dashboard
           </Link>
-          <h2 className="font-heading font-bold text-slate-800 line-clamp-2">{course.title}</h2>
+          <h2 className="font-heading font-extrabold text-ink text-lg leading-tight">{course.title}</h2>
           
           <div className="mt-4">
-            <div className="flex justify-between text-xs text-slate-500 mb-1">
+            <div className="flex justify-between text-[10px] font-mono uppercase tracking-wider text-ink-3 mb-1">
               <span>Progress</span>
               <span>{progressPercentage}%</span>
             </div>
-            <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+            <div className="w-full bg-paper-3 rounded-full h-1 overflow-hidden">
               <div 
-                className="bg-royal-blue h-1.5 rounded-full transition-all duration-500" 
+                className="bg-ink h-1 rounded-full transition-all duration-500" 
                 style={{ width: `${Math.max(0, Math.min(100, progressPercentage))}%` }}
               ></div>
             </div>
@@ -59,7 +59,7 @@ export default async function LearnerCourseLayout({
       </aside>
 
       {/* Main Learning Area */}
-      <main className="flex-1 flex bg-slate-50 overflow-hidden">
+      <main className="flex-1 flex bg-paper overflow-hidden">
         {children}
       </main>
     </div>

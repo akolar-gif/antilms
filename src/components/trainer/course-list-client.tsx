@@ -2,10 +2,7 @@
 
 import { useState } from "react";
 import { Course } from "@/types";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Image from "next/image";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { deleteCourseAction } from "@/app/actions/course";
@@ -13,128 +10,147 @@ import { deleteCourseAction } from "@/app/actions/course";
 export function CourseListClient({ courses, role }: { courses: Course[], role: "trainer" | "learner" }) {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
-  const categories = ["All", ...Array.from(new Set(courses.map(c => c.category || "Uncategorized"))).sort()];
+  const categories = ["All", ...Array.from(new Set(courses.map(c => c.category || "General"))).sort()];
 
   const filteredCourses = selectedCategory === "All" 
     ? courses 
-    : courses.filter(c => (c.category || "Uncategorized") === selectedCategory);
+    : courses.filter(c => (c.category || "General") === selectedCategory);
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-8">
       {/* Category Tabs */}
       {categories.length > 1 && (
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className="pad flex flex-wrap gap-2">
           {categories.map(category => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                selectedCategory === category 
-                  ? "bg-emerald-green text-white shadow-sm" 
-                  : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-              }`}
+              className={`chip ${selectedCategory === category ? "active" : ""}`}
+              style={{
+                background: selectedCategory === category ? "var(--ink)" : "var(--paper-2)",
+                color: selectedCategory === category ? "var(--paper)" : "var(--ink-2)",
+                border: "1.5px solid var(--line-soft)",
+                borderRadius: "99px",
+                padding: "8px 16px",
+                fontSize: "13px",
+                fontFamily: "var(--f-mono)",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
             >
-              {category}
+              {category.toUpperCase()}
             </button>
           ))}
         </div>
       )}
 
       {/* Course Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredCourses.map(course => (
-          <Card key={course.id} className="hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col border-slate-200 overflow-hidden group">
-            {/* Course Image */}
-            <div className="h-40 bg-slate-100 relative w-full border-b border-slate-100 overflow-hidden">
-              {course.imageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img 
-                  src={course.imageUrl} 
-                  alt={course.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-emerald-green/20 to-royal-blue/20 flex items-center justify-center">
-                  <span className="text-4xl">📚</span>
-                </div>
-              )}
-              <div className="absolute top-3 left-3">
-                <span className="text-xs font-bold px-2 py-1 bg-white/90 backdrop-blur-sm rounded text-slate-700 shadow-sm">
-                  {course.category || "Uncategorized"}
-                </span>
-              </div>
-            </div>
+      {filteredCourses.length === 0 ? (
+        <div className="pad">
+          <div className="p-12 text-center bg-paper-2 border border-line-soft rounded-2xl">
+            <h3 className="font-heading font-medium text-ink mb-1">Keine Lernpfade gefunden</h3>
+            <p className="text-ink-2 text-sm">
+              {selectedCategory === "All" 
+                ? "Gestalte deinen ersten Lernpfad oben."
+                : `Keine Kurse in der Kategorie "${selectedCategory}" gefunden.`}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="courses border-t border-b border-line">
+          {filteredCourses.map((course, idx) => {
+            const cardColor = idx % 3 === 0 ? "blue" : idx % 3 === 1 ? "ink" : "coral";
+            const imageUrl = course.imageUrl;
+            const linkHref = `/${role}/courses/${course.id}`;
+            const displayIdx = String(idx + 1).padStart(2, "0");
 
-            <CardHeader className="pb-3 pt-4">
-              <CardTitle className="text-lg leading-tight group-hover:text-emerald-green transition-colors">{course.title}</CardTitle>
-            </CardHeader>
-            
-            <CardContent className="flex-1 flex flex-col">
-              <p className="text-slate-600 mb-6 text-sm line-clamp-2 flex-1">{course.description}</p>
-              
-              <div className="flex justify-between items-center mt-auto">
-                <div className="flex items-center space-x-2">
-                  <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-                    course.status === 'published' ? 'bg-emerald-green/10 text-emerald-green' : 'bg-slate-100 text-slate-600'
-                  }`}>
+            if (imageUrl) {
+              return (
+                <Link href={linkHref} className="poster photo" key={course.id}>
+                  <div 
+                    className="absolute inset-0 bg-cover bg-center z-0" 
+                    style={{ backgroundImage: `url(${imageUrl})` }}
+                  />
+                  <div className="pinner">
+                    <div className="top">
+                      <span className="no">№ {displayIdx}</span>
+                      <span className="tag">{course.category || "General"}</span>
+                    </div>
+                    <div className="ptitle">{course.title}</div>
+                    
+                    <div className="pmeta mt-auto flex items-center justify-between">
+                      <span className="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded border border-white/40 uppercase">
+                        {course.status}
+                      </span>
+                      
+                      {role === "trainer" && (
+                        <button 
+                          type="button"
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (confirm("Möchtest du diesen Kurs und alle zugehörigen Module wirklich löschen? Dies kann nicht rückgängig gemacht werden.")) {
+                              const toastId = toast.loading("Lösche Kurs...");
+                              try {
+                                await deleteCourseAction(course.id);
+                                toast.success("Kurs erfolgreich gelöscht!", { id: toastId });
+                              } catch (err) {
+                                toast.error("Fehler beim Löschen des Kurses", { id: toastId });
+                              }
+                            }
+                          }}
+                          className="text-red-300 hover:text-white transition-all bg-black/40 hover:bg-red-600/80 p-1.5 rounded-md border border-white/10"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              );
+            }
+
+            return (
+              <Link href={linkHref} className={`poster ${cardColor}`} key={course.id}>
+                <div className="top">
+                  <span className="no">№ {displayIdx}</span>
+                  <span className="tag">{course.category || "General"}</span>
+                </div>
+                <div className="ptitle">{course.title}</div>
+                
+                <div className="pmeta mt-auto flex items-center justify-between">
+                  <span className="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded border border-current/30 uppercase">
                     {course.status}
                   </span>
                   
                   {role === "trainer" && (
-                    <Button 
+                    <button 
                       type="button"
-                      variant="ghost" 
-                      size="icon" 
                       onClick={async (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        if (confirm("Are you sure you want to delete this course and all its modules/blocks? This cannot be undone.")) {
-                          const toastId = toast.loading("Deleting course...");
+                        if (confirm("Möchtest du diesen Kurs und alle zugehörigen Module wirklich löschen? Dies kann nicht rückgängig gemacht werden.")) {
+                          const toastId = toast.loading("Lösche Kurs...");
                           try {
                             await deleteCourseAction(course.id);
-                            toast.success("Course deleted successfully!", { id: toastId });
+                            toast.success("Kurs erfolgreich gelöscht!", { id: toastId });
                           } catch (err) {
-                            toast.error("Failed to delete course", { id: toastId });
+                            toast.error("Fehler beim Löschen des Kurses", { id: toastId });
                           }
                         }
                       }}
-                      className="text-red-500 hover:text-red-600 hover:bg-red-50 w-7 h-7 rounded-lg transition-all"
+                      className="text-ink-3 hover:text-red-500 transition-all bg-paper-2 hover:bg-red-50 p-1.5 rounded-md border border-line"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
-                    </Button>
+                    </button>
                   )}
                 </div>
-                
-                <Link href={`/${role}/courses/${course.id}`}>
-                  {role === "trainer" ? (
-                    <Button variant="outline" size="sm" className="hover:bg-emerald-green hover:text-white hover:border-emerald-green">
-                      Open Studio
-                    </Button>
-                  ) : (
-                    <Button size="sm" className="bg-royal-blue hover:bg-royal-blue/90 text-white">
-                      Enter Course
-                    </Button>
-                  )}
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-
-        {filteredCourses.length === 0 && (
-          <div className="col-span-full p-12 text-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
-            <div className="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-              📭
-            </div>
-            <h3 className="text-lg font-heading font-medium text-slate-800 mb-1">No courses found</h3>
-            <p className="text-slate-500">
-              {selectedCategory === "All" 
-                ? (role === "trainer" ? "Create your first learning journey." : "Check back later when trainers have published new content.")
-                : `No courses available in the "${selectedCategory}" category.`}
-            </p>
-          </div>
-        )}
-      </div>
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
+

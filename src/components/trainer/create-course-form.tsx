@@ -1,24 +1,43 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import { createCourseAction, generateCurriculumAction } from "@/app/actions/course";
 import { uploadImageAction } from "@/app/actions/upload";
 import { ImagePicker } from "@/components/trainer/image-picker";
 import { CurriculumWizard } from "./curriculum-wizard";
 import { GeneratedCurriculumResult } from "@/lib/ai/provider";
-import { Sparkles } from "lucide-react";
+import { Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
 
-export function CreateCourseForm() {
-  const [isOpen, setIsOpen] = useState(false);
+interface CreateCourseFormProps {
+  initialOpen?: boolean;
+}
+
+export function CreateCourseForm({ initialOpen }: CreateCourseFormProps) {
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(initialOpen || false);
   const [isLoading, setIsLoading] = useState(false);
   const [generateWithAI, setGenerateWithAI] = useState(false);
   const [generatedCurriculum, setGeneratedCurriculum] = useState<GeneratedCurriculumResult | null>(null);
   const [tempCourseData, setTempCourseData] = useState<any>(null);
 
+  const handleClose = () => {
+    setIsOpen(false);
+    // Remove ?create=true search parameter from URL
+    router.replace("/trainer");
+  };
+
+  const handleOpen = () => {
+    setIsOpen(true);
+  };
+
   if (!isOpen) {
-    return <Button onClick={() => setIsOpen(true)}>Create Course</Button>;
+    return (
+      <button onClick={handleOpen} className="btn blue" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+        <Sparkles className="w-4 h-4" /> Neuen Kurs gestalten
+      </button>
+    );
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -31,12 +50,12 @@ export function CreateCourseForm() {
     const courseImage = formData.get("courseImage") as File | null;
 
     if (!title || !description) {
-      toast.error("Title and description are required.");
+      toast.error("Titel und Beschreibung sind erforderlich.");
       return;
     }
 
     setIsLoading(true);
-    const toastId = toast.loading(generateWithAI ? "Generating AI curriculum..." : "Creating course...");
+    const toastId = toast.loading(generateWithAI ? "Generiere AI-Curriculum..." : "Erstelle Kurs...");
 
     try {
       let finalImageUrl: string | undefined = undefined;
@@ -55,15 +74,17 @@ export function CreateCourseForm() {
         const curriculum = await generateCurriculumAction(title, description);
         setTempCourseData({ title, description, category, imageUrl: finalImageUrl });
         setGeneratedCurriculum(curriculum);
-        toast.success("AI Curriculum generated! Opening wizard...", { id: toastId });
+        toast.success("AI-Curriculum generiert! Öffne Wizard...", { id: toastId });
       } else {
         // Call server action to create a simple draft course
         await createCourseAction(formData);
-        toast.success("Course created successfully!", { id: toastId });
+        toast.success("Kurs erfolgreich erstellt!", { id: toastId });
+        setIsOpen(false);
+        router.replace("/trainer");
       }
     } catch (err) {
       console.error(err);
-      toast.error(generateWithAI ? "AI curriculum generation failed. Please try again." : "Failed to create course", { id: toastId });
+      toast.error(generateWithAI ? "AI-Generierung fehlgeschlagen. Bitte erneut versuchen." : "Erstellung fehlgeschlagen", { id: toastId });
     } finally {
       setIsLoading(false);
     }
@@ -71,78 +92,99 @@ export function CreateCourseForm() {
 
   return (
     <>
-      <form 
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-xl shadow-lg border border-slate-200 min-w-[300px] sm:min-w-[400px] absolute right-0 top-12 z-50 animate-in fade-in slide-in-from-top-4"
-      >
-        <h3 className="text-lg font-heading font-semibold text-slate-800 mb-4">New Learning Journey</h3>
-        
-        <div className="space-y-4 mb-6">
+      <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+        <form 
+          onSubmit={handleSubmit}
+          className="bg-paper border border-line p-8 rounded-2xl w-full max-w-lg shadow-xl relative animate-in zoom-in-95 duration-200 flex flex-col gap-6"
+        >
+          {/* Close button */}
+          <button 
+            type="button" 
+            onClick={handleClose} 
+            className="absolute top-6 right-6 text-ink-3 hover:text-ink transition-colors"
+            style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}
+          >
+            <X className="w-5 h-5" />
+          </button>
+
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-slate-700 mb-1">Course Title</label>
-            <input 
-              type="text" 
-              id="title" 
-              name="title" 
-              required 
-              placeholder="e.g. Agile Leadership Basics"
-              className="w-full p-2 border border-slate-200 rounded-md outline-none focus:border-emerald-green focus:ring-1 focus:ring-emerald-green transition-all"
-            />
+            <span className="eyebrow" style={{ color: "var(--blue)" }}>NEUER LERNPFAD</span>
+            <h3 className="display" style={{ fontSize: 24, marginTop: 4 }}>Kurs entwerfen</h3>
           </div>
           
-          <div>
-            <label htmlFor="category" className="block text-sm font-medium text-slate-700 mb-1">Category / Rubrik</label>
-            <input 
-              type="text" 
-              id="category" 
-              name="category" 
-              placeholder="e.g. Leadership, Technology, Soft Skills..."
-              className="w-full p-2 border border-slate-200 rounded-md outline-none focus:border-emerald-green focus:ring-1 focus:ring-emerald-green transition-all"
-            />
-          </div>
+          <div className="flex flex-col gap-4">
+            <div>
+              <label htmlFor="title" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">Kurs-Titel</label>
+              <input 
+                type="text" 
+                id="title" 
+                name="title" 
+                required 
+                placeholder="z.B. Agile Führungskompetenzen"
+                className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all"
+                style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="category" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">Kategorie / Rubrik</label>
+              <input 
+                type="text" 
+                id="category" 
+                name="category" 
+                placeholder="z.B. Leadership, Technologie, Soft Skills..."
+                className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all"
+                style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
+              />
+            </div>
 
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-slate-700 mb-1">Description</label>
-            <textarea 
-              id="description" 
-              name="description" 
-              required 
-              rows={3}
-              placeholder="Brief overview of what learners will achieve..."
-              className="w-full p-2 border border-slate-200 rounded-md outline-none focus:border-emerald-green focus:ring-1 focus:ring-emerald-green transition-all resize-none"
-            />
-          </div>
+            <div>
+              <label htmlFor="description" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">Beschreibung</label>
+              <textarea 
+                id="description" 
+                name="description" 
+                required 
+                rows={3}
+                placeholder="Kurze Übersicht über die Lernziele und Zielgruppen..."
+                className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all resize-none"
+                style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
+              />
+            </div>
 
-          {/* AI Toggle Option */}
-          <div className="flex items-center space-x-2.5 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-            <input 
-              type="checkbox" 
-              id="generateWithAI" 
-              checked={generateWithAI}
-              onChange={(e) => setGenerateWithAI(e.target.checked)}
-              className="w-4 h-4 text-emerald-green border-slate-300 rounded focus:ring-emerald-green cursor-pointer"
-            />
-            <label htmlFor="generateWithAI" className="text-sm font-semibold text-slate-800 flex items-center gap-1.5 cursor-pointer select-none">
-              <Sparkles className="w-4 h-4 text-emerald-green animate-pulse" />
-              Co-Design Curriculum with Anka AI
-            </label>
-          </div>
+            {/* AI Toggle Option */}
+            <div 
+              className="flex items-center gap-3 p-4 border border-line rounded-2xl"
+              style={{ background: "var(--paper-2)" }}
+            >
+              <input 
+                type="checkbox" 
+                id="generateWithAI" 
+                checked={generateWithAI}
+                onChange={(e) => setGenerateWithAI(e.target.checked)}
+                className="w-4 h-4 cursor-pointer accent-blue"
+              />
+              <label htmlFor="generateWithAI" className="text-sm font-bold text-ink flex items-center gap-1.5 cursor-pointer select-none">
+                <Sparkles className="w-4 h-4 text-blue animate-pulse" />
+                Co-Design Curriculum mit Anka AI
+              </label>
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Course Cover Image</label>
-            <ImagePicker />
+            <div>
+              <label className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-2">Titelbild</label>
+              <ImagePicker />
+            </div>
           </div>
-        </div>
-        
-        <div className="flex justify-end space-x-3">
-          <Button type="button" variant="ghost" onClick={() => setIsOpen(false)} disabled={isLoading}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? (generateWithAI ? "Generating..." : "Creating...") : (generateWithAI ? "Generate Journey" : "Create & Enter Studio")}
-          </Button>
-        </div>
-      </form>
+          
+          <div className="flex justify-end gap-3 mt-2">
+            <button type="button" className="btn ghost" onClick={handleClose} disabled={isLoading}>
+              Abbrechen
+            </button>
+            <button type="submit" className="btn blue" disabled={isLoading}>
+              {isLoading ? (generateWithAI ? "Generiere..." : "Erstelle...") : (generateWithAI ? "Pfad generieren" : "Kurs erstellen")}
+            </button>
+          </div>
+        </form>
+      </div>
 
       {generatedCurriculum && tempCourseData && (
         <CurriculumWizard
@@ -157,3 +199,4 @@ export function CreateCourseForm() {
     </>
   );
 }
+

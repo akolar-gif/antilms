@@ -7,8 +7,8 @@ import { AICoDesigner } from "@/components/trainer/ai-co-designer";
 import { createBlockAction } from "@/app/actions/store";
 import { updateModuleAction } from "@/app/actions/course";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Sparkles, Eye, Edit } from "lucide-react";
 
 export function ModuleEditorClient({
   course,
@@ -25,13 +25,13 @@ export function ModuleEditorClient({
   const [moduleDesc, setModuleDesc] = useState(module.description);
 
   const handleSaveModule = async () => {
-    const toastId = toast.loading("Saving module settings...");
+    const toastId = toast.loading("Speichere Moduleinstellungen...");
     try {
       await updateModuleAction(course.id, module.id, { title: moduleTitle, description: moduleDesc });
       setIsEditingModule(false);
-      toast.success("Module settings saved", { id: toastId });
+      toast.success("Moduleinstellungen gespeichert", { id: toastId });
     } catch (error) {
-      toast.error("Failed to save module settings", { id: toastId });
+      toast.error("Speichern der Moduleinstellungen fehlgeschlagen", { id: toastId });
     }
   };
 
@@ -41,7 +41,7 @@ export function ModuleEditorClient({
     content: string;
     learningMode: LearningBlock["learningMode"];
   }) => {
-    const toastId = toast.loading("Adding block...");
+    const toastId = toast.loading("Füge Block hinzu...");
     try {
       const newBlock = await createBlockAction(course.id, {
         moduleId: module.id,
@@ -52,57 +52,61 @@ export function ModuleEditorClient({
         source: 'ai_assisted',
       });
       setBlocks(prev => [...prev, newBlock]);
-      toast.success("Block added from Co-Designer!", { id: toastId });
+      toast.success("Block erfolgreich hinzugefügt!", { id: toastId });
     } catch (error) {
       console.error(error);
-      toast.error("Failed to add block", { id: toastId });
+      toast.error("Hinzufügen fehlgeschlagen", { id: toastId });
     }
   };
 
   return (
     <>
-      <div className="flex-1 overflow-y-auto p-8 bg-slate-50">
+      <div className="flex-1 overflow-y-auto p-8" style={{ background: "var(--paper)" }}>
         <div className="max-w-3xl mx-auto">
-          <div className="mb-8">
+          <div className="mb-8 pb-6" style={{ borderBottom: "1.5px solid var(--line)" }}>
             {isEditingModule ? (
-              <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm mb-4">
-                <div className="mb-4">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Module Title</label>
+              <div className="bg-paper p-6 rounded-2xl border border-line flex flex-col gap-4">
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">Modul-Titel</label>
                   <input 
                     type="text" 
                     value={moduleTitle} 
                     onChange={e => setModuleTitle(e.target.value)} 
-                    className="w-full font-heading font-bold text-xl text-slate-800 p-2 border border-slate-300 rounded"
+                    className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all"
+                    style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 16, fontFamily: "var(--f-display)", fontWeight: 700 }}
                   />
                 </div>
-                <div className="mb-4">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Module Description</label>
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">Beschreibung</label>
                   <textarea 
                     value={moduleDesc} 
                     onChange={e => setModuleDesc(e.target.value)} 
                     rows={2}
-                    className="w-full text-slate-600 p-2 border border-slate-300 rounded resize-none"
+                    className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all resize-none"
+                    style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
                   />
                 </div>
-                <div className="flex justify-end space-x-2">
-                  <Button variant="ghost" size="sm" onClick={() => setIsEditingModule(false)}>Cancel</Button>
-                  <Button size="sm" onClick={handleSaveModule} className="bg-emerald-green hover:bg-emerald-green/90 text-white">Save Changes</Button>
+                <div className="flex justify-end gap-2">
+                  <button className="btn ghost" onClick={() => setIsEditingModule(false)}>Abbrechen</button>
+                  <button className="btn blue" onClick={handleSaveModule}>Speichern</button>
                 </div>
               </div>
             ) : (
-              <div className="group relative">
-                <div className="absolute right-0 top-0 flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Link href={`/learner/courses/${course.id}/modules/${module.id}`} target="_blank">
-                    <Button variant="outline" size="sm" className="text-royal-blue border-royal-blue/30 hover:bg-royal-blue/5">
-                      👁️ Preview as Learner
-                    </Button>
+              <div className="group relative flex flex-col gap-3">
+                <div className="absolute right-0 top-0 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Link href={`/learner/courses/${course.id}/modules/${module.id}`} target="_blank" className="btn ghost" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "6px 12px", fontSize: 12 }}>
+                    <Eye className="w-3.5 h-3.5" /> Vorschau
                   </Link>
-                  <Button variant="outline" size="sm" onClick={() => setIsEditingModule(true)}>
-                    Edit
-                  </Button>
+                  <button className="btn ghost" onClick={() => setIsEditingModule(true)} style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "6px 12px", fontSize: 12 }}>
+                    <Edit className="w-3.5 h-3.5" /> Bearbeiten
+                  </button>
                 </div>
-                <h2 className="text-2xl font-heading font-bold text-slate-800 pr-48">{module.title}</h2>
-                <p className="text-slate-600 mt-2">{module.description}</p>
+                
+                <div>
+                  <span className="eyebrow" style={{ color: "var(--blue)" }}>MODUL EDITOR</span>
+                  <h2 className="display pr-48" style={{ fontSize: 28, marginTop: 4 }}>{module.title}</h2>
+                </div>
+                <p className="text-ink-2 text-sm max-w-xl" style={{ lineHeight: 1.5 }}>{module.description}</p>
               </div>
             )}
           </div>
@@ -126,3 +130,4 @@ export function ModuleEditorClient({
     </>
   );
 }
+

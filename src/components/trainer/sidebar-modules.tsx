@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Module } from "@/types";
-import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { deleteModuleAction } from "@/app/actions/course";
 import { toast } from "sonner";
@@ -19,19 +18,19 @@ export function SidebarModules({ courseId, modules }: SidebarModulesProps) {
   const handleDeleteModule = async (moduleId: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (confirm("Are you sure you want to delete this module and all its blocks? This cannot be undone.")) {
-      const toastId = toast.loading("Deleting module...");
+    if (confirm("Möchtest du dieses Modul und alle zugehörigen Blöcke wirklich löschen? Dies kann nicht rückgängig gemacht werden.")) {
+      const toastId = toast.loading("Lösche Modul...");
       try {
         await deleteModuleAction(courseId, moduleId);
-        toast.success("Module deleted successfully!", { id: toastId });
+        toast.success("Modul erfolgreich gelöscht!", { id: toastId });
       } catch (error) {
-        toast.error("Failed to delete module", { id: toastId });
+        toast.error("Fehler beim Löschen des Moduls", { id: toastId });
       }
     }
   };
 
   return (
-    <div className="space-y-2">
+    <div className="flex flex-col gap-2">
       {modules.map((mod) => {
         const href = `/trainer/courses/${courseId}/modules/${mod.id}`;
         const isActive = pathname === href;
@@ -39,22 +38,28 @@ export function SidebarModules({ courseId, modules }: SidebarModulesProps) {
           <Link
             key={mod.id}
             href={href}
-            className={`flex items-center justify-between p-3 rounded-md border shadow-sm transition-all text-sm font-medium group ${
-              isActive
-                ? "bg-emerald-green/10 border-emerald-green text-emerald-green"
-                : "bg-white border-slate-200 text-slate-700 hover:border-emerald-green hover:shadow-md"
-            }`}
+            className="flex items-center justify-between p-3 rounded-xl border text-xs font-mono uppercase tracking-wider transition-all group"
+            style={{
+              background: isActive ? "var(--ink)" : "var(--paper)",
+              borderColor: isActive ? "var(--ink)" : "var(--line)",
+              color: isActive ? "var(--paper)" : "var(--ink)",
+              boxShadow: "none"
+            }}
           >
-            <span className="truncate pr-2">{mod.title}</span>
-            <Button
+            <span className="truncate pr-2 font-bold">{mod.title}</span>
+            <button
               type="button"
-              size="icon"
-              variant="ghost"
               onClick={(e) => handleDeleteModule(mod.id, e)}
-              className="opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-600 w-7 h-7 rounded-lg transition-all"
+              className="opacity-0 group-hover:opacity-100 hover:bg-red-550 transition-all p-1 rounded-md"
+              style={{
+                border: "none",
+                background: "none",
+                cursor: "pointer",
+                color: isActive ? "color-mix(in oklab, var(--paper) 60%, transparent)" : "var(--ink-3)",
+              }}
             >
-              <Trash2 className="w-3.5 h-3.5" />
-            </Button>
+              <Trash2 className="w-3.5 h-3.5 hover:text-red-500 transition-colors" />
+            </button>
           </Link>
         );
       })}

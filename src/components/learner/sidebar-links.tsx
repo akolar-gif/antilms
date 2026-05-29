@@ -17,7 +17,7 @@ export function SidebarLinks({ courseId, modules }: SidebarLinksProps) {
   const pathname = usePathname();
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-1">
+    <div className="flex-1 overflow-y-auto p-4 space-y-1 bg-paper-2">
       {modules.map((mod) => {
         const href = `/learner/courses/${courseId}/modules/${mod.id}`;
         const isActive = pathname === href;
@@ -25,10 +25,10 @@ export function SidebarLinks({ courseId, modules }: SidebarLinksProps) {
           <Link
             key={mod.id}
             href={href}
-            className={`block p-3 rounded-lg text-sm font-medium transition-colors ${
+            className={`block p-3 rounded-xl text-xs font-mono uppercase tracking-wider transition-colors ${
               isActive
-                ? "bg-royal-blue/10 text-royal-blue"
-                : "text-slate-600 hover:bg-slate-50"
+                ? "bg-ink text-paper"
+                : "text-ink-2 hover:bg-paper-3 hover:text-ink"
             }`}
           >
             {mod.title}

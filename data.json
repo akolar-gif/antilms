@@ -123,6 +123,18 @@
       "status": "published",
       "createdAt": "2026-05-27T12:44:59.263Z",
       "updatedAt": "2026-05-27T12:45:14.945Z"
+    },
+    {
+      "id": "course-1780072905033",
+      "title": "agile führungskompetenzen",
+      "description": "dfsddfgvs sfdfgs sdfsdf",
+      "category": "Leadership",
+      "targetGroup": "General",
+      "imageUrl": "/uploads/1780072546189-119.png",
+      "createdBy": "Trainer",
+      "status": "published",
+      "createdAt": "2026-05-29T16:41:45.033Z",
+      "updatedAt": "2026-05-29T16:42:10.617Z"
     }
   ],
   "modules": [
@@ -408,6 +420,42 @@
         "Teilnehmende entwickeln ein gestärktes Selbstvertrauen in ihre eigene kreative Fähigkeit."
       ],
       "order": 3
+    },
+    {
+      "id": "module-1780072905040",
+      "courseId": "course-1780072905033",
+      "title": "Grundlagen Agiler Führung: Mindset und Prinzipien",
+      "description": "Tauchen Sie ein in die Welt der agilen Führung. Dieses Modul beleuchtet die Kernunterschiede zur traditionellen Führung, die essenziellen Werte und Prinzipien der Agilität und wie ein agiles Mindset die Grundlage für erfolgreiche Führung bildet.",
+      "learningObjectives": [
+        "Den grundlegenden Unterschied zwischen traditioneller und agiler Führung erkennen und verstehen.",
+        "Die Kernwerte und Prinzipien des Agilen Manifests im Kontext von Führung interpretieren.",
+        "Die Merkmale eines agilen Mindsets identifizieren und dessen Bedeutung für die Führungsrolle erfassen."
+      ],
+      "order": 0
+    },
+    {
+      "id": "module-1780072905082",
+      "courseId": "course-1780072905033",
+      "title": "Agile Teams Befähigen und Coachen: Der Servant Leader Ansatz",
+      "description": "Erfahren Sie, wie Sie als agiler Leader Ihre Teams effektiv unterstützen, ihre Selbstorganisation fördern und als Coach agieren. Dieses Modul vermittelt praktische Techniken zur Teamentwicklung, Konfliktlösung und zur Schaffung eines Umfelds der kontinuierlichen Verbesserung.",
+      "learningObjectives": [
+        "Coaching-Techniken anwenden, um die Selbstorganisation und Problemlösungskompetenz von agilen Teams zu stärken.",
+        "Methoden zur effektiven Moderation agiler Zeremonien (z.B. Retrospektiven) beherrschen.",
+        "Eine offene Feedback-Kultur im Team etablieren und fördern, um kontinuierliches Lernen zu ermöglichen."
+      ],
+      "order": 1
+    },
+    {
+      "id": "module-1780072905124",
+      "courseId": "course-1780072905033",
+      "title": "Strategische Agilität und Organisationale Transformation",
+      "description": "Dieses Modul befasst sich mit der Rolle des agilen Leaders bei der Gestaltung und Führung organisatorischer Veränderungen. Es behandelt, wie strategische Entscheidungen in einer volatilen Welt getroffen werden, wie man eine agile Vision kommuniziert und die Kultur für eine nachhaltige agile Transformation entwickelt.",
+      "learningObjectives": [
+        "Strategien zur Förderung von organisationaler Agilität und zur Bewältigung von Widerständen gegen Veränderungen entwickeln.",
+        "Eine klare agile Vision kommunizieren und Stakeholder für die Transformation gewinnen.",
+        "Methoden zur Anpassung strategischer Entscheidungen an sich schnell ändernde Marktbedingungen anwenden."
+      ],
+      "order": 2
     }
   ],
   "blocks": [
@@ -1128,6 +1176,126 @@
       "title": "Mein kreativer Durchbruch",
       "content": "{\"reflectionPrompt\": \"Nach dem '5-Minuten-Ideen-Sprint', wie fühlst du dich jetzt? War es einfacher oder schwieriger als erwartet, Ideen zu generieren? Welche Einsichten hast du über deine eigene Fähigkeit, schnell und originell zu denken, gewonnen?\", \"followUpQuestions\": [\"Was hat dir während des Sprints geholfen, Ideen zu entwickeln?\", \"Gab es Momente, in denen du dich 'festgefahren' gefühlt hast, und wie bist du damit umgegangen?\", \"Wie könntest du die Erkenntnisse aus dieser Übung in deinen Alltag oder Berufsalltag integrieren, um deine Kreativität bewusster zu nutzen?\", \"Nimmst du jetzt stärker wahr: 'Ja, ich bin kreativ'?\", \"Welche Art von Unterstützung oder Umgebung hilft dir am meisten, kreativ zu sein?\"]}",
       "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-17800729050488",
+      "moduleId": "module-1780072905040",
+      "type": "text",
+      "title": "Was ist agile Führung?",
+      "content": "Agile Führung ist mehr als nur die Anwendung von Frameworks; es ist eine Denkweise, die Anpassungsfähigkeit, Zusammenarbeit, Empowerment und kontinuierliche Verbesserung in den Vordergrund stellt. Im Gegensatz zur hierarchischen Top-Down-Führung, fördert agile Führung Selbstorganisation, Eigenverantwortung und schnelle Iteration. Sie bedeutet, Teams zu befähigen, Entscheidungen zu treffen, statt Anweisungen zu geben, und einen Rahmen zu schaffen, in dem Innovation und Lernen gedeihen können. Ein agiler Leader ist ein Servant Leader, Coach und Mentor, der Hindernisse beseitigt und das Team auf dem Weg zur Wertschöpfung unterstützt. Dies erfordert ein hohes Maß an Vertrauen, Transparenz und die Bereitschaft, Kontrolle abzugeben und Verantwortung zu teilen.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1780072905055440",
+      "moduleId": "module-1780072905040",
+      "type": "video",
+      "title": "Warum agile Führung heute entscheidend ist",
+      "content": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1780072905063722",
+      "moduleId": "module-1780072905040",
+      "type": "reflection",
+      "title": "Mein Führungsstil im Wandel",
+      "content": "{\"reflectionPrompt\": \"Denken Sie über Ihren aktuellen Führungsstil nach. Welche Aspekte davon passen bereits zu einem agilen Mindset und wo sehen Sie die größten Herausforderungen oder Anpassungsbedarfe, um agiler zu werden?\", \"followUpQuestions\": [\"Welche Ihrer bisherigen Führungsgewohnheiten müssten Sie zuerst ändern?\", \"Wie könnten Sie Ihr Team aktiv in diesen Veränderungsprozess einbeziehen?\", \"Welche Unterstützung würden Sie benötigen, um agiler zu führen?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1780072905072917",
+      "moduleId": "module-1780072905040",
+      "type": "quiz",
+      "title": "Agile Prinzipien auf den Prüfstand",
+      "content": "{\"question\": \"Welches der folgenden Prinzipien gehört NICHT zu den Kernwerten des Agilen Manifests?\", \"options\": [\"Individuen und Interaktionen mehr als Prozesse und Werkzeuge\", \"Umfassende Dokumentation mehr als funktionierende Software\", \"Zusammenarbeit mit dem Kunden mehr als Vertragsverhandlung\", \"Reagieren auf Veränderung mehr als das Befolgen eines Plans\"], \"correctAnswer\": \"Umfassende Dokumentation mehr als funktionierende Software\", \"explanation\": \"Das Agile Manifest legt Wert auf 'funktionierende Software mehr als umfassende Dokumentation', da der Fokus auf der direkten Wertschöpfung liegt, nicht auf dem Bürokratischen.\"}",
+      "learningMode": "test",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1780072905091908",
+      "moduleId": "module-1780072905082",
+      "type": "text",
+      "title": "Coaching für agile Performance",
+      "content": "Als agiler Leader ist Ihre primäre Aufgabe nicht das Anweisen, sondern das Coaching. Coaching bedeutet, die richtigen Fragen zu stellen, zuzuhören und dem Team zu helfen, eigene Lösungen zu finden. Es geht darum, das Potenzial jedes Einzelnen und des Teams als Ganzes zu entfalten. Dies beinhaltet, den Teammitgliedern Feedback zu geben, sie bei der persönlichen Entwicklung zu unterstützen und ihnen die Werkzeuge an die Hand zu geben, um Herausforderungen selbstständig zu meistern. Ein agiler Coach erkennt, wann er eingreifen muss und wann er sich zurückhalten sollte, um dem Team Raum zum Wachsen zu geben.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1780072905101619",
+      "moduleId": "module-1780072905082",
+      "type": "punk_game",
+      "title": "Schnelle Entscheidungen im Team",
+      "content": "{\"scenario\": \"Ihr agiles Team steht vor einer kritischen Entscheidung: Ein unerwarteter technischer Fehler blockiert die Auslieferung eines wichtigen Features in 3 Stunden. Es gibt zwei mögliche Lösungswege, die beide Risiken bergen, aber unterschiedliche Ressourcen erfordern und unterschiedliche Wahrscheinlichkeiten für eine schnelle Behebung haben. Der Kunde wartet dringend auf eine Statusmeldung und eine Entscheidung.\", \"task\": \"Als agiler Leader müssen Sie Ihr Team innerhalb von 5 Minuten durch eine schnelle Entscheidungsfindung führen, um den besten Weg vorwärts zu wählen und eine klare Kommunikation an den Kunden vorzubereiten. Sie dürfen keine direkten Anweisungen geben, sondern müssen das Team befähigen, selbst zu einer Lösung zu kommen.\", \"timeboxMinutes\": 5, \"evaluationCriteria\": [\"Fähigkeit zur Team-Konsensfindung unter Zeitdruck\", \"Qualität der getroffenen Entscheidung (im Kontext der gegebenen Risiken)\", \"Klarheit der Kommunikationsstrategie\"]}",
+      "learningMode": "challenge",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1780072905109820",
+      "moduleId": "module-1780072905082",
+      "type": "project_task",
+      "title": "Eine Retrospektive moderieren",
+      "content": "{\"title\": \"Konzeption und Moderation einer Sprint-Retrospektive\", \"scenario\": \"Ihr agiles Team hat gerade einen anspruchsvollen Sprint abgeschlossen. Es gab einige Herausforderungen bei der Kommunikation und der Schätzung von Aufgaben. Als agiler Leader sollen Sie eine wirksame Sprint-Retrospektive planen und 'moderieren', um dem Team zu helfen, aus diesen Erfahrungen zu lernen und konkrete Verbesserungsmaßnahmen für den nächsten Sprint zu definieren.\", \"task\": \"Erstellen Sie einen detaillierten Plan für eine 60-minütige Sprint-Retrospektive. Beschreiben Sie die Phasen, die verwendeten Moderationstechniken und die erwarteten Ergebnisse. Spielen Sie die Moderation mental durch und notieren Sie sich wichtige Formulierungen.\", \"deliverable\": \"Ein schriftlicher Moderationsplan mit Phasen, Techniken und Rollenbeschreibung. Optional: Eine kurze Video- oder Audioaufnahme, in der Sie einen Teil der Moderation simulieren.\", \"constraints\": [\"Dauer der Retrospektive: 60 Minuten\", \"Fokus auf die Verbesserung von Kommunikation und Schätzungen\", \"Das Team soll eigenverantwortlich Lösungen erarbeiten.\"], \"reflectionPrompt\": \"Welche Herausforderungen erwarten Sie bei der Moderation dieser Retrospektive und wie würden Sie darauf reagieren? Wie stellen Sie sicher, dass alle Teammitglieder aktiv beteiligt sind und konkrete Maßnahmen definiert werden?\"}",
+      "learningMode": "apply",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1780072905116581",
+      "moduleId": "module-1780072905082",
+      "type": "reflection",
+      "title": "Die Kunst des Gebens und Nehmens von Feedback",
+      "content": "{\"reflectionPrompt\": \"Feedback ist das Herzstück kontinuierlicher Verbesserung in agilen Teams. Wie würden Sie ein konstruktives Feedbackgespräch mit einem Teammitglied führen, das Schwierigkeiten hat, seine Aufgaben termingerecht abzuschließen, ohne es zu demotivieren?\", \"followUpQuestions\": [\"Welche Fragen würden Sie stellen, um das Teammitglied zur Selbstreflexion anzuregen?\", \"Wie würden Sie sicherstellen, dass das Feedback spezifisch und umsetzbar ist?\", \"Wie würden Sie die nächsten Schritte vereinbaren und die Verantwortung für die Umsetzung beim Teammitglied belassen?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1780072905131471",
+      "moduleId": "module-1780072905124",
+      "type": "text",
+      "title": "Agile Transformation gestalten",
+      "content": "Die Transformation zu einer agilen Organisation ist ein komplexer und langfristiger Prozess, der weit über die Einführung neuer Tools und Methoden hinausgeht. Er erfordert einen grundlegenden Wandel in Denkmustern, Prozessen und der Unternehmenskultur. Als agiler Leader spielen Sie eine Schlüsselrolle bei der Gestaltung dieser Transformation. Dies beinhaltet die Entwicklung einer klaren Vision, das Schaffen von Dringlichkeit, das Aufbauen einer Koalition für den Wandel und das Empowerment der Mitarbeiter auf allen Ebenen. Es ist eine Reise, die Mut, Geduld und die Bereitschaft erfordert, ständig zu lernen und anzupassen.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1780072905141290",
+      "moduleId": "module-1780072905124",
+      "type": "reflection",
+      "title": "Vision in Unsicherheit",
+      "content": "{\"reflectionPrompt\": \"Stellen Sie sich vor, Sie sind verantwortlich für eine Abteilung in einem sich schnell verändernden Markt. Wie würden Sie eine überzeugende agile Vision entwickeln und kommunizieren, die Ihr Team motiviert und gleichzeitig flexibel genug ist, um auf unerwartete Marktveränderungen zu reagieren?\", \"followUpQuestions\": [\"Welche Elemente müssten in Ihrer Vision unbedingt enthalten sein?\", \"Wie würden Sie die Vision regelmäßig überprüfen und anpassen?\", \"Wie würden Sie sicherstellen, dass die Vision von allen Teammitgliedern getragen und verstanden wird?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1780072905147960",
+      "moduleId": "module-1780072905124",
+      "type": "project_task",
+      "title": "Entwicklung einer agilen Transformations-Roadmap",
+      "content": "{\"title\": \"Agile Transformations-Roadmap für ein fiktives Unternehmen\", \"scenario\": \"Ein mittelständisches Technologieunternehmen (ca. 200 Mitarbeiter) hat erkannt, dass es seine Innovationsfähigkeit und Marktreaktionszeit verbessern muss. Der Vorstand hat beschlossen, eine agile Transformation zu starten. Sie wurden beauftragt, als externer Berater oder interner Change Leader eine erste strategische Roadmap für die Transformation zu entwickeln.\", \"task\": \"Erstellen Sie eine 6-12 Monate dauernde Roadmap für die agile Transformation. Berücksichtigen Sie dabei die Bereiche Kultur, Prozesse, Tools und Training. Definieren Sie Meilensteine, Schlüsselinitiativen und Metriken für den Erfolg. Denken Sie auch an Kommunikationsstrategien für verschiedene Stakeholder.\", \"deliverable\": \"Eine detaillierte agile Transformations-Roadmap (z.B. als Präsentation oder Dokument), die die Phasen, Initiativen, Verantwortlichkeiten und erwarteten Ergebnisse für die ersten 6-12 Monate aufzeigt.\", \"constraints\": [\"Realistische Annahmen für ein mittelständisches Unternehmen\", \"Fokus auf nachhaltige Veränderungen, nicht nur auf schnelle Fixes\", \"Berücksichtigung von Widerständen und deren Management\"], \"reflectionPrompt\": \"Welche sind die größten Risiken bei einer solchen Transformation und wie würden Sie diesen Risiken begegnen? Wie würden Sie den Erfolg der Transformation langfristig messen?\"}",
+      "learningMode": "create",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1780072905158333",
+      "moduleId": "module-1780072905124",
+      "type": "quiz",
+      "title": "Strategische Agilität verstehen",
+      "content": "{\"question\": \"Welche der folgenden Aussagen beschreibt am besten das Konzept der 'strategischen Agilität'?\", \"options\": [\"Die Fähigkeit, innerhalb fester Jahresbudgets zu operieren.\", \"Die schnelle Anpassung von Produkten und Dienstleistungen an sich ändernde Kundenbedürfnisse und Marktbedingungen.\", \"Das strikte Festhalten an einem einmal definierten 5-Jahres-Plan.\", \"Die zentrale Steuerung aller operativen Entscheidungen durch das Top-Management.\"], \"correctAnswer\": \"Die schnelle Anpassung von Produkten und Dienstleistungen an sich ändernde Kundenbedürfnisse und Marktbedingungen.\", \"explanation\": \"Strategische Agilität bedeutet die Fähigkeit einer Organisation, ihre Strategie, Struktur, Kultur und Prozesse schnell und flexibel an sich ändernde interne und externe Gegebenheiten anzupassen, um wettbewerbsfähig zu bleiben und neue Chancen zu nutzen.\"}",
+      "learningMode": "test",
       "source": "ai_assisted",
       "order": 3
     }

@@ -1,16 +1,22 @@
 import type { Metadata } from "next";
-import { Montserrat, Open_Sans } from "next/font/google";
+import { Archivo, Space_Grotesk, Space_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
 });
 
-const openSans = Open_Sans({
-  variable: "--font-open-sans",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
+});
+
+const spaceMono = Space_Mono({
+  variable: "--font-space-mono",
+  subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -25,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} ${openSans.variable} font-sans antialiased bg-warm-white text-slate-900`}>
+      <body className={`${archivo.variable} ${spaceGrotesk.variable} ${spaceMono.variable} antialiased`}>
         {children}
         <Toaster position="top-center" richColors />
       </body>

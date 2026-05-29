@@ -1,99 +1,317 @@
-import { Brain, Star, Clock, Trophy, Target, Sparkles } from "lucide-react";
 import { store } from "@/lib/store";
-import { CourseListClient } from "@/components/trainer/course-list-client";
+import Link from "next/link";
+import { Brain, Star, Clock, Trophy, Target, Sparkles, LogOut, ArrowRight } from "lucide-react";
 import { GDPRControls } from "@/components/learner/gdpr-controls";
+import { I, Mark, AIChip } from "@/components/layout/icons";
 
 export const dynamic = 'force-dynamic';
 
 export default async function LearnerDashboard() {
   const courses = await store.getCourses();
   const reflections = await store.getReflections("learner-1");
-
-  // Get all completed blocks count across all courses
   const publishedCourses = courses.filter(c => c.status === "published");
-  let completedBlocksCount = 0;
+
+  // Format current date
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('de-DE', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long'
+  }).toUpperCase();
+
+  // Calculate course progress percentages and find active course
+  const courseProgresses = [];
+  let completedBlocksTotal = 0;
   let totalPunkGamesCompleted = 0;
   let totalQuizzesCompleted = 0;
-  
+
   for (const course of publishedCourses) {
     const userProgress = await store.getUserProgress("learner-1", course.id);
-    completedBlocksCount += userProgress.completedBlocks.length;
-    
-    // Fetch blocks of this course modules to match types
     const modules = await store.getModules(course.id);
+    
+    let totalBlocks = 0;
+    let completedInCourse = 0;
+
     for (const mod of modules) {
       const blocks = await store.getBlocks(mod.id);
+      totalBlocks += blocks.length;
+      
       for (const block of blocks) {
         if (userProgress.completedBlocks.includes(block.id)) {
+          completedInCourse++;
+          completedBlocksTotal++;
           if (block.type === "punk_game") totalPunkGamesCompleted++;
           if (block.type === "quiz") totalQuizzesCompleted++;
         }
       }
     }
+
+    const percentage = totalBlocks > 0 ? Math.round((completedInCourse / totalBlocks) * 100) : 0;
+    courseProgresses.push({
+      course,
+      percentage,
+      totalBlocks,
+      completedInCourse,
+      completedBlocks: userProgress.completedBlocks,
+      modules
+    });
   }
 
-  // Calculate scores (baseline 20 for empty states, increments based on actual work)
+  // Find first active in-progress course, fallback to first course
+  const activeCourseProgress = courseProgresses.find(p => p.percentage > 0 && p.percentage < 100) || courseProgresses[0];
+  
+  let resumeLink = "/learner";
+  let resumeBlockTitle = "Start Learning";
+  let resumeModuleTitle = "No Active Modules";
+  let resumeProgress = 0;
+
+  if (activeCourseProgress) {
+    resumeProgress = activeCourseProgress.percentage;
+    const { course, modules, completedBlocks } = activeCourseProgress;
+    
+    // Find first uncompleted block
+    let found = false;
+    for (const mod of modules) {
+      const blocks = await store.getBlocks(mod.id);
+      const uncompletedBlock = blocks.find(b => !completedBlocks.includes(b.id));
+      if (uncompletedBlock) {
+        resumeLink = `/learner/courses/${course.id}/modules/${mod.id}`;
+        resumeBlockTitle = uncompletedBlock.title;
+        resumeModuleTitle = mod.title;
+        found = true;
+        break;
+      }
+    }
+    
+    // If all blocks are completed, link to first block
+    if (!found && modules.length > 0) {
+      resumeLink = `/learner/courses/${course.id}/modules/${modules[0].id}`;
+      resumeBlockTitle = "Review course";
+      resumeModuleTitle = modules[0].title;
+    }
+  }
+
+  // Future Skills scores
   const criticalThinking = Math.min(100, reflections.length * 20 + 20);
   const complexProblemSolving = Math.min(100, totalPunkGamesCompleted * 25 + 20);
   const aiLiteracy = Math.min(100, totalQuizzesCompleted * 20 + 20);
-  const agileMindset = Math.min(100, completedBlocksCount * 5 + 20);
+  const agileMindset = Math.min(100, completedBlocksTotal * 5 + 20);
 
   const futureSkills = [
-    { name: "Critical Thinking", score: criticalThinking, icon: Brain, color: "text-plum bg-plum/10 border-plum/20", progressColor: "bg-plum" },
-    { name: "Complex Problem Solving", score: complexProblemSolving, icon: Target, color: "text-emerald-green bg-emerald-green/10 border-emerald-green/20", progressColor: "bg-emerald-green" },
-    { name: "AI Literacy", score: aiLiteracy, icon: Sparkles, color: "text-royal-blue bg-royal-blue/10 border-royal-blue/20", progressColor: "bg-royal-blue" },
-    { name: "Agile Mindset", score: agileMindset, icon: Trophy, color: "text-amber-600 bg-amber-50 border-amber-200", progressColor: "bg-amber-500" }
+    { name: "Critical Thinking", score: criticalThinking, color: "var(--ink-2)", strokeColor: "bg-plum" },
+    { name: "Complex Problem Solving", score: complexProblemSolving, color: "var(--ink-2)", strokeColor: "bg-emerald-green" },
+    { name: "AI Literacy", score: aiLiteracy, color: "var(--ink-2)", strokeColor: "bg-royal-blue" },
+    { name: "Agile Mindset", score: agileMindset, color: "var(--ink-2)", strokeColor: "bg-amber-500" }
   ];
 
   return (
-    <div className="p-8 max-w-5xl mx-auto space-y-12">
-      {/* Welcome Header */}
-      <div>
-        <h1 className="text-3xl font-heading font-bold text-slate-800 mb-2">My Learning Journeys</h1>
-        <p className="text-slate-600">Explore your journeys, build capability, and track your future skills progress.</p>
+    <div className="screen">
+      {/* TopBar Header */}
+      <header className="topbar">
+        <div className="tb-left">
+          <div>
+            <div className="eyebrow">{dateStr}</div>
+            <div style={{ fontFamily: "var(--f-display)", fontWeight: 800, fontSize: 18, marginTop: 2, textTransform: "uppercase", letterSpacing: "-.01em" }}>
+              Studio Dashboard
+            </div>
+          </div>
+        </div>
+        <div className="tb-right">
+          <div className="streak">
+            <span className="dot"></span>
+            <span className="num">{completedBlocksTotal}</span>
+            <span className="lbl" style={{ color: "var(--ink-2)", fontWeight: 400 }}>Aktivitäten</span>
+          </div>
+        </div>
+      </header>
+
+      {/* Grid Layout (Lattice & Cells) */}
+      <div className="lattice hero-grid">
+        {/* Left Welcome Cell */}
+        <div className="cell">
+          <div className="eyebrow" style={{ marginBottom: 18 }}>WILLKOMMEN ZURÜCK, LERNER</div>
+          <h1 className="display hero-display">
+            Was wirst du<br/>heute <span className="stroke">erschaffen</span>?
+          </h1>
+          <p className="lede" style={{ marginTop: 22, maxWidth: 520 }}>
+            Deine persönliche Lernumgebung. Setze deinen Kurs fort, trainiere Zukunftsfähigkeiten oder lasse dir neue Themen per KI aufbereiten.
+          </p>
+        </div>
+
+        {/* Right Continue Card */}
+        <div className="cell blue">
+          <span className="corner-no" style={{ color: "color-mix(in oklab, var(--on-blue) 70%, transparent)" }}>AKTUELL</span>
+          
+          <div className="continue">
+            <div className="meta">
+              <span className="eyebrow" style={{ color: "color-mix(in oklab, var(--on-blue) 70%, transparent)" }}>
+                FORTSETZEN · {activeCourseProgress?.course.title || "Kein aktiver Kurs"}
+              </span>
+            </div>
+            <div>
+              <div className="eyebrow" style={{ color: "color-mix(in oklab, var(--on-blue) 70%, transparent)", marginBottom: 8 }}>
+                {resumeModuleTitle}
+              </div>
+              <div className="title truncate max-w-xs">{resumeBlockTitle}</div>
+            </div>
+            <div>
+              <div className="progress-line">
+                <i style={{ width: `${resumeProgress}%` }}></i>
+              </div>
+              <div className="num" style={{ fontSize: 12, marginTop: 8, opacity: .8 }}>
+                {resumeProgress}% abgeschlossen
+              </div>
+            </div>
+            
+            {activeCourseProgress ? (
+              <Link href={resumeLink} className="resume">
+                Lernpfad fortsetzen <I.arrow className="arrow" style={{ width: 22, height: 22 }} />
+              </Link>
+            ) : (
+              <Link href="/learner/library" className="resume">
+                Bibliothek durchstöbern <I.arrow className="arrow" style={{ width: 22, height: 22 }} />
+              </Link>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* Future Skills Progress Grid */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-        <div className="flex items-center gap-2">
-          <Brain className="w-5 h-5 text-royal-blue" />
-          <h2 className="font-heading font-bold text-slate-800 text-lg">My Future Skills Competence Signals</h2>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {futureSkills.map((skill) => {
-            const Icon = skill.icon;
-            return (
-              <div key={skill.name} className="p-4 rounded-xl border border-slate-100 bg-slate-50/50 flex flex-col justify-between space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className={`p-2 rounded-lg border ${skill.color}`}>
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <span className="text-lg font-bold text-slate-800">{skill.score}%</span>
-                </div>
-                <div>
-                  <h4 className="font-heading font-bold text-xs text-slate-500 uppercase tracking-wider mb-2">{skill.name}</h4>
-                  <div className="w-full bg-slate-200 rounded-full h-1.5">
-                    <div className={`h-1.5 rounded-full ${skill.progressColor}`} style={{ width: `${skill.score}%` }}></div>
-                  </div>
-                </div>
+      {/* Dynamic Future Skills Competence Signals */}
+      <div className="sec-head">
+        <h2>Zukunftsfähigkeiten</h2>
+        <span className="meta">COMPETENCE SIGNALS</span>
+      </div>
+      <div className="pad">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1.5 bg-line border border-line">
+          {futureSkills.map((skill) => (
+            <div key={skill.name} className="cell tight bg-paper flex flex-col justify-between min-h-[140px] p-5">
+              <div className="flex justify-between items-start w-full">
+                <span className="eyebrow font-mono text-[10px] text-ink-3">{skill.name}</span>
+                <span className="num font-bold text-lg">{skill.score}%</span>
               </div>
+              <div className="w-full space-y-2 mt-4">
+                <div className="progress-line bg-paper-3 h-1 rounded-full overflow-hidden">
+                  <div className={`h-full ${skill.strokeColor}`} style={{ width: `${skill.score}%` }}></div>
+                </div>
+                <div className="text-[9px] text-ink-3 font-mono tracking-wide uppercase">Signalstärke</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Library Preview */}
+      <div className="sec-head">
+        <h2>Meine Lernpfade</h2>
+        <span className="meta">{publishedCourses.length} PUBLIZIERTE KURSE</span>
+      </div>
+      
+      {publishedCourses.length === 0 ? (
+        <div className="pad">
+          <div className="p-8 text-center bg-paper-2 border border-line-soft rounded-2xl">
+            <p className="text-sm text-ink-2">Aktuell sind keine Kurse publiziert.</p>
+          </div>
+        </div>
+      ) : (
+        <div className="courses border-t border-b border-line">
+          {courseProgresses.map((p, idx) => {
+            const course = p.course;
+            const cardColor = idx % 3 === 0 ? "blue" : idx % 3 === 1 ? "ink" : "coral";
+            const imageUrl = course.imageUrl;
+            
+            if (imageUrl) {
+              return (
+                <Link href={`/learner/courses/${course.id}`} className="poster photo" key={course.id}>
+                  <div 
+                    className="absolute inset-0 bg-cover bg-center z-0" 
+                    style={{ backgroundImage: `url(${imageUrl})` }}
+                  />
+                  <div className="pinner">
+                    <div className="top">
+                      <span className="no">№ {String(idx + 1).padStart(2, '0')}</span>
+                      <span className="tag">{course.category || "General"}</span>
+                    </div>
+                    <div className="ptitle">{course.title}</div>
+                    <div className="pmeta">
+                      <span>{p.totalBlocks} Blöcke</span>
+                      <span>{p.percentage}% erledigt</span>
+                    </div>
+                    {p.percentage > 0 && (
+                      <div className="pbar"><i style={{ width: `${p.percentage}%` }}></i></div>
+                    )}
+                  </div>
+                </Link>
+              );
+            }
+
+            return (
+              <Link href={`/learner/courses/${course.id}`} className={`poster ${cardColor}`} key={course.id}>
+                <div className="top">
+                  <span className="no">№ {String(idx + 1).padStart(2, '0')}</span>
+                  <span className="tag">{course.category || "General"}</span>
+                </div>
+                <div className="ptitle">{course.title}</div>
+                <div className="pmeta mt-auto">
+                  <span>{p.totalBlocks} Blöcke</span>
+                  <span>{p.percentage}% erledigt</span>
+                </div>
+                {p.percentage > 0 ? (
+                  <div className="pbar"><i style={{ width: `${p.percentage}%` }}></i></div>
+                ) : (
+                  <div className="pmeta" style={{ marginTop: 14, opacity: .7 }}>
+                    <span>{course.targetGroup}</span>
+                  </div>
+                )}
+              </Link>
             );
           })}
         </div>
-        <p className="text-[10px] text-slate-400 italic">
-          * Competence levels are dynamically calculated based on your module completions, quiz performance, and reflections.
-        </p>
+      )}
+
+      {/* Daily Training Teaser */}
+      <div className="sec-head">
+        <h2>Tägliches Training</h2>
+        <span className="meta">DAILY TRAINING</span>
+      </div>
+      
+      <div className="pad">
+        <div className="lattice teaser-grid border border-line">
+          <div className="cell ink flex flex-col justify-between gap-6 p-6 min-h-[220px]">
+            <div className="eyebrow" style={{ color: "color-mix(in oklab, var(--paper) 70%, transparent)" }}>TRAINING WORKSHOP</div>
+            <h2 className="h-lg" style={{ fontSize: "clamp(24px, 3.4vw, 40px)", textTransform: "uppercase", lineHeight: 0.95 }}>
+              Drei Fragen.<br/>KI bewertet dich.
+            </h2>
+            <Link href="/learner/practice" className="btn coral self-start">
+              Training starten <I.arrow className="arrow" style={{ width: 18, height: 18 }} />
+            </Link>
+          </div>
+          
+          <div className="cell flex flex-col justify-center gap-4 p-6 bg-paper">
+            <div className="eyebrow">DIESE WOCHE</div>
+            <div className="flex gap-2.5 items-end h-24">
+              {[40, 65, 30, 80, 55, 90, 20].map((h, i) => (
+                <div 
+                  key={i} 
+                  className={`flex-1 rounded ${i === 5 ? "bg-coral" : "bg-paper-3"}`} 
+                  style={{ height: `${h}%` }}
+                ></div>
+              ))}
+            </div>
+            <div className="num" style={{ fontSize: 12, color: "var(--ink-2)" }}>MON — SON · 6 von 7 Tagen aktiv</div>
+          </div>
+        </div>
       </div>
 
-      {/* Courses Catalog */}
-      <div className="space-y-6">
-        <h3 className="text-xl font-heading font-bold text-slate-800">Published Learning Journeys</h3>
-        <CourseListClient courses={publishedCourses} role="learner" />
+      {/* GDPR Data Controls Panel */}
+      <div className="sec-head">
+        <h2>Datenschutz &amp; Privatsphäre</h2>
+        <span className="meta">GDPR MANAGEMENT</span>
       </div>
-
-      {/* GDPR Data controls */}
-      <GDPRControls reflections={reflections} completedBlocksCount={completedBlocksCount} />
+      <div className="pad">
+        <div className="cell border border-line bg-paper p-6">
+          <GDPRControls reflections={reflections} completedBlocksCount={completedBlocksTotal} />
+        </div>
+      </div>
     </div>
   );
 }

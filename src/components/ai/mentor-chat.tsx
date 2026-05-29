@@ -1,7 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { askMentorAction } from "@/app/actions/ai";
+import { AIglyph, I } from "@/components/layout/icons";
+
+const TOOLS = [
+  { id: "sum", name: "Zusammenfassen", desc: "3 Kernpunkte des Moduls" },
+  { id: "explain", name: "Erklären", desc: "Einfacher, mit Analogie" },
+  { id: "quiz", name: "Abfragen", desc: "Verständnistest starten" },
+  { id: "deeper", name: "Vertiefen", desc: "Experten-Blickwinkel" },
+];
 
 export function MentorChat({ 
   courseId, 
@@ -18,89 +26,146 @@ export function MentorChat({
     {
       role: 'mentor',
       text: moduleTitle 
-        ? `Hi! I'm Anka, your learning companion. I'm here to support you in the module "${moduleTitle}". I can see the current block you are working on, so feel free to ask me anything!`
-        : "Hi! I'm here to support your learning journey. I can see the block you are currently looking at, so feel free to ask me questions if you get stuck!"
+        ? `Hallo! Ich bin Anka, deine Lernbegleiterin. Ich unterstütze dich im Modul "${moduleTitle}". Ich kenne deinen aktuellen Lernfortschritt, frage mich also gerne alles!`
+        : "Hallo! Ich unterstütze dich bei deiner Lernreise. Ich kann sehen, woran du gerade arbeitest. Frag mich einfach, wenn du nicht weiterkommst!"
     }
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const feedRef = useRef<HTMLDivElement>(null);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
+  // Auto scroll to bottom
+  useEffect(() => {
+    if (feedRef.current) {
+      feedRef.current.scrollTop = feedRef.current.scrollHeight;
+    }
+  }, [messages, isLoading]);
 
-    const userText = input;
-    setMessages(prev => [...prev, { role: 'user', text: userText }]);
-    setInput("");
+  async function sendMessage(text: string) {
+    if (!text.trim() || isLoading) return;
+
+    setMessages(prev => [...prev, { role: 'user', text }]);
     setIsLoading(true);
 
     try {
       const response = await askMentorAction({
-        learnerMessage: userText,
+        learnerMessage: text,
         courseContext: courseId,
-        moduleContext: moduleId + (activeContext ? `\n\nCurrent Active Block Context:\n${activeContext}` : ''),
+        moduleContext: moduleId + (activeContext ? `\n\nAktueller aktiver Block:\n${activeContext}` : ''),
       });
 
+      const formattedAnswer = `${response.answer}${response.question ? `\n\n${response.question}` : ''}${response.nextStep ? `\n\n${response.nextStep}` : ''}`;
       setMessages(prev => [...prev, { 
         role: 'mentor', 
-        text: `${response.answer}\n\n${response.question || ''}\n\n${response.nextStep || ''}` 
+        text: formattedAnswer
       }]);
     } catch (error) {
-      setMessages(prev => [...prev, { role: 'mentor', text: "Sorry, I'm having trouble thinking right now. Please try again." }]);
+      setMessages(prev => [...prev, { role: 'mentor', text: "Entschuldigung, ich habe gerade Verbindungsschwierigkeiten. Bitte versuche es noch einmal." }]);
     } finally {
       setIsLoading(false);
     }
   }
 
+  const handleToolClick = (toolId: string) => {
+    let prompt = "";
+    if (toolId === "sum") prompt = "Fasse dieses Modul in 3 kurzen Punkten zusammen.";
+    else if (toolId === "explain") prompt = "Erkläre mir den Inhalt dieses Moduls einfacher und benutze eine verständliche Analogie.";
+    else if (toolId === "quiz") prompt = "Stelle mir eine kurze Verständnisfrage zum aktuellen Thema.";
+    else if (toolId === "deeper") prompt = "Gehe tiefer in das Thema des Moduls ein und erkläre mir einen fortgeschrittenen Aspekt.";
+    
+    sendMessage(prompt);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+    const text = input;
+    setInput("");
+    sendMessage(text);
+  };
+
   return (
-    <aside className="w-80 border-l border-slate-200 bg-white flex flex-col hidden lg:flex shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.05)] z-10 h-full">
-      <div className="p-6 border-b border-slate-100 flex items-center space-x-3">
-        <div className="w-10 h-10 bg-gradient-to-br from-royal-blue to-plum rounded-full flex items-center justify-center text-white font-bold shadow-inner">
-          A
-        </div>
+    <aside className="assistant w-full lg:w-auto border-l border-line bg-paper-2 flex flex-col hidden lg:flex h-full shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.03)] z-10">
+      {/* Assistant Head */}
+      <div className="asst-head p-5 border-b border-line flex items-center gap-3">
+        <AIglyph size={20} color="var(--blue)" />
         <div>
-          <h3 className="font-heading font-semibold text-slate-800 leading-tight">Anka AI</h3>
-          <p className="text-xs text-slate-500">Learning Companion</p>
+          <div className="ttl font-display font-extrabold text-sm text-ink uppercase tracking-wide">Anka AI</div>
+          <div className="sub font-mono text-[9px] text-ink-3">CONTEXT: LESSON PROGRESS</div>
         </div>
       </div>
-      
-      <div className="flex-1 p-6 overflow-y-auto bg-slate-50/50 space-y-4">
-        {messages.map((msg, i) => (
-          <div key={i} className={`p-4 rounded-xl shadow-sm border ${msg.role === 'mentor' ? 'bg-white border-slate-100 rounded-tl-none' : 'bg-royal-blue/10 border-royal-blue/20 text-slate-800 rounded-tr-none ml-8'}`}>
-            <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+
+      {/* Quick Tools */}
+      <div className="asst-tools grid grid-cols-2 gap-2 p-4 border-b border-line">
+        {TOOLS.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => handleToolClick(t.id)}
+            disabled={isLoading}
+            className="tool border border-line rounded-xl p-3 bg-paper text-left transition-all hover:border-ink hover:-translate-y-[1px] disabled:opacity-40"
+          >
+            <span className="tname block font-display font-bold text-xs text-ink">{t.name}</span>
+            <span className="tdesc block font-mono text-[9px] text-ink-3 mt-1 leading-tight">{t.desc}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Chat Messages Feed */}
+      <div className="asst-feed flex-1 overflow-y-auto p-4 flex flex-col gap-4" ref={feedRef}>
+        {messages.map((m, i) => (
+          <div key={i} className={`msg max-w-[88%] ${m.role === 'mentor' ? 'ai self-start' : 'me self-end'}`}>
+            <div className="who font-mono text-[9px] text-ink-3 mb-1.5 uppercase tracking-wider">
+              {m.role === 'mentor' ? 'ANKA AI' : 'ICH'}
+            </div>
+            <div 
+              className={`bubble p-4 text-xs leading-relaxed ${
+                m.role === 'mentor' 
+                  ? 'bg-paper border border-line rounded-2xl rounded-tl-none text-ink' 
+                  : 'bg-ink text-paper rounded-2xl rounded-tr-none'
+              }`}
+              style={{ whiteSpace: "pre-line" }}
+            >
+              {m.text}
+            </div>
           </div>
         ))}
         {isLoading && (
-          <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 rounded-tl-none mr-8">
-            <p className="text-sm text-slate-400 animate-pulse">Thinking...</p>
+          <div className="msg ai self-start">
+            <div className="who font-mono text-[9px] text-ink-3 mb-1.5 uppercase tracking-wider">ANKA AI</div>
+            <div className="bubble bg-paper border border-line rounded-2xl rounded-tl-none p-4">
+              <span className="thinking inline-flex gap-1.5 items-center">
+                <i className="w-1.5 h-1.5 rounded-full bg-ink-3 animate-bounce"></i>
+                <i className="w-1.5 h-1.5 rounded-full bg-ink-3 animate-bounce delay-150"></i>
+                <i className="w-1.5 h-1.5 rounded-full bg-ink-3 animate-bounce delay-300"></i>
+              </span>
+            </div>
           </div>
         )}
       </div>
-      
-      <div className="p-4 border-t border-slate-100 bg-white">
-        <form onSubmit={handleSubmit} className="relative">
-          <textarea 
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className="w-full p-3 pr-10 border border-slate-200 rounded-xl text-sm resize-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none transition-all"
-            rows={2}
-            placeholder="Ask a question or share a thought..."
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmit(e);
-              }
-            }}
-          />
-          <button 
-            type="submit" 
-            disabled={isLoading || !input.trim()}
-            className="absolute right-3 bottom-3 text-royal-blue hover:text-royal-blue/80 disabled:opacity-50"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-          </button>
-        </form>
-      </div>
+
+      {/* Chat Input Field */}
+      <form onSubmit={handleSubmit} className="asst-input p-4 border-t border-line flex gap-2.5 items-center bg-paper">
+        <input 
+          value={input} 
+          onChange={e => setInput(e.target.value)} 
+          disabled={isLoading}
+          onKeyDown={e => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmit(e);
+            }
+          }}
+          placeholder="Frag Anka..."
+          className="flex-1 border border-line rounded-xl px-4 py-3 outline-none bg-paper text-xs text-ink focus:border-ink placeholder-ink-3 transition-colors"
+        />
+        <button 
+          type="submit"
+          disabled={isLoading || !input.trim()}
+          className="send w-11 h-11 border-none rounded-xl bg-blue text-paper flex items-center justify-center transition-transform hover:-translate-y-[1px] disabled:opacity-50"
+        >
+          <I.send style={{ width: 18, height: 18 }} />
+        </button>
+      </form>
     </aside>
   );
 }
