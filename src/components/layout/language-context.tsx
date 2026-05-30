@@ -110,6 +110,15 @@ export const translations = {
 
     // Search placeholder
     "topbar.search": "Suchen oder fragen...",
+
+    // Trainer Studio
+    "trainer.title": "Trainer Studio",
+    "trainer.subtitle": "TRAINER STUDIO",
+    "trainer.workspace": "Studio Workspace",
+    "trainer.courses_total": "{count} KURSE INSGESAMT",
+    "trainer.hero_desc": "Entwirf intelligente, KI-gestützte Lernjourneys. Nutze den Curriculum-Wizard, um in Sekundenschnelle vollständige Module zu generieren.",
+    "trainer.paths_title": "Deine Lernpfade",
+    "trainer.paths_meta": "№ {count} KURSE",
   },
   en: {
     // Navigation
@@ -216,6 +225,15 @@ export const translations = {
 
     // Search placeholder
     "topbar.search": "Search or ask anything...",
+
+    // Trainer Studio
+    "trainer.title": "Trainer Studio",
+    "trainer.subtitle": "TRAINER STUDIO",
+    "trainer.workspace": "Studio Workspace",
+    "trainer.courses_total": "{count} COURSES TOTAL",
+    "trainer.hero_desc": "Design intelligent, AI-powered learning journeys. Use the curriculum wizard to generate complete modules in seconds.",
+    "trainer.paths_title": "Your Learning Paths",
+    "trainer.paths_meta": "№ {count} COURSES",
   }
 };
 
