@@ -1,7 +1,7 @@
 import { store } from "@/lib/store";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
-import { I, AIChip } from "@/components/layout/icons";
+import { I, AIChip } from "@/components/layout/static-icons";
 
 export const dynamic = 'force-dynamic';
 

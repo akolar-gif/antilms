@@ -2,7 +2,7 @@ import { store } from "@/lib/store";
 import Link from "next/link";
 import { Brain, Star, Clock, Trophy, Target, Sparkles, LogOut, ArrowRight } from "lucide-react";
 import { GDPRControls } from "@/components/learner/gdpr-controls";
-import { I, Mark, AIChip } from "@/components/layout/icons";
+import { I, Mark, AIChip } from "@/components/layout/static-icons";
 import { cookies } from "next/headers";
 import { translations } from "@/components/layout/translations";
 
