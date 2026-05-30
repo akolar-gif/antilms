@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { clearUserDataAction } from "@/app/actions/progress";
-import { ShieldAlert, Download, Trash2, CheckCircle2 } from "lucide-react";
+import { ShieldAlert, Download, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "@/components/layout/language-context";
 
 interface GDPRControlsProps {
   reflections: any[];
@@ -13,6 +14,7 @@ interface GDPRControlsProps {
 
 export function GDPRControls({ reflections, completedBlocksCount }: GDPRControlsProps) {
   const [isDeleting, setIsDeleting] = useState(false);
+  const { t } = useTranslation();
 
   const handleExport = () => {
     try {
@@ -32,22 +34,22 @@ export function GDPRControls({ reflections, completedBlocksCount }: GDPRControls
       linkElement.setAttribute('href', dataUri);
       linkElement.setAttribute('download', exportFileDefaultName);
       linkElement.click();
-      toast.success("Export successful! JSON data downloaded.");
+      toast.success(t("gdpr.export_success"));
     } catch (e) {
-      toast.error("Failed to export data");
+      toast.error(t("gdpr.export_failed"));
     }
   };
 
   const handleDelete = async () => {
-    if (confirm("🚨 WARNING: Are you sure you want to delete all your learning progress and reflections? This action is permanent and cannot be undone.")) {
+    if (confirm(t("gdpr.confirm_delete"))) {
       setIsDeleting(true);
-      const toastId = toast.loading("Clearing all user data...");
+      const toastId = toast.loading(t("gdpr.clearing_data"));
       try {
         await clearUserDataAction();
-        toast.success("All your progress and reflections have been deleted.", { id: toastId });
+        toast.success(t("gdpr.deleted_success"), { id: toastId });
         window.location.reload();
       } catch (error) {
-        toast.error("Failed to clear data", { id: toastId });
+        toast.error(t("gdpr.deleted_failed"), { id: toastId });
       } finally {
         setIsDeleting(false);
       }
@@ -58,11 +60,10 @@ export function GDPRControls({ reflections, completedBlocksCount }: GDPRControls
     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mt-12">
       <div className="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
         <ShieldAlert className="w-5 h-5 text-slate-500" />
-        <h3 className="font-heading font-bold text-slate-800 text-lg">Privacy & GDPR Data Management</h3>
+        <h3 className="font-heading font-bold text-slate-800 text-lg">{t("gdpr.title")}</h3>
       </div>
       <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-        We respect your privacy. Under GDPR/DSGVO, you have the right to access and erase your personal data. 
-        Your data consists of completed course blocks, submitted reflections, and Anka AI mentor logs.
+        {t("gdpr.desc")}
       </p>
       
       <div className="flex flex-wrap gap-4">
@@ -71,7 +72,7 @@ export function GDPRControls({ reflections, completedBlocksCount }: GDPRControls
           onClick={handleExport}
           className="text-slate-700 hover:text-royal-blue border-slate-200 hover:bg-royal-blue/5 gap-2 text-xs"
         >
-          <Download className="w-4 h-4" /> Export My Learning Data
+          <Download className="w-4 h-4" /> {t("gdpr.export_btn")}
         </Button>
         <Button 
           variant="ghost" 
@@ -79,7 +80,7 @@ export function GDPRControls({ reflections, completedBlocksCount }: GDPRControls
           disabled={isDeleting}
           className="text-red-500 hover:text-red-600 hover:bg-red-50 gap-2 text-xs"
         >
-          <Trash2 className="w-4 h-4" /> Delete All My Progress
+          <Trash2 className="w-4 h-4" /> {t("gdpr.delete_btn")}
         </Button>
       </div>
     </div>

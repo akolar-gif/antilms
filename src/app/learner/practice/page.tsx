@@ -1,4 +1,5 @@
 import { store } from "@/lib/store";
+import { cookies } from "next/headers";
 import { LearnerPracticeClient } from "./practice-client";
 
 export const dynamic = 'force-dynamic';
@@ -6,6 +7,9 @@ export const dynamic = 'force-dynamic';
 export default async function LearnerPracticePage() {
   const courses = await store.getCourses();
   const publishedCourses = courses.filter(c => c.status === "published");
+
+  const cookieStore = await cookies();
+  const lang = (cookieStore.get("lang")?.value || "de") as "de" | "en";
 
   // Fetch all quiz blocks in published courses
   const quizzes = [];
@@ -24,8 +28,10 @@ export default async function LearnerPracticePage() {
             q: data.question,
             opts: data.options,
             correct: data.options.indexOf(data.correctAnswer) !== -1 ? data.options.indexOf(data.correctAnswer) : 0,
-            fb: data.explanation || "Gut gemacht! Das ist die richtige Antwort.",
-            fbWrong: `Leider nicht ganz. Die richtige Antwort ist: <b>${data.correctAnswer}</b>. ${data.explanation || ""}`
+            fb: data.explanation || (lang === "en" ? "Well done! That is the correct answer." : "Gut gemacht! Das ist die richtige Antwort."),
+            fbWrong: lang === "en"
+              ? `Not quite right. The correct answer is: <b>${data.correctAnswer}</b>. ${data.explanation || ""}`
+              : `Leider nicht ganz. Die richtige Antwort ist: <b>${data.correctAnswer}</b>. ${data.explanation || ""}`
           });
         } catch (e) {
           // ignore corrupted json
@@ -35,7 +41,7 @@ export default async function LearnerPracticePage() {
   }
 
   // Fallback default questions if database has no quizzes yet
-  const fallbacks = [
+  const fallbacksDe = [
     {
       id: "fb-1",
       q: "Was ist der Hauptunterschied zwischen einer Kopie und einem Remix im kreativen Schaffen?",
@@ -74,7 +80,46 @@ export default async function LearnerPracticePage() {
     }
   ];
 
-  const activeQuizzes = quizzes.length > 0 ? quizzes : fallbacks;
+  const fallbacksEn = [
+    {
+      id: "fb-1",
+      q: "What is the primary difference between a copy and a remix in creative work?",
+      opts: [
+        "A remix changes the surface while keeping the core structure, whereas a copy replicates it one-to-one.",
+        "A copy is illegal, a remix is always legal.",
+        "A remix recombines existing parts and transforms them to create something new."
+      ],
+      correct: 2,
+      fb: "Correct! A remix takes existing parts, rearranges them, and adds a transformation, resulting in a new creative work.",
+      fbWrong: "Not quite. A remix is characterized by the **combinatorial rearrangement and transformation** of existing elements."
+    },
+    {
+      id: "fb-2",
+      q: "How can mentor questions be optimally enriched using AI?",
+      opts: [
+        "By sending the entire user profile.",
+        "By automatically sending the current module context and learning progress.",
+        "By forcing the user to type long questions."
+      ],
+      correct: 1,
+      fb: "Correct! The AI answers much more precisely when it knows which course, module, and concrete block the learner is working on.",
+      fbWrong: "Not quite. The key lies in **automatic context enrichment** (course, module, block, and status)."
+    },
+    {
+      id: "fb-3",
+      q: "What goal does a 'Project Task' block pursue in project-based learning?",
+      opts: [
+        "Pure memorization of terms.",
+        "Practical application of concepts followed by a deliverable submission and reflection.",
+        "Watching instructional videos without interaction."
+      ],
+      correct: 1,
+      fb: "Excellent! A Project Task requires active application and deepens understanding through structured post-submission reflection.",
+      fbWrong: "Unfortunately incorrect. Project Tasks aim for **practical application and subsequent reflection**."
+    }
+  ];
+
+  const activeQuizzes = quizzes.length > 0 ? quizzes : (lang === "en" ? fallbacksEn : fallbacksDe);
 
   return (
     <LearnerPracticeClient initialQuizzes={activeQuizzes} />

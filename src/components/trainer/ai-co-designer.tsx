@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { LearningBlock } from "@/types";
 import { motion } from "framer-motion";
 import { askCoDesignerAction } from "@/app/actions/ai";
+import { useTranslation } from "@/components/layout/language-context";
 
 interface AICoDesignerProps {
   courseTitle: string;
@@ -27,6 +28,7 @@ export function AICoDesigner({ courseTitle, moduleTitle, moduleDescription, bloc
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -62,7 +64,7 @@ export function AICoDesigner({ courseTitle, moduleTitle, moduleDescription, bloc
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: "I'm sorry, I ran into an error while trying to process that."
+        content: t("codesigner.error")
       }]);
     } finally {
       setIsLoading(false);
@@ -73,7 +75,7 @@ export function AICoDesigner({ courseTitle, moduleTitle, moduleDescription, bloc
     <aside className="w-80 border-l border-slate-200 bg-white flex flex-col h-full shrink-0">
       <div className="p-4 border-b border-slate-200 bg-emerald-green/5 flex items-center gap-2">
         <Sparkles className="w-5 h-5 text-emerald-green" />
-        <h3 className="font-heading font-semibold text-slate-800">AI Co-Designer</h3>
+        <h3 className="font-heading font-semibold text-slate-800">{t("codesigner.title")}</h3>
       </div>
       
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -81,7 +83,7 @@ export function AICoDesigner({ courseTitle, moduleTitle, moduleDescription, bloc
           <div className="text-center p-6 mt-4">
             <Bot className="w-12 h-12 text-slate-300 mx-auto mb-3" />
             <p className="text-sm text-slate-500">
-              I'm your AI Co-Designer! Ask me for brainstorming ideas, block rewriting, or structure suggestions based on your module's context. I can even create blocks for you!
+              {t("codesigner.greeting")}
             </p>
           </div>
         ) : (
@@ -93,7 +95,7 @@ export function AICoDesigner({ courseTitle, moduleTitle, moduleDescription, bloc
               className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}
             >
               <span className={`text-xs font-semibold mb-1 ${m.role === 'user' ? 'text-royal-blue' : 'text-emerald-green'}`}>
-                {m.role === 'user' ? 'You' : 'Co-Designer'}
+                {m.role === 'user' ? t("codesigner.you") : t("codesigner.name")}
               </span>
               <div 
                 className={`p-3 rounded-xl max-w-[90%] text-sm whitespace-pre-wrap shadow-sm ${
@@ -120,7 +122,7 @@ export function AICoDesigner({ courseTitle, moduleTitle, moduleDescription, bloc
                         className="w-full text-xs h-7 border-emerald-green/30 text-emerald-green hover:bg-emerald-green/5"
                         onClick={() => onAddBlock(m.proposedBlock)}
                       >
-                        <Plus className="w-3 h-3 mr-1" /> Add to Module
+                        <Plus className="w-3 h-3 mr-1" /> {t("codesigner.add_btn")}
                       </Button>
                     )}
                   </div>
@@ -131,7 +133,7 @@ export function AICoDesigner({ courseTitle, moduleTitle, moduleDescription, bloc
         )}
         {isLoading && (
           <div className="flex items-center gap-2 text-slate-400 text-sm p-2">
-            <Loader2 className="w-4 h-4 animate-spin" /> Thinking...
+            <Loader2 className="w-4 h-4 animate-spin" /> {t("codesigner.thinking")}
           </div>
         )}
         <div ref={messagesEndRef} />
@@ -142,7 +144,7 @@ export function AICoDesigner({ courseTitle, moduleTitle, moduleDescription, bloc
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask to create a block..."
+            placeholder={t("codesigner.placeholder")}
             className="w-full p-3 pr-12 border border-slate-300 rounded-xl outline-none focus:border-emerald-green focus:ring-1 focus:ring-emerald-green resize-none text-sm bg-slate-50 transition-all"
             rows={2}
             onKeyDown={(e) => {

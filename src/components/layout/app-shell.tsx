@@ -113,7 +113,11 @@ export function AppShell({
 
         {/* Language Switcher Toggle */}
         <button
-          onClick={() => setLanguage(language === "de" ? "en" : "de")}
+          onClick={() => {
+            const nextLang = language === "de" ? "en" : "de";
+            setLanguage(nextLang);
+            router.refresh();
+          }}
           className="w-11 h-11 mb-4 rounded-xl flex flex-col items-center justify-center font-mono font-bold border border-line-soft hover:bg-paper-3 transition-colors cursor-pointer text-ink text-[11px] leading-tight select-none"
           title={language === "de" ? "Switch to English" : "Auf Deutsch umstellen"}
         >
@@ -280,7 +284,10 @@ export function AppShell({
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <button
-                    onClick={() => setLanguage("de")}
+                    onClick={() => {
+                      setLanguage("de");
+                      router.refresh();
+                    }}
                     className={`p-3 rounded-xl border border-line text-xs font-semibold ${
                       language === "de" ? "bg-ink text-paper" : "bg-paper text-ink"
                     }`}
@@ -288,7 +295,10 @@ export function AppShell({
                     Deutsch
                   </button>
                   <button
-                    onClick={() => setLanguage("en")}
+                    onClick={() => {
+                      setLanguage("en");
+                      router.refresh();
+                    }}
                     className={`p-3 rounded-xl border border-line text-xs font-semibold ${
                       language === "en" ? "bg-ink text-paper" : "bg-paper text-ink"
                     }`}

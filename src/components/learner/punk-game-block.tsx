@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Send, Users, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { useTranslation } from "@/components/layout/language-context";
 
 export function PunkGameBlock({ block }: { block: LearningBlock }) {
   const [solution, setSolution] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const { t } = useTranslation();
 
   let data = { scenario: "", task: "", timeboxMinutes: 0, evaluationCriteria: [] };
   try {
@@ -44,7 +46,7 @@ export function PunkGameBlock({ block }: { block: LearningBlock }) {
   const handleSubmit = () => {
     if (!solution.trim()) return;
     setIsSubmitted(true);
-    toast.success("Solution submitted for Peer Review!");
+    toast.success(t("punk.toast_success"));
   };
 
   const isTimeUp = timeLeft === 0;
@@ -63,9 +65,9 @@ export function PunkGameBlock({ block }: { block: LearningBlock }) {
         <div className="p-4 bg-emerald-green/5 border-b border-emerald-green/10 flex items-center justify-between">
           <div className="flex items-center space-x-2 text-emerald-green">
             <Users className="w-5 h-5" />
-            <span className="font-semibold text-sm uppercase tracking-wider">Peer Challenge</span>
+            <span className="font-semibold text-sm uppercase tracking-wider">{t("punk.badge")}</span>
           </div>
-          <span className="text-xs font-medium text-emerald-green/70 bg-emerald-green/10 px-2 py-1 rounded-full">Practical Challenge</span>
+          <span className="text-xs font-medium text-emerald-green/70 bg-emerald-green/10 px-2 py-1 rounded-full">{t("punk.subbadge")}</span>
         </div>
         
         <div className="p-6">
@@ -78,23 +80,23 @@ export function PunkGameBlock({ block }: { block: LearningBlock }) {
                   : 'text-orange-500 bg-orange-50 border-orange-100'
             }`}>
               <Clock className="w-4 h-4" />
-              <span>TIME LEFT: {formatTime(timeLeft)}</span>
+              <span>{t("punk.time_left", { time: formatTime(timeLeft) })}</span>
             </div>
           )}
 
           <div className="mb-6 space-y-4">
             <div>
-              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Scenario</h4>
+              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{t("punk.scenario")}</h4>
               <p className="text-slate-700 text-sm">{data.scenario}</p>
             </div>
             <div>
-              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Your Task</h4>
+              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{t("punk.task")}</h4>
               <p className="text-slate-900 font-medium">{data.task}</p>
             </div>
           </div>
 
           <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 mb-6">
-            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Evaluation Criteria</h4>
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">{t("punk.criteria")}</h4>
             <ul className="space-y-2">
               {(data.evaluationCriteria || []).map((criteria: string, idx: number) => (
                 <li key={idx} className="flex items-start text-sm text-slate-600">
@@ -107,11 +109,11 @@ export function PunkGameBlock({ block }: { block: LearningBlock }) {
 
           {!isSubmitted ? (
             <div className="space-y-3">
-              <label className="text-sm font-semibold text-slate-700">Write your solution</label>
+              <label className="text-sm font-semibold text-slate-700">{t("punk.solution_label")}</label>
               <textarea
                 value={solution}
                 onChange={(e) => setSolution(e.target.value)}
-                placeholder={isTimeUp ? "Time's up! You can no longer submit a solution." : "How would you solve this challenge?"}
+                placeholder={isTimeUp ? t("punk.time_up_placeholder") : t("punk.solution_placeholder")}
                 disabled={isTimeUp}
                 rows={4}
                 className={`w-full p-3 border rounded-xl outline-none text-sm resize-y transition-colors ${
@@ -130,7 +132,7 @@ export function PunkGameBlock({ block }: { block: LearningBlock }) {
                       : "bg-emerald-green hover:bg-emerald-green/90 text-white"
                   }`}
                 >
-                  <Send className="w-4 h-4 mr-2" /> {isTimeUp ? "Time's Up" : "Submit for Peer Review"}
+                  <Send className="w-4 h-4 mr-2" /> {isTimeUp ? t("punk.time_up_btn") : t("punk.submit_btn")}
                 </Button>
               </div>
             </div>
@@ -141,8 +143,8 @@ export function PunkGameBlock({ block }: { block: LearningBlock }) {
               className="bg-emerald-green/10 text-emerald-green p-4 rounded-xl border border-emerald-green/20 flex flex-col items-center justify-center text-center space-y-2"
             >
               <Users className="w-8 h-8 opacity-80" />
-              <h4 className="font-semibold">Solution Submitted!</h4>
-              <p className="text-sm opacity-90">Your solution has been sent to your peers for review. You can now continue with the module.</p>
+              <h4 className="font-semibold">{t("punk.submitted_title")}</h4>
+              <p className="text-sm opacity-90">{t("punk.submitted_desc")}</p>
             </motion.div>
           )}
         </div>

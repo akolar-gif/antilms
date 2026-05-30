@@ -6,6 +6,7 @@ import { Sparkles, Plus, X, Wand2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "@/components/layout/language-context";
 
 export function SidebarModuleActions({ courseId }: { courseId: string }) {
   const router = useRouter();
@@ -13,38 +14,39 @@ export function SidebarModuleActions({ courseId }: { courseId: string }) {
   const [isLoading, setIsLoading] = useState(false);
   const [topic, setTopic] = useState("");
   const [description, setDescription] = useState("");
+  const { t } = useTranslation();
 
   const handleAddManual = async () => {
-    const toastId = toast.loading("Füge leeres Modul hinzu...");
+    const toastId = toast.loading(t("module_actions.toast_adding"));
     try {
       await addModuleAction(courseId);
-      toast.success("Modul hinzugefügt!", { id: toastId });
+      toast.success(t("module_actions.toast_added"), { id: toastId });
     } catch (error) {
       console.error(error);
-      toast.error("Hinzufügen fehlgeschlagen", { id: toastId });
+      toast.error(t("module_actions.toast_add_failed"), { id: toastId });
     }
   };
 
   const handleGenerateModule = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!topic || !description) {
-      toast.error("Thema und Fokus sind erforderlich.");
+      toast.error(t("module_actions.toast_required"));
       return;
     }
 
     setIsLoading(true);
-    const toastId = toast.loading("Anka AI entwirft dein Modul und die Lernblöcke...");
+    const toastId = toast.loading(t("module_actions.toast_generating"));
 
     try {
       const result = await generateModuleAction(courseId, topic, description);
-      toast.success("Modul erfolgreich generiert!", { id: toastId });
+      toast.success(t("module_actions.toast_gen_success"), { id: toastId });
       setIsOpen(false);
       setTopic("");
       setDescription("");
       router.push(`/trainer/courses/${courseId}/modules/${result.moduleId}`);
     } catch (error) {
       console.error(error);
-      toast.error("AI-Generierung fehlgeschlagen. Bitte erneut versuchen.", { id: toastId });
+      toast.error(t("module_actions.toast_gen_failed"), { id: toastId });
     } finally {
       setIsLoading(false);
     }
@@ -58,7 +60,7 @@ export function SidebarModuleActions({ courseId }: { courseId: string }) {
         style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "10px 14px", fontSize: "12px", fontFamily: "var(--f-mono)", textTransform: "uppercase" }}
       >
         <Plus className="w-3.5 h-3.5" />
-        Leeres Modul
+        {t("module_actions.empty_module")}
       </button>
 
       <button 
@@ -67,7 +69,7 @@ export function SidebarModuleActions({ courseId }: { courseId: string }) {
         style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "10px 14px", fontSize: "12px", fontFamily: "var(--f-mono)", textTransform: "uppercase" }}
       >
         <Sparkles className="w-3.5 h-3.5 text-yellow-200 animate-pulse" />
-        AI Modul
+        {t("module_actions.ai_module")}
       </button>
 
       {/* Generation Dialog */}
@@ -91,14 +93,14 @@ export function SidebarModuleActions({ courseId }: { courseId: string }) {
               </button>
 
               <div>
-                <span className="eyebrow" style={{ color: "var(--blue)" }}>ANKA AI DESIGNER</span>
-                <h3 className="display" style={{ fontSize: 24, marginTop: 4 }}>Modul generieren</h3>
+                <span className="eyebrow" style={{ color: "var(--blue)" }}>{t("module_actions.designer_title")}</span>
+                <h3 className="display" style={{ fontSize: 24, marginTop: 4 }}>{t("module_actions.generate_module")}</h3>
               </div>
 
               <form onSubmit={handleGenerateModule} className="flex flex-col gap-4">
                 <div>
                   <label htmlFor="modal-topic" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">
-                    Modul-Thema / Titel
+                    {t("module_actions.topic_label")}
                   </label>
                   <input
                     type="text"
@@ -107,7 +109,7 @@ export function SidebarModuleActions({ courseId }: { courseId: string }) {
                     onChange={(e) => setTopic(e.target.value)}
                     required
                     disabled={isLoading}
-                    placeholder="z.B. Scrum Rollen: Der Product Owner"
+                    placeholder={t("module_actions.topic_placeholder")}
                     className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all"
                     style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
                   />
@@ -115,7 +117,7 @@ export function SidebarModuleActions({ courseId }: { courseId: string }) {
 
                 <div>
                   <label htmlFor="modal-desc" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">
-                    Fokus & Lernziele
+                    {t("module_actions.focus_label")}
                   </label>
                   <textarea
                     id="modal-desc"
@@ -124,7 +126,7 @@ export function SidebarModuleActions({ courseId }: { courseId: string }) {
                     required
                     disabled={isLoading}
                     rows={3}
-                    placeholder="Beschreibe, was die Lernenden in diesem Modul verstehen oder umsetzen können sollen..."
+                    placeholder={t("module_actions.focus_placeholder")}
                     className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all resize-none"
                     style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
                   />
@@ -137,7 +139,7 @@ export function SidebarModuleActions({ courseId }: { courseId: string }) {
                     disabled={isLoading}
                     className="btn ghost"
                   >
-                    Abbrechen
+                    {t("module_actions.cancel")}
                   </button>
                   <button 
                     type="submit" 
@@ -146,7 +148,7 @@ export function SidebarModuleActions({ courseId }: { courseId: string }) {
                     style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
                   >
                     <Wand2 className="w-4 h-4" />
-                    {isLoading ? "Generiere..." : "Generieren"}
+                    {isLoading ? t("module_actions.generating") : t("module_actions.generate")}
                   </button>
                 </div>
               </form>

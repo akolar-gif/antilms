@@ -1,15 +1,31 @@
+import { cookies } from "next/headers";
+import { translations } from "@/components/layout/translations";
+
 export const dynamic = 'force-dynamic';
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const cookieStore = await cookies();
+  const lang = (cookieStore.get("lang")?.value || "de") as "de" | "en";
+  const dict = translations[lang] || translations.de;
+  const t = (key: keyof typeof translations.de, params?: Record<string, string>) => {
+    let text = dict[key] || translations.de[key] || String(key);
+    if (params) {
+      Object.entries(params).forEach(([k, v]) => {
+        text = text.replace(`{${k}}`, v);
+      });
+    }
+    return text;
+  };
+
   return (
     <div className="screen">
       {/* TopBar Header */}
       <header className="topbar">
         <div className="tb-left">
           <div>
-            <div className="eyebrow">ADMIN PORTAL</div>
+            <div className="eyebrow">{t("admin.eyebrow")}</div>
             <div style={{ fontFamily: "var(--f-display)", fontWeight: 800, fontSize: 18, marginTop: 2, textTransform: "uppercase", letterSpacing: "-.01em" }}>
-              Development Signals
+              {t("admin.title")}
             </div>
           </div>
         </div>
@@ -19,11 +35,11 @@ export default function AdminPage() {
       <div className="lattice" style={{ gridTemplateColumns: "1fr" }}>
         <div className="cell">
           <div className="eyebrow" style={{ marginBottom: 14 }}>
-            SYSTEM TELEMETRY
+            {t("admin.telemetry")}
           </div>
-          <h1 className="display" style={{ fontSize: "clamp(36px, 5vw, 72px)" }}>Development Signals</h1>
+          <h1 className="display" style={{ fontSize: "clamp(36px, 5vw, 72px)" }}>{t("admin.title")}</h1>
           <p className="lede" style={{ maxWidth: 560, marginTop: 18 }}>
-            Verstehe, wo Lernende auf Hindernisse stoßen, sich weiterentwickeln und zusammenarbeiten. Echtzeit-Friction-Daten und Kompetenz-Signale.
+            {t("admin.desc")}
           </p>
         </div>
       </div>
@@ -35,19 +51,23 @@ export default function AdminPage() {
           <span className="corner-no">№ 01</span>
           <div>
             <span className="eyebrow" style={{ color: "var(--coral-d)" }}>DIFFICULT CONCEPTS</span>
-            <h3 style={{ fontFamily: "var(--f-display)", fontWeight: 800, fontSize: 24, marginTop: 6, textTransform: "uppercase" }}>Uncertainty Clusters</h3>
+            <h3 style={{ fontFamily: "var(--f-display)", fontWeight: 800, fontSize: 24, marginTop: 6, textTransform: "uppercase" }}>{t("admin.uncertainty_clusters")}</h3>
           </div>
           <p className="text-sm text-ink-2" style={{ lineHeight: 1.4 }}>
-            Themenbereiche, die die meisten Rückfragen an den AI-Mentor auslösen und Lernschwierigkeiten aufzeigen:
+            {t("admin.uncertainty_desc")}
           </p>
           <div className="flex flex-col gap-2 mt-auto">
             <div className="flex justify-between items-center p-3 rounded-xl border border-line" style={{ background: "var(--paper-2)" }}>
               <span className="font-bold text-ink">"Root Cause Analysis"</span>
-              <span className="text-[10px] tracking-wider uppercase font-bold px-2 py-0.5 bg-coral/20 text-coral-d rounded border border-coral/30">High Friction</span>
+              <span className="text-[10px] tracking-wider uppercase font-bold px-2 py-0.5 bg-coral/20 text-coral-d rounded border border-coral/30">
+                {lang === "de" ? "Hohe Reibung" : "High Friction"}
+              </span>
             </div>
             <div className="flex justify-between items-center p-3 rounded-xl border border-line" style={{ background: "var(--paper-2)" }}>
-              <span className="font-bold text-ink">"Agile Schätzungen"</span>
-              <span className="text-[10px] tracking-wider uppercase font-bold px-2 py-0.5 bg-blue/20 text-blue-d rounded border border-blue/30">Moderate</span>
+              <span className="font-bold text-ink">{lang === "de" ? "\"Agile Schätzungen\"" : "\"Agile Estimations\""}</span>
+              <span className="text-[10px] tracking-wider uppercase font-bold px-2 py-0.5 bg-blue/20 text-blue-d rounded border border-blue/30">
+                {lang === "de" ? "Moderat" : "Moderate"}
+              </span>
             </div>
           </div>
         </div>
@@ -57,10 +77,10 @@ export default function AdminPage() {
           <span className="corner-no">№ 02</span>
           <div>
             <span className="eyebrow" style={{ color: "var(--blue-d)" }}>COHORT ANALYSIS</span>
-            <h3 style={{ fontFamily: "var(--f-display)", fontWeight: 800, fontSize: 24, marginTop: 6, textTransform: "uppercase" }}>Reflection Depth</h3>
+            <h3 style={{ fontFamily: "var(--f-display)", fontWeight: 800, fontSize: 24, marginTop: 6, textTransform: "uppercase" }}>{t("admin.reflection_depth")}</h3>
           </div>
           <p className="text-sm text-ink-2" style={{ lineHeight: 1.4 }}>
-            Durchschnittliche Tiefe und Differenzierung der verfassten Selbstreflexionen im Kursverlauf:
+            {t("admin.reflection_desc")}
           </p>
           
           <div className="mt-auto h-28 flex items-end justify-between gap-2.5 p-4 border border-line rounded-2xl animate-reveal" style={{ background: "var(--paper-2)" }}>
@@ -76,17 +96,17 @@ export default function AdminPage() {
           <span className="corner-no">№ 03</span>
           <div>
             <span className="eyebrow" style={{ color: "var(--ink-3)" }}>FUTURE SKILLS</span>
-            <h3 style={{ fontFamily: "var(--f-display)", fontWeight: 800, fontSize: 24, marginTop: 6, textTransform: "uppercase" }}>Competence Signals</h3>
+            <h3 style={{ fontFamily: "var(--f-display)", fontWeight: 800, fontSize: 24, marginTop: 6, textTransform: "uppercase" }}>{t("admin.competence_signals")}</h3>
           </div>
           <p className="text-sm text-ink-2" style={{ lineHeight: 1.4 }}>
-            Entwicklung von Zukunftsfähigkeiten basierend auf Projekt-Abgaben und reflektiven Texten:
+            {t("admin.competence_desc")}
           </p>
           
           <div className="flex flex-col gap-4 mt-auto">
             <div className="flex flex-col gap-1.5">
               <div className="flex justify-between text-xs font-mono uppercase tracking-wider text-ink-3">
-                <span>Critical Thinking</span>
-                <span>78% active</span>
+                <span>{lang === "de" ? "Kritisches Denken" : "Critical Thinking"}</span>
+                <span>{t("admin.active", { percentage: "78" })}</span>
               </div>
               <div className="w-full bg-line rounded-full h-1.5 overflow-hidden">
                 <div className="bg-ink h-full rounded-full" style={{ width: "78%" }}></div>
@@ -94,8 +114,8 @@ export default function AdminPage() {
             </div>
             <div className="flex flex-col gap-1.5">
               <div className="flex justify-between text-xs font-mono uppercase tracking-wider text-ink-3">
-                <span>Complex Problem Solving</span>
-                <span>45% active</span>
+                <span>{lang === "de" ? "Komplexe Problemlösung" : "Complex Problem Solving"}</span>
+                <span>{t("admin.active", { percentage: "45" })}</span>
               </div>
               <div className="w-full bg-line rounded-full h-1.5 overflow-hidden">
                 <div className="bg-ink h-full rounded-full" style={{ width: "45%" }}></div>

@@ -15,22 +15,43 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("de");
+export function LanguageProvider({ 
+  children,
+  initialLanguage = "de"
+}: { 
+  children: React.ReactNode;
+  initialLanguage?: Language;
+}) {
+  const [language, setLanguageState] = useState<Language>(initialLanguage);
 
-  // Load language from localStorage/cookie on mount
   useEffect(() => {
     const savedLang = localStorage.getItem("lang") as Language;
+    const cookieLang = typeof document !== "undefined" 
+      ? document.cookie.split("; ").find(row => row.startsWith("lang="))?.split("=")[1] as Language
+      : undefined;
+    
+    let detectedLang: Language = "de";
     if (savedLang === "de" || savedLang === "en") {
-      setLanguageState(savedLang);
+      detectedLang = savedLang;
+    } else if (cookieLang === "de" || cookieLang === "en") {
+      detectedLang = cookieLang;
     } else {
-      // Try to detect browser language
-      const browserLang = navigator.language.slice(0, 2).toLowerCase();
-      if (browserLang === "en") {
-        setLanguageState("en");
-      }
+      const browserLang = typeof navigator !== "undefined"
+        ? navigator.language.slice(0, 2).toLowerCase()
+        : "de";
+      detectedLang = browserLang === "en" ? "en" : "de";
     }
-  }, []);
+
+    if (detectedLang !== initialLanguage) {
+      localStorage.setItem("lang", detectedLang);
+      document.cookie = `lang=${detectedLang}; path=/; max-age=31536000; SameSite=Lax`;
+      window.location.reload();
+    } else {
+      localStorage.setItem("lang", initialLanguage);
+      document.cookie = `lang=${initialLanguage}; path=/; max-age=31536000; SameSite=Lax`;
+      setLanguageState(initialLanguage);
+    }
+  }, [initialLanguage]);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);

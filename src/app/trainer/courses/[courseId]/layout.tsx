@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SidebarModules } from "@/components/trainer/sidebar-modules";
 import { SidebarModuleActions } from "@/components/trainer/sidebar-actions";
+import { cookies } from "next/headers";
+import { translations } from "@/components/layout/translations";
 
 export const dynamic = 'force-dynamic';
 import { publishCourseAction } from "@/app/actions/course";
@@ -23,13 +25,30 @@ export default async function CourseEditorLayout({
 
   const modules = await store.getModules(courseId);
 
+  const cookieStore = await cookies();
+  const lang = (cookieStore.get("lang")?.value || "de") as "de" | "en";
+  const dict = translations[lang] || translations.de;
+  const t = (key: keyof typeof translations.de, params?: Record<string, string>) => {
+    let text = dict[key] || translations.de[key] || String(key);
+    if (params) {
+      Object.entries(params).forEach(([k, v]) => {
+        text = text.replace(`{${k}}`, v);
+      });
+    }
+    return text;
+  };
+
+  const statusLabel = course.status === 'published' 
+    ? (lang === 'en' ? 'PUBLISHED' : 'VERÖFFENTLICHT') 
+    : (lang === 'en' ? 'DRAFT' : 'ENTWURF');
+
   return (
     <div className="flex h-[calc(100vh-4rem)]" style={{ background: "var(--paper)" }}>
       {/* Left Sidebar: Course Structure */}
       <aside className="w-64 flex flex-col h-full" style={{ background: "var(--paper-2)", borderRight: "1.5px solid var(--line)" }}>
         <div className="p-5" style={{ borderBottom: "1.5px solid var(--line)" }}>
           <Link href="/trainer" className="text-xs font-mono uppercase tracking-wider text-ink-3 hover:text-blue mb-4 inline-block">
-            ← Zur Übersicht
+            {t("trainer.back_to_overview")}
           </Link>
           <div className="flex justify-between items-start mb-3">
             <h2 style={{ fontFamily: "var(--f-display)", fontWeight: 800, fontSize: 16, textTransform: "uppercase", lineHeight: 1.2 }} className="text-ink line-clamp-2 pr-2">
@@ -38,12 +57,12 @@ export default async function CourseEditorLayout({
           </div>
           <div className="flex items-center justify-between mt-2">
             <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-line-soft uppercase" style={{ color: course.status === 'published' ? 'var(--blue)' : 'var(--ink-2)', background: course.status === 'published' ? 'color-mix(in oklab, var(--blue) 12%, transparent)' : 'var(--paper-3)' }}>
-              {course.status}
+              {statusLabel}
             </span>
             {course.status !== "published" && (
               <form action={publishCourseAction.bind(null, course.id)}>
                 <button type="submit" className="text-xs font-mono font-bold text-blue hover:underline bg-transparent border-none cursor-pointer">
-                  Veröffentlichen
+                  {t("trainer.publish")}
                 </button>
               </form>
             )}
@@ -56,11 +75,11 @@ export default async function CourseEditorLayout({
             className="block p-3 rounded-xl border border-line text-xs font-mono uppercase tracking-wider text-center text-ink hover:bg-paper-3 transition-colors"
             style={{ background: "var(--paper)" }}
           >
-            ⚙️ Einstellungen
+            {t("trainer.settings")}
           </Link>
 
           <div>
-            <div className="text-xs font-mono uppercase tracking-widest text-ink-3 mb-3">Module</div>
+            <div className="text-xs font-mono uppercase tracking-widest text-ink-3 mb-3">{t("trainer.modules_title")}</div>
             <SidebarModules courseId={course.id} modules={modules} />
             <SidebarModuleActions courseId={course.id} />
           </div>

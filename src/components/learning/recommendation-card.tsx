@@ -1,7 +1,10 @@
+"use client";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Recommendation } from "@/lib/learning/adaptive-engine";
 import { Sparkles, ArrowRight } from "lucide-react";
+import { useTranslation } from "@/components/layout/language-context";
 
 interface RecommendationCardProps {
   recommendation: Recommendation | null;
@@ -9,6 +12,8 @@ interface RecommendationCardProps {
 }
 
 export function RecommendationCard({ recommendation, onExecuteAction }: RecommendationCardProps) {
+  const { t } = useTranslation();
+
   if (!recommendation) return null;
 
   const emojiMap = {
@@ -50,7 +55,7 @@ export function RecommendationCard({ recommendation, onExecuteAction }: Recommen
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-white shadow-sm flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-emerald-green fill-emerald-green" /> Adaptive Signal
+                <Sparkles className="w-3 h-3 text-emerald-green fill-emerald-green" /> {t("recommendation.adaptive_signal")}
               </span>
             </div>
             <h4 className="font-heading font-bold text-slate-800 text-lg mb-1">
@@ -61,7 +66,7 @@ export function RecommendationCard({ recommendation, onExecuteAction }: Recommen
             </p>
             
             <div className="text-xs text-slate-400 italic mb-4 flex items-center gap-1.5 bg-white/40 p-2 rounded-lg border border-slate-100/20">
-              <strong>Why this?</strong> {recommendation.explanation}
+              <strong>{t("recommendation.why_this")}</strong> {recommendation.explanation}
             </div>
 
             <div className="flex flex-wrap gap-2">

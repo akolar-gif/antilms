@@ -48,11 +48,11 @@ export function LearnerModuleClient({
     setCompleted(prev => {
       const newCompleted = [...prev, blockId];
       if (newCompleted.length === blocks.length) {
-        toast.success("Modul beendet! 🎉", {
-          description: "Du hast alle Abschnitte in diesem Modul erfolgreich abgeschlossen."
+        toast.success(t("module.toast_module_completed"), {
+          description: t("module.toast_module_completed_desc")
         });
       } else {
-        toast.success("Abschnitt abgeschlossen!");
+        toast.success(t("module.toast_block_completed"));
       }
       return newCompleted;
     });
@@ -77,7 +77,7 @@ export function LearnerModuleClient({
   const progressPercentage = blocks.length > 0 ? Math.min(100, Math.round((completedInModule.length / blocks.length) * 100)) : 0;
   
   // Calculate recommendation dynamically
-  const recommendation = generateRecommendation(completedInModule.map(b => b.id), blocks, reflections);
+  const recommendation = generateRecommendation(completedInModule.map(b => b.id), blocks, reflections, {}, language);
 
   const handleRecommendationAction = (type: string) => {
     if (type === "mentor") {
@@ -85,7 +85,7 @@ export function LearnerModuleClient({
       const textarea = document.querySelector("aside input");
       if (textarea) {
         (textarea as HTMLInputElement).focus();
-        toast.info("Anka AI ist bereit im Seiten-Panel!");
+        toast.info(t("module.toast_tutor_ready"));
       }
     } else {
       const nextBlock = blocks.find(b => !completed.includes(b.id));

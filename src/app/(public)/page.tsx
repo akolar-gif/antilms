@@ -1,6 +1,8 @@
 import { store } from "@/lib/store";
 import Link from "next/link";
 import { ArrowRight, BookOpen } from "lucide-react";
+import { cookies } from "next/headers";
+import { translations } from "@/components/layout/translations";
 
 export const dynamic = 'force-dynamic';
 
@@ -11,21 +13,34 @@ export default async function LandingPage() {
   // Group by category
   const categories = Array.from(new Set(publishedCourses.map(c => c.category || "General"))).sort();
 
+  const cookieStore = await cookies();
+  const lang = (cookieStore.get("lang")?.value || "de") as "de" | "en";
+  const dict = translations[lang] || translations.de;
+  const t = (key: keyof typeof translations.de, params?: Record<string, string>) => {
+    let text = dict[key] || translations.de[key] || String(key);
+    if (params) {
+      Object.entries(params).forEach(([k, v]) => {
+        text = text.replace(`{${k}}`, v);
+      });
+    }
+    return text;
+  };
+
   return (
     <div className="screen">
       {/* TopBar Header */}
       <header className="topbar">
         <div className="tb-left">
           <div>
-            <div className="eyebrow">INNOVERSITY PLATFORM</div>
+            <div className="eyebrow">{t("public.eyebrow")}</div>
             <div style={{ fontFamily: "var(--f-display)", fontWeight: 800, fontSize: 18, marginTop: 2, textTransform: "uppercase", letterSpacing: "-.01em" }}>
-              Welcome
+              {t("public.welcome")}
             </div>
           </div>
         </div>
         <div className="tb-right" style={{ gap: 12 }}>
           <Link href="/login" className="btn ghost" style={{ textTransform: "uppercase", fontFamily: "var(--f-mono)", fontSize: 12, padding: "8px 16px" }}>
-            Einloggen
+            {t("public.login")}
           </Link>
         </div>
       </header>
@@ -34,13 +49,13 @@ export default async function LandingPage() {
       <div className="lattice" style={{ gridTemplateColumns: "1fr" }}>
         <div className="cell">
           <div className="eyebrow" style={{ marginBottom: 14, color: "var(--blue)" }}>
-            THE FUTURE OF LEARNING
+            {t("public.hero_eyebrow")}
           </div>
           <h1 className="display" style={{ fontSize: "clamp(40px, 6vw, 84px)" }}>
-            Welcome to <span style={{ color: "var(--blue)" }}>Innoversity</span>
+            {lang === "de" ? "Willkommen bei" : "Welcome to"} <span style={{ color: "var(--blue)" }}>Innoversity</span>
           </h1>
           <p className="lede" style={{ maxWidth: 560, marginTop: 18 }}>
-            Dies ist kein traditionelles LMS. Es ist eine lebendige Lernumgebung für adaptiven, reflektiven und projektbasierten Kompetenzaufbau mit intelligenter KI-Begleitung.
+            {t("public.hero_desc")}
           </p>
         </div>
       </div>
@@ -53,14 +68,14 @@ export default async function LandingPage() {
           <div>
             <span className="eyebrow" style={{ color: "var(--blue)" }}>TRAINER STUDIO</span>
             <h3 style={{ fontFamily: "var(--f-display)", fontWeight: 800, fontSize: 24, marginTop: 6, textTransform: "uppercase" }} className="text-ink">
-              Pfade gestalten
+              {t("public.trainer_title")}
             </h3>
           </div>
           <p className="text-sm text-ink-2" style={{ lineHeight: 1.4 }}>
-            Entwirf intelligente, adaptive Lernjourneys mit Anka AI statt nur statische Folien oder PDFs hochzuladen.
+            {t("public.trainer_desc")}
           </p>
           <div className="mt-auto flex items-center text-blue text-xs font-mono uppercase tracking-wider gap-1.5 group-hover:gap-2.5 transition-all">
-            Studio betreten <ArrowRight className="w-4 h-4" />
+            {t("public.trainer_btn")} <ArrowRight className="w-4 h-4" />
           </div>
         </Link>
 
@@ -70,14 +85,14 @@ export default async function LandingPage() {
           <div>
             <span className="eyebrow" style={{ color: "var(--coral-d)" }}>LEARNER PORTAL</span>
             <h3 style={{ fontFamily: "var(--f-display)", fontWeight: 800, fontSize: 24, marginTop: 6, textTransform: "uppercase" }} className="text-ink">
-              Lernen starten
+              {t("public.learner_title")}
             </h3>
           </div>
           <p className="text-sm text-ink-2" style={{ lineHeight: 1.4 }}>
-            Bewege dich durch einen geführten Raum, der sich an deine Fortschritte, Quizzes und Reflexionen anpasst.
+            {t("public.learner_desc")}
           </p>
           <div className="mt-auto flex items-center text-coral-d text-xs font-mono uppercase tracking-wider gap-1.5 group-hover:gap-2.5 transition-all">
-            Lernpfad starten <ArrowRight className="w-4 h-4" />
+            {t("public.learner_btn")} <ArrowRight className="w-4 h-4" />
           </div>
         </Link>
 
@@ -87,30 +102,30 @@ export default async function LandingPage() {
           <div>
             <span className="eyebrow" style={{ color: "var(--ink-2)" }}>ADMIN PORTAL</span>
             <h3 style={{ fontFamily: "var(--f-display)", fontWeight: 800, fontSize: 24, marginTop: 6, textTransform: "uppercase" }} className="text-ink">
-              Signale analysieren
+              {t("public.admin_title")}
             </h3>
           </div>
           <p className="text-sm text-ink-2" style={{ lineHeight: 1.4 }}>
-            Analysiere echte Telemetriedaten des Lernfortschritts und der Verständnishürden statt bloßer Klickzahlen.
+            {t("public.admin_desc")}
           </p>
           <div className="mt-auto flex items-center text-ink text-xs font-mono uppercase tracking-wider gap-1.5 group-hover:gap-2.5 transition-all">
-            Dashboard betreten <ArrowRight className="w-4 h-4" />
+            {t("public.admin_btn")} <ArrowRight className="w-4 h-4" />
           </div>
         </Link>
       </div>
 
       {/* Courses Catalog */}
       <div className="sec-head">
-        <h2>Verfügbare Lernpfade</h2>
-        <span className="meta">№ {String(publishedCourses.length).padStart(2, "0")} KURSE</span>
+        <h2>{t("public.available_paths")}</h2>
+        <span className="meta">{t("public.courses_count", { count: publishedCourses.length.toString() })}</span>
       </div>
 
       {publishedCourses.length === 0 ? (
         <div className="pad">
           <div className="p-12 text-center bg-paper-2 border border-line-soft rounded-2xl">
             <BookOpen className="w-10 h-10 text-ink-3 mx-auto mb-4" />
-            <h3 className="font-heading font-medium text-ink mb-1">Noch keine Kurse veröffentlicht</h3>
-            <p className="text-ink-2 text-sm">Besuche das Trainer-Studio, um deinen ersten Lernpfad zu erstellen.</p>
+            <h3 className="font-heading font-medium text-ink mb-1">{t("public.no_courses")}</h3>
+            <p className="text-ink-2 text-sm">{t("public.no_courses_desc")}</p>
           </div>
         </div>
       ) : (
@@ -134,7 +149,7 @@ export default async function LandingPage() {
                     </div>
                     <div className="ptitle">{course.title}</div>
                     <div className="pmeta">
-                      <span>Start Journey</span>
+                      <span>{t("public.start_journey")}</span>
                       <ArrowRight className="w-4 h-4" />
                     </div>
                   </div>
@@ -150,7 +165,7 @@ export default async function LandingPage() {
                 </div>
                 <div className="ptitle">{course.title}</div>
                 <div className="pmeta mt-auto flex items-center justify-between">
-                  <span className="text-xs uppercase tracking-wider font-bold">Start Journey</span>
+                  <span className="text-xs uppercase tracking-wider font-bold">{t("public.start_journey")}</span>
                   <ArrowRight className="w-4 h-4" />
                 </div>
               </Link>

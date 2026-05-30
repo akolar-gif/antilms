@@ -4,16 +4,18 @@ import { useState } from "react";
 import { LearningBlock } from "@/types";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle } from "lucide-react";
+import { useTranslation } from "@/components/layout/language-context";
 
 export function QuizBlock({ block }: { block: LearningBlock }) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const { t } = useTranslation();
 
   let quizData = null;
   try {
     quizData = JSON.parse(block.content);
   } catch (e) {
-    return <div className="text-red-500">Failed to load quiz content.</div>;
+    return <div className="text-red-500">{t("quiz.error")}</div>;
   }
 
   const handleSelect = (option: string) => {
@@ -29,7 +31,7 @@ export function QuizBlock({ block }: { block: LearningBlock }) {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 my-8">
       <div className="inline-block px-3 py-1 bg-royal-blue/10 text-royal-blue rounded-full text-xs font-bold tracking-wider mb-6">
-        Knowledge Check
+        {t("quiz.badge")}
       </div>
       
       <h3 className="text-xl font-heading font-semibold text-slate-800 mb-6">
@@ -77,12 +79,12 @@ export function QuizBlock({ block }: { block: LearningBlock }) {
           disabled={!selectedOption}
           className="w-full bg-royal-blue hover:bg-royal-blue/90 text-white"
         >
-          Check Answer
+          {t("quiz.check_btn")}
         </Button>
       ) : (
         <div className={`p-4 rounded-lg ${isCorrect ? 'bg-emerald-green/10' : 'bg-red-50'} mt-6`}>
           <h4 className={`font-bold mb-2 ${isCorrect ? 'text-emerald-green' : 'text-red-600'}`}>
-            {isCorrect ? "Correct!" : "Not quite right."}
+            {isCorrect ? t("quiz.correct") : t("quiz.incorrect")}
           </h4>
           <p className="text-slate-700 text-sm">
             {quizData.explanation}

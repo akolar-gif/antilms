@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { LearningBlock, Reflection } from "@/types";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Brain, Award } from "lucide-react";
+import { Brain, Award } from "lucide-react";
+import { useTranslation } from "@/components/layout/language-context";
 
 interface ReflectionBlockProps {
   block: LearningBlock;
@@ -17,12 +18,13 @@ export function ReflectionBlock({ block, initialReflection, onSave }: Reflection
   const [difficulty, setDifficulty] = useState(initialReflection?.difficulty || 3);
   const [isSubmitted, setIsSubmitted] = useState(!!initialReflection);
   const [isSaving, setIsSaving] = useState(false);
+  const { t } = useTranslation();
 
   let reflectionData = null;
   try {
     reflectionData = JSON.parse(block.content);
   } catch (e) {
-    return <div className="text-red-500">Failed to load reflection content.</div>;
+    return <div className="text-red-500">{t("reflection.error")}</div>;
   }
 
   const handleSubmit = async () => {
@@ -43,7 +45,7 @@ export function ReflectionBlock({ block, initialReflection, onSave }: Reflection
   return (
     <div className="bg-plum/5 rounded-xl border border-plum/20 p-8 my-8 shadow-sm transition-all hover:shadow-md">
       <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-plum/10 text-plum rounded-full text-xs font-bold tracking-wider mb-6">
-        <Brain className="w-3.5 h-3.5" /> Reflection Prompt
+        <Brain className="w-3.5 h-3.5" /> {t("reflection.badge")}
       </div>
       
       <h3 className="text-xl font-heading font-semibold text-slate-800 mb-4">
@@ -63,7 +65,7 @@ export function ReflectionBlock({ block, initialReflection, onSave }: Reflection
           <textarea
             className="w-full p-4 rounded-xl border border-slate-200 bg-white focus:border-plum focus:ring-1 focus:ring-plum outline-none resize-y text-slate-700 text-sm shadow-inner transition-all"
             rows={5}
-            placeholder="Write your reflection here..."
+            placeholder={t("reflection.placeholder")}
             value={reflectionText}
             onChange={(e) => setReflectionText(e.target.value)}
           />
@@ -72,7 +74,7 @@ export function ReflectionBlock({ block, initialReflection, onSave }: Reflection
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/50 p-4 rounded-xl border border-slate-100/50">
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                Self-Assessed Confidence (1 - 5)
+                {t("reflection.confidence_label")}
               </label>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((val) => (
@@ -90,12 +92,12 @@ export function ReflectionBlock({ block, initialReflection, onSave }: Reflection
                   </button>
                 ))}
               </div>
-              <p className="text-[10px] text-slate-400 mt-1">1 = Low Confidence, 5 = Ready to coach others</p>
+              <p className="text-[10px] text-slate-400 mt-1">{t("reflection.confidence_desc")}</p>
             </div>
 
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                Perceived Difficulty (1 - 5)
+                {t("reflection.difficulty_label")}
               </label>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((val) => (
@@ -113,7 +115,7 @@ export function ReflectionBlock({ block, initialReflection, onSave }: Reflection
                   </button>
                 ))}
               </div>
-              <p className="text-[10px] text-slate-400 mt-1">1 = Very Simple, 5 = Highly Complex</p>
+              <p className="text-[10px] text-slate-400 mt-1">{t("reflection.difficulty_desc")}</p>
             </div>
           </div>
 
@@ -123,7 +125,7 @@ export function ReflectionBlock({ block, initialReflection, onSave }: Reflection
               disabled={!reflectionText.trim() || isSaving}
               className="bg-plum hover:bg-plum/90 text-white font-semibold"
             >
-              {isSaving ? "Saving..." : "Submit Reflection"}
+              {isSaving ? t("reflection.saving") : t("reflection.submit_btn")}
             </Button>
           </div>
         </div>
@@ -131,11 +133,11 @@ export function ReflectionBlock({ block, initialReflection, onSave }: Reflection
         <div className="bg-white p-6 rounded-xl border border-plum/20 mt-4 shadow-sm space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h4 className="text-xs font-bold text-plum uppercase tracking-wider flex items-center gap-1">
-              <Award className="w-4 h-4" /> Your Reflection
+              <Award className="w-4 h-4" /> {t("reflection.result_title")}
             </h4>
             <div className="flex gap-4 text-xs font-medium text-slate-500">
-              <span>Confidence: <strong className="text-plum">{confidence}/5</strong></span>
-              <span>Difficulty: <strong className="text-plum">{difficulty}/5</strong></span>
+              <span>{t("reflection.confidence")} <strong className="text-plum">{confidence}/5</strong></span>
+              <span>{t("reflection.difficulty")} <strong className="text-plum">{difficulty}/5</strong></span>
             </div>
           </div>
           <p className="text-slate-700 text-sm whitespace-pre-wrap leading-relaxed">{reflectionText}</p>
@@ -146,7 +148,7 @@ export function ReflectionBlock({ block, initialReflection, onSave }: Reflection
               onClick={() => setIsSubmitted(false)} 
               className="text-xs text-slate-500 hover:text-plum hover:bg-plum/5"
             >
-              Edit Reflection
+              {t("reflection.edit_btn")}
             </Button>
           </div>
         </div>

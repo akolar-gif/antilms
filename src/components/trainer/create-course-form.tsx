@@ -9,6 +9,7 @@ import { CurriculumWizard } from "./curriculum-wizard";
 import { GeneratedCurriculumResult } from "@/lib/ai/provider";
 import { Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "@/components/layout/language-context";
 
 interface CreateCourseFormProps {
   initialOpen?: boolean;
@@ -21,6 +22,7 @@ export function CreateCourseForm({ initialOpen }: CreateCourseFormProps) {
   const [generateWithAI, setGenerateWithAI] = useState(false);
   const [generatedCurriculum, setGeneratedCurriculum] = useState<GeneratedCurriculumResult | null>(null);
   const [tempCourseData, setTempCourseData] = useState<any>(null);
+  const { t } = useTranslation();
 
   const handleClose = () => {
     setIsOpen(false);
@@ -35,7 +37,7 @@ export function CreateCourseForm({ initialOpen }: CreateCourseFormProps) {
   if (!isOpen) {
     return (
       <button onClick={handleOpen} className="btn blue" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-        <Sparkles className="w-4 h-4" /> Neuen Kurs gestalten
+        <Sparkles className="w-4 h-4" /> {t("library.create_btn")}
       </button>
     );
   }
@@ -50,12 +52,12 @@ export function CreateCourseForm({ initialOpen }: CreateCourseFormProps) {
     const courseImage = formData.get("courseImage") as File | null;
 
     if (!title || !description) {
-      toast.error("Titel und Beschreibung sind erforderlich.");
+      toast.error(t("creator.toast_required"));
       return;
     }
 
     setIsLoading(true);
-    const toastId = toast.loading(generateWithAI ? "Generiere AI-Curriculum..." : "Erstelle Kurs...");
+    const toastId = toast.loading(generateWithAI ? t("creator.toast_generating") : t("creator.toast_creating"));
 
     try {
       let finalImageUrl: string | undefined = undefined;
@@ -74,17 +76,17 @@ export function CreateCourseForm({ initialOpen }: CreateCourseFormProps) {
         const curriculum = await generateCurriculumAction(title, description);
         setTempCourseData({ title, description, category, imageUrl: finalImageUrl });
         setGeneratedCurriculum(curriculum);
-        toast.success("AI-Curriculum generiert! Öffne Wizard...", { id: toastId });
+        toast.success(t("creator.toast_gen_success"), { id: toastId });
       } else {
         // Call server action to create a simple draft course
         await createCourseAction(formData);
-        toast.success("Kurs erfolgreich erstellt!", { id: toastId });
+        toast.success(t("creator.toast_create_success"), { id: toastId });
         setIsOpen(false);
         router.replace("/trainer");
       }
     } catch (err) {
       console.error(err);
-      toast.error(generateWithAI ? "AI-Generierung fehlgeschlagen. Bitte erneut versuchen." : "Erstellung fehlgeschlagen", { id: toastId });
+      toast.error(generateWithAI ? t("creator.toast_gen_failed") : t("creator.toast_create_failed"), { id: toastId });
     } finally {
       setIsLoading(false);
     }
@@ -108,44 +110,44 @@ export function CreateCourseForm({ initialOpen }: CreateCourseFormProps) {
           </button>
 
           <div>
-            <span className="eyebrow" style={{ color: "var(--blue)" }}>NEUER LERNPFAD</span>
-            <h3 className="display" style={{ fontSize: 24, marginTop: 4 }}>Kurs entwerfen</h3>
+            <span className="eyebrow" style={{ color: "var(--blue)" }}>{t("creator.new_path")}</span>
+            <h3 className="display" style={{ fontSize: 24, marginTop: 4 }}>{t("creator.design_title")}</h3>
           </div>
           
           <div className="flex flex-col gap-4">
             <div>
-              <label htmlFor="title" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">Kurs-Titel</label>
+              <label htmlFor="title" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">{t("creator.course_title")}</label>
               <input 
                 type="text" 
                 id="title" 
                 name="title" 
                 required 
-                placeholder="z.B. Agile Führungskompetenzen"
+                placeholder={t("creator.placeholder_title")}
                 className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all"
                 style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
               />
             </div>
             
             <div>
-              <label htmlFor="category" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">Kategorie / Rubrik</label>
+              <label htmlFor="category" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">{t("creator.category")}</label>
               <input 
                 type="text" 
                 id="category" 
                 name="category" 
-                placeholder="z.B. Leadership, Technologie, Soft Skills..."
+                placeholder={t("creator.placeholder_category")}
                 className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all"
                 style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
               />
             </div>
 
             <div>
-              <label htmlFor="description" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">Beschreibung</label>
+              <label htmlFor="description" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">{t("creator.description")}</label>
               <textarea 
                 id="description" 
                 name="description" 
                 required 
                 rows={3}
-                placeholder="Kurze Übersicht über die Lernziele und Zielgruppen..."
+                placeholder={t("creator.placeholder_description")}
                 className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all resize-none"
                 style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
               />
@@ -165,22 +167,24 @@ export function CreateCourseForm({ initialOpen }: CreateCourseFormProps) {
               />
               <label htmlFor="generateWithAI" className="text-sm font-bold text-ink flex items-center gap-1.5 cursor-pointer select-none">
                 <Sparkles className="w-4 h-4 text-blue animate-pulse" />
-                Co-Design Curriculum mit Anka AI
+                {t("creator.co_design")}
               </label>
             </div>
 
             <div>
-              <label className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-2">Titelbild</label>
+              <label className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-2">{t("creator.cover_image")}</label>
               <ImagePicker />
             </div>
           </div>
           
           <div className="flex justify-end gap-3 mt-2">
             <button type="button" className="btn ghost" onClick={handleClose} disabled={isLoading}>
-              Abbrechen
+              {t("creator.cancel")}
             </button>
             <button type="submit" className="btn blue" disabled={isLoading}>
-              {isLoading ? (generateWithAI ? "Generiere..." : "Erstelle...") : (generateWithAI ? "Pfad generieren" : "Kurs erstellen")}
+              {isLoading 
+                ? (generateWithAI ? t("creator.generating") : t("creator.creating")) 
+                : (generateWithAI ? t("creator.generate") : t("creator.create"))}
             </button>
           </div>
         </form>

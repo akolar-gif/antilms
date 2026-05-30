@@ -6,6 +6,7 @@ import { Module } from "@/types";
 import { Trash2 } from "lucide-react";
 import { deleteModuleAction } from "@/app/actions/course";
 import { toast } from "sonner";
+import { useTranslation } from "@/components/layout/language-context";
 
 interface SidebarModulesProps {
   courseId: string;
@@ -14,17 +15,18 @@ interface SidebarModulesProps {
 
 export function SidebarModules({ courseId, modules }: SidebarModulesProps) {
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   const handleDeleteModule = async (moduleId: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (confirm("Möchtest du dieses Modul und alle zugehörigen Blöcke wirklich löschen? Dies kann nicht rückgängig gemacht werden.")) {
-      const toastId = toast.loading("Lösche Modul...");
+    if (confirm(t("sidebar_modules.confirm_delete"))) {
+      const toastId = toast.loading(t("sidebar_modules.toast_deleting"));
       try {
         await deleteModuleAction(courseId, moduleId);
-        toast.success("Modul erfolgreich gelöscht!", { id: toastId });
+        toast.success(t("sidebar_modules.toast_deleted"), { id: toastId });
       } catch (error) {
-        toast.error("Fehler beim Löschen des Moduls", { id: toastId });
+        toast.error(t("sidebar_modules.toast_delete_failed"), { id: toastId });
       }
     }
   };

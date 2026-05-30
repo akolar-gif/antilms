@@ -64,7 +64,7 @@ export class RealAIProvider implements AIProvider {
 
       return {
         type: "quiz",
-        title: "Knowledge Check",
+        title: input.language === "en" ? "Knowledge Check" : "Wissenstest",
         content: JSON.stringify(object),
         learningMode: "test",
         source: "ai_assisted"
@@ -89,7 +89,7 @@ export class RealAIProvider implements AIProvider {
 
       return {
         type: "punk_game",
-        title: "Practical Challenge",
+        title: input.language === "en" ? "Practical Challenge" : "Praktische Herausforderung",
         content: JSON.stringify(object),
         learningMode: "challenge",
         source: "ai_assisted"
@@ -116,7 +116,7 @@ export class RealAIProvider implements AIProvider {
 
       return {
         type: "project_task",
-        title: object.title || "Project Assignment",
+        title: object.title || (input.language === "en" ? "Project Assignment" : "Projektarbeit"),
         content: JSON.stringify(object),
         learningMode: "apply",
         source: "ai_assisted"
@@ -139,7 +139,7 @@ export class RealAIProvider implements AIProvider {
 
       return {
         type: "reflection",
-        title: "Pause and Reflect",
+        title: input.language === "en" ? "Pause and Reflect" : "Innehalten & Reflektieren",
         content: JSON.stringify(object),
         learningMode: "reflect",
         source: "ai_assisted"

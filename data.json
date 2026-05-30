@@ -135,6 +135,17 @@
       "status": "published",
       "createdAt": "2026-05-29T16:41:45.033Z",
       "updatedAt": "2026-05-29T16:42:10.617Z"
+    },
+    {
+      "id": "course-1780143192626",
+      "title": "rhabarber",
+      "description": "safdfafd",
+      "category": "gemüse",
+      "targetGroup": "General",
+      "createdBy": "Trainer",
+      "status": "published",
+      "createdAt": "2026-05-30T12:13:12.626Z",
+      "updatedAt": "2026-05-30T12:17:50.548Z"
     }
   ],
   "modules": [
@@ -454,6 +465,42 @@
         "Strategien zur Förderung von organisationaler Agilität und zur Bewältigung von Widerständen gegen Veränderungen entwickeln.",
         "Eine klare agile Vision kommunizieren und Stakeholder für die Transformation gewinnen.",
         "Methoden zur Anpassung strategischer Entscheidungen an sich schnell ändernde Marktbedingungen anwenden."
+      ],
+      "order": 2
+    },
+    {
+      "id": "module-1780143192633",
+      "courseId": "course-1780143192626",
+      "title": "Unveiling the Rhabarber Paradigm",
+      "description": "This module introduces the fundamental concepts of Rhabarber systems, exploring their unique characteristics and the abstract principles that govern their behavior. You will learn to perceive and interpret the subtle cues within these enigmatic structures.",
+      "learningObjectives": [
+        "Define the core properties and emergent behaviors of an abstract Rhabarber system.",
+        "Develop foundational observation skills to identify initial patterns within complex, non-linear environments.",
+        "Distinguish between superficial manifestations and deeper underlying Rhabarber structures."
+      ],
+      "order": 0
+    },
+    {
+      "id": "module-1780143192745",
+      "courseId": "course-1780143192626",
+      "title": "Deconstructing Rhabarber Logic and Dynamics",
+      "description": "Delve deeper into the operational logic and dynamic interactions within Rhabarber systems. This module focuses on analytical techniques to uncover hidden rules, identify feedback loops, and predict potential evolutions of the system.",
+      "learningObjectives": [
+        "Analyze feedback mechanisms and causal relationships within a given Rhabarber structure.",
+        "Identify and categorize emergent patterns and recurring motifs in Rhabarber system behavior.",
+        "Formulate hypotheses about future Rhabarber states based on observed dynamics."
+      ],
+      "order": 1
+    },
+    {
+      "id": "module-1780143192799",
+      "courseId": "course-1780143192626",
+      "title": "Architecting Rhabarber Interactions and Evolution",
+      "description": "This module moves from analysis to synthesis, focusing on how to strategically interact with and influence Rhabarber systems. You will learn to design interventions, anticipate system responses, and guide their evolution towards desired outcomes.",
+      "learningObjectives": [
+        "Design effective intervention strategies to steer Rhabarber systems towards specific goals.",
+        "Evaluate the potential impacts and unintended consequences of proposed interactions.",
+        "Develop a framework for adaptive management and continuous learning within evolving Rhabarber environments."
       ],
       "order": 2
     }
@@ -1296,6 +1343,126 @@
       "title": "Strategische Agilität verstehen",
       "content": "{\"question\": \"Welche der folgenden Aussagen beschreibt am besten das Konzept der 'strategischen Agilität'?\", \"options\": [\"Die Fähigkeit, innerhalb fester Jahresbudgets zu operieren.\", \"Die schnelle Anpassung von Produkten und Dienstleistungen an sich ändernde Kundenbedürfnisse und Marktbedingungen.\", \"Das strikte Festhalten an einem einmal definierten 5-Jahres-Plan.\", \"Die zentrale Steuerung aller operativen Entscheidungen durch das Top-Management.\"], \"correctAnswer\": \"Die schnelle Anpassung von Produkten und Dienstleistungen an sich ändernde Kundenbedürfnisse und Marktbedingungen.\", \"explanation\": \"Strategische Agilität bedeutet die Fähigkeit einer Organisation, ihre Strategie, Struktur, Kultur und Prozesse schnell und flexibel an sich ändernde interne und externe Gegebenheiten anzupassen, um wettbewerbsfähig zu bleiben und neue Chancen zu nutzen.\"}",
       "learningMode": "test",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1780143192640412",
+      "moduleId": "module-1780143192633",
+      "type": "text",
+      "title": "Introduction to Rhabarber Systems",
+      "content": "Imagine a system so intricate, so dynamic, yet so inherently undefined that its very nature defies simple categorization. This is the essence of a 'Rhabarber System.' It's a metaphor for any complex, adaptive, and often abstract environment – be it a rapidly evolving market, an emergent social phenomenon, or a deeply interconnected ecosystem. Understanding Rhabarber isn't about memorizing rules; it's about cultivating a mindset for perception, interpretation, and strategic interaction with the unknown. This module will lay the groundwork for this paradigm shift, inviting you to embrace ambiguity and discover hidden structures within apparent chaos.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1780143192646324",
+      "moduleId": "module-1780143192633",
+      "type": "video",
+      "title": "The Dance of Emergence: A Rhabarber Metaphor",
+      "content": "https://www.youtube.com/embed/ZfHk2Ff8hL4",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1780143192731537",
+      "moduleId": "module-1780143192633",
+      "type": "reflection",
+      "title": "First Impressions of Rhabarber",
+      "content": "{\"reflectionPrompt\": \"Before we delve deeper, what are your initial thoughts or feelings about the concept of 'Rhabarber Systems'? How do you typically approach situations that feel undefined or overly complex in your own life or work?\", \"followUpQuestions\": [\"What preconceived notions might you bring to analyzing such systems?\", \"How might embracing ambiguity change your problem-solving approach?\", \"Can you recall a real-world scenario that resonates with the 'Rhabarber' metaphor?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1780143192738830",
+      "moduleId": "module-1780143192633",
+      "type": "quiz",
+      "title": "Rhabarber Foundations Check",
+      "content": "{\"question\": \"Which of the following best describes the fundamental nature of a 'Rhabarber System' as introduced?\", \"options\": [\"A clearly defined system with predictable outcomes.\", \"A linear system where cause and effect are always obvious.\", \"A complex, adaptive, and often abstract system with emergent properties.\", \"A static system that resists change and external influence.\"], \"correctAnswer\": \"A complex, adaptive, and often abstract system with emergent properties.\", \"explanation\": \"Rhabarber systems are characterized by their inherent complexity, adaptability, and the emergence of new properties that cannot be easily predicted from their individual components.\"}",
+      "learningMode": "test",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1780143192762575",
+      "moduleId": "module-1780143192745",
+      "type": "text",
+      "title": "Mapping Rhabarber Flow: Tracing Connections",
+      "content": "To truly understand a Rhabarber system, we must go beyond surface-level observations and map its intricate flow. This involves identifying key agents, tracing causal loops (both reinforcing and balancing), and recognizing delay mechanisms. Tools like causal loop diagrams or influence diagrams can be invaluable here, helping us visualize the non-linear relationships that drive system behavior. Remember, a Rhabarber system's logic often lies in its dynamics, not just its components.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1780143192776584",
+      "moduleId": "module-1780143192745",
+      "type": "code",
+      "title": "Simulating Rhabarber Influence (Pseudocode Example)",
+      "content": "```pseudocode  FUNCTION SimulateRhabarber(initialState, numSteps):  currentSystem = initialState  FOR i FROM 1 TO numSteps:  // Identify influences and feedback loops  influenceA = CalculateInfluenceA(currentSystem)  influenceB = CalculateInfluenceB(currentSystem)    // Apply adaptive rules based on system state and influences  IF currentSystem.rhabarberLevel > THRESHOLD_HIGH:  currentSystem.AdjustFactorX(-influenceA * 0.5) // Balancing loop  ELSE IF currentSystem.rhabarberLevel < THRESHOLD_LOW:  currentSystem.AdjustFactorY(influenceB * 0.2) // Reinforcing loop    // Introduce random 'noise' or external perturbations (unpredictability)  currentSystem.ApplyRandomPerturbation()    // Update system based on interactions  currentSystem = UpdateSystemState(currentSystem, influenceA, influenceB)    LogState(currentSystem)  RETURN currentSystem  END FUNCTION  ```",
+      "learningMode": "practice",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1780143192785944",
+      "moduleId": "module-1780143192745",
+      "type": "punk_game",
+      "title": "Rhabarber Reaction Challenge",
+      "content": "{\"scenario\": \"You are a crisis responder monitoring a rapidly evolving Rhabarber anomaly spreading through a network. Different 'nodes' (parts of the system) are showing varying degrees of instability, indicated by flashing colors. Your goal is to stabilize the system before critical failure.\", \"task\": \"Observe the color changes in 5 interconnected Rhabarber nodes. For each node, quickly select the appropriate 'mitigation pulse' (Green, Blue, or Red) to counter its instability. Incorrect pulses or delays will accelerate system collapse.\", \"timeboxMinutes\": 2, \"evaluationCriteria\": [\"Speed of response per node\", \"Accuracy of mitigation pulse selection\", \"Overall system stability achieved\"]}",
+      "learningMode": "challenge",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1780143192792603",
+      "moduleId": "module-1780143192745",
+      "type": "quiz",
+      "title": "Dynamic Pattern Recognition",
+      "content": "{\"question\": \"In a Rhabarber system, if a positive feedback loop is identified, what is its primary effect?\", \"options\": [\"It always leads to system collapse.\", \"It dampens changes, promoting stability.\", \"It amplifies initial changes, potentially leading to rapid growth or decline.\", \"It has no significant effect on system dynamics.\"], \"correctAnswer\": \"It amplifies initial changes, potentially leading to rapid growth or decline.\", \"explanation\": \"Positive feedback loops are characterized by their ability to reinforce or amplify initial changes, driving the system further in a particular direction. This can lead to exponential growth or rapid decline.\"}",
+      "learningMode": "test",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1780143192807214",
+      "moduleId": "module-1780143192799",
+      "type": "text",
+      "title": "Principles of Rhabarber Intervention",
+      "content": "Interacting with a Rhabarber system requires a delicate touch. Direct, heavy-handed interventions often lead to unintended consequences, or 'Rhabarber backlash.' Instead, we focus on principles of minimal viable intervention, leveraging 'leverage points' where small changes can yield significant, systemic shifts. This demands an iterative, experimental approach, constant monitoring, and a deep ethical consideration for the system's inherent nature and its stakeholders. The goal isn't to control Rhabarber, but to gently guide its evolution.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1780143192812403",
+      "moduleId": "module-1780143192799",
+      "type": "project_task",
+      "title": "The Rhabarber Reconfiguration Project",
+      "content": "{\"title\": \"The Rhabarber Reconfiguration Project\", \"scenario\": \"A critical Rhabarber system, 'The Chronosynclastic Infundibulum,' is exhibiting signs of drift, moving away from its optimal state of balanced complexity. Your team has been tasked with proposing an intervention strategy to subtly guide it back towards equilibrium without disrupting its core emergent properties.\", \"task\": \"Develop a detailed intervention plan. Identify at least three potential leverage points within the system, propose a specific intervention for each, and describe the expected short-term and long-term impacts. Include a monitoring plan to track the success and unintended consequences of your proposed actions.\", \"deliverable\": \"A 500-word executive summary outlining your strategy, including a diagram of the chosen leverage points and their proposed interventions, and a brief section on expected outcomes and monitoring.\", \"constraints\": [\"Intervention must be minimal and non-disruptive to the system's core functionality.\", \"Consider ethical implications of any proposed changes.\", \"Budget for intervention is extremely limited, favoring 'soft' rather than 'hard' changes.\"], \"reflectionPrompt\": \"How did identifying leverage points influence your intervention strategy compared to addressing symptoms directly? What ethical considerations were most prominent in your design process?\"}",
+      "learningMode": "create",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1780143192820468",
+      "moduleId": "module-1780143192799",
+      "type": "reflection",
+      "title": "Ethical Dimensions of Rhabarber Influence",
+      "content": "{\"reflectionPrompt\": \"When actively designing interventions for complex, adaptive systems like Rhabarber, what ethical responsibilities do you believe are paramount? How can we ensure our actions, even with good intentions, do not inadvertently harm the system or its constituents?\", \"followUpQuestions\": [\"Who 'owns' a Rhabarber system, and who should have a say in its guidance?\", \"How do you balance achieving a desired outcome with respecting the system's natural evolution?\", \"What mechanisms can be put in place to prevent misuse or exploitation of Rhabarber understanding?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-17801431928273",
+      "moduleId": "module-1780143192799",
+      "type": "video",
+      "title": "Future Rhabarber: Anticipating Complexity",
+      "content": "https://www.youtube.com/embed/fD1ES6w2Cpo",
+      "learningMode": "transfer",
       "source": "ai_assisted",
       "order": 3
     }
