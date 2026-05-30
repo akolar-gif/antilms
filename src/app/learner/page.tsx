@@ -4,7 +4,7 @@ import { Brain, Star, Clock, Trophy, Target, Sparkles, LogOut, ArrowRight } from
 import { GDPRControls } from "@/components/learner/gdpr-controls";
 import { I, Mark, AIChip } from "@/components/layout/icons";
 import { cookies } from "next/headers";
-import { translations } from "@/components/layout/language-context";
+import { translations } from "@/components/layout/translations";
 
 export const dynamic = 'force-dynamic';
 

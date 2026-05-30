@@ -2,7 +2,7 @@ import { store } from "@/lib/store";
 import { CreateCourseForm } from "@/components/trainer/create-course-form";
 import { CourseListClient } from "@/components/trainer/course-list-client";
 import { cookies } from "next/headers";
-import { translations } from "@/components/layout/language-context";
+import { translations } from "@/components/layout/translations";
 
 export const dynamic = 'force-dynamic';
 
