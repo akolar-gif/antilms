@@ -56,6 +56,16 @@ export const translations = {
     "library.not_enrolled": "Verfügbar",
     "library.start": "Kurs starten",
     "library.continue": "Fortsetzen",
+    "library.eyebrow": "STUDIO BIBLIOTHEK",
+    "library.title_main": "Die Bibliothek",
+    "library.hero_meta": "{count} LERNPFADE · {active} IN ARBEIT",
+    "library.hero_desc": "Entdecke strukturierte Lernjourneys zu Zukunftsfähigkeiten, Kreativität und AI-Co-Creation. Oder wechsle zum Trainer-Studio, um eigene Pfade zu entwerfen.",
+    "library.create_btn": "Neuen Kurs gestalten",
+    "library.in_progress": "Laufende Kurse",
+    "library.all_paths": "Alle Lernpfade",
+    "library.no_published": "Keine publizierten Kurse vorhanden.",
+    "library.welcome_journey": "Willkommen auf deiner Lernreise",
+    "library.trainer_preparing": "Der Trainer bereitet derzeit die ersten Module vor. Bitte schaue später noch einmal vorbei!",
 
     // Reader & Module view
     "reader.intro": "Modul-Einführung",
@@ -171,6 +181,16 @@ export const translations = {
     "library.not_enrolled": "Available",
     "library.start": "Start Course",
     "library.continue": "Continue",
+    "library.eyebrow": "STUDIO LIBRARY",
+    "library.title_main": "The Library",
+    "library.hero_meta": "{count} PATHS · {active} IN PROGRESS",
+    "library.hero_desc": "Discover structured learning journeys on future skills, creativity, and AI co-creation. Or switch to the Trainer Studio to design your own paths.",
+    "library.create_btn": "Design New Course",
+    "library.in_progress": "In Progress",
+    "library.all_paths": "All Learning Paths",
+    "library.no_published": "No published courses available.",
+    "library.welcome_journey": "Welcome to your journey",
+    "library.trainer_preparing": "The trainer is still preparing the first modules for you. Please check back later!",
 
     // Reader & Module view
     "reader.intro": "Module Introduction",
