@@ -6,10 +6,14 @@ import { MentorReplyInput, MentorReplyResult, GenerateBlockInput, CoDesignerResu
 import { LearningBlock } from "@/types";
 
 import { store } from "@/lib/store";
+import { cookies } from "next/headers";
 
 const aiProvider = new RealAIProvider();
 
 export async function askMentorAction(input: MentorReplyInput): Promise<MentorReplyResult> {
+  const cookieStore = await cookies();
+  const language = input.language || cookieStore.get("lang")?.value || "de";
+
   const courseId = input.courseContext;
   const moduleId = input.moduleContext.split('\n')[0];
 
@@ -58,15 +62,20 @@ export async function askMentorAction(input: MentorReplyInput): Promise<MentorRe
   return await aiProvider.mentorReply({
     ...input,
     courseContext: courseContextStr,
-    moduleContext: moduleContextStr
+    moduleContext: moduleContextStr,
+    language
   });
 }
 
 export async function generateBlockAction(input: GenerateBlockInput): Promise<Partial<LearningBlock>> {
-  return await aiProvider.generateStructuredBlock(input);
+  const cookieStore = await cookies();
+  const language = input.language || cookieStore.get("lang")?.value || "de";
+  return await aiProvider.generateStructuredBlock({ ...input, language });
 }
 
 export async function askCoDesignerAction(input: any): Promise<CoDesignerResult> {
-  return await aiProvider.coDesignerReply(input);
+  const cookieStore = await cookies();
+  const language = input.language || cookieStore.get("lang")?.value || "de";
+  return await aiProvider.coDesignerReply({ ...input, language });
 }
 

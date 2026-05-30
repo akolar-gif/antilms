@@ -3,13 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { askMentorAction } from "@/app/actions/ai";
 import { AIglyph, I } from "@/components/layout/icons";
-
-const TOOLS = [
-  { id: "sum", name: "Zusammenfassen", desc: "3 Kernpunkte des Moduls" },
-  { id: "explain", name: "Erklären", desc: "Einfacher, mit Analogie" },
-  { id: "quiz", name: "Abfragen", desc: "Verständnistest starten" },
-  { id: "deeper", name: "Vertiefen", desc: "Experten-Blickwinkel" },
-];
+import { useTranslation } from "@/components/layout/language-context";
 
 export function MentorChat({ 
   courseId, 
@@ -22,17 +16,44 @@ export function MentorChat({
   activeContext?: string;
   moduleTitle?: string;
 }) {
-  const [messages, setMessages] = useState<{role: 'user'|'mentor', text: string}[]>([
-    {
-      role: 'mentor',
-      text: moduleTitle 
-        ? `Hallo! Ich bin Anka, deine Lernbegleiterin. Ich unterstütze dich im Modul "${moduleTitle}". Ich kenne deinen aktuellen Lernfortschritt, frage mich also gerne alles!`
-        : "Hallo! Ich unterstütze dich bei deiner Lernreise. Ich kann sehen, woran du gerade arbeitest. Frag mich einfach, wenn du nicht weiterkommst!"
-    }
-  ]);
+  const { t, language } = useTranslation();
+
+  const initialGreeting = moduleTitle 
+    ? t("tutor.greeting_module", { moduleTitle })
+    : t("tutor.greeting_default");
+
+  const [messages, setMessages] = useState<{role: 'user'|'mentor', text: string}[]>([]);
+
+  // Initialize messages once on client side to match the translation hook
+  useEffect(() => {
+    setMessages([
+      {
+        role: 'mentor',
+        text: initialGreeting
+      }
+    ]);
+  }, []);
+
+  // Update greeting text if language changes and we haven't started chatting yet
+  useEffect(() => {
+    setMessages(prev => {
+      if (prev.length === 1 && prev[0].role === 'mentor') {
+        return [{ role: 'mentor', text: initialGreeting }];
+      }
+      return prev;
+    });
+  }, [language, initialGreeting]);
+
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const feedRef = useRef<HTMLDivElement>(null);
+
+  const tools = [
+    { id: "sum", name: t("tutor.sum_name"), desc: t("tutor.sum_desc") },
+    { id: "explain", name: t("tutor.explain_name"), desc: t("tutor.explain_desc") },
+    { id: "quiz", name: t("tutor.quiz_name"), desc: t("tutor.quiz_desc") },
+    { id: "deeper", name: t("tutor.deeper_name"), desc: t("tutor.deeper_desc") },
+  ];
 
   // Auto scroll to bottom
   useEffect(() => {
@@ -52,6 +73,7 @@ export function MentorChat({
         learnerMessage: text,
         courseContext: courseId,
         moduleContext: moduleId + (activeContext ? `\n\nAktueller aktiver Block:\n${activeContext}` : ''),
+        language
       });
 
       const formattedAnswer = `${response.answer}${response.question ? `\n\n${response.question}` : ''}${response.nextStep ? `\n\n${response.nextStep}` : ''}`;
@@ -60,7 +82,7 @@ export function MentorChat({
         text: formattedAnswer
       }]);
     } catch (error) {
-      setMessages(prev => [...prev, { role: 'mentor', text: "Entschuldigung, ich habe gerade Verbindungsschwierigkeiten. Bitte versuche es noch einmal." }]);
+      setMessages(prev => [...prev, { role: 'mentor', text: t("tutor.connection_error") }]);
     } finally {
       setIsLoading(false);
     }
@@ -68,10 +90,10 @@ export function MentorChat({
 
   const handleToolClick = (toolId: string) => {
     let prompt = "";
-    if (toolId === "sum") prompt = "Fasse dieses Modul in 3 kurzen Punkten zusammen.";
-    else if (toolId === "explain") prompt = "Erkläre mir den Inhalt dieses Moduls einfacher und benutze eine verständliche Analogie.";
-    else if (toolId === "quiz") prompt = "Stelle mir eine kurze Verständnisfrage zum aktuellen Thema.";
-    else if (toolId === "deeper") prompt = "Gehe tiefer in das Thema des Moduls ein und erkläre mir einen fortgeschrittenen Aspekt.";
+    if (toolId === "sum") prompt = language === "en" ? "Summarize this module in 3 short points." : "Fasse dieses Modul in 3 kurzen Punkten zusammen.";
+    else if (toolId === "explain") prompt = language === "en" ? "Explain the content of this module simpler, using a clear analogy." : "Erkläre mir den Inhalt dieses Moduls einfacher und benutze eine verständliche Analogie.";
+    else if (toolId === "quiz") prompt = language === "en" ? "Ask me a short understanding question about the current topic." : "Stelle mir eine kurze Verständnisfrage zum aktuellen Thema.";
+    else if (toolId === "deeper") prompt = language === "en" ? "Go deeper into the topic of the module and explain an advanced aspect." : "Gehe tiefer in das Thema des Moduls ein und erkläre mir einen fortgeschrittenen Aspekt.";
     
     sendMessage(prompt);
   };
@@ -91,13 +113,13 @@ export function MentorChat({
         <AIglyph size={20} color="var(--blue)" />
         <div>
           <div className="ttl font-display font-extrabold text-sm text-ink uppercase tracking-wide">Anka AI</div>
-          <div className="sub font-mono text-[9px] text-ink-3">CONTEXT: LESSON PROGRESS</div>
+          <div className="sub font-mono text-[9px] text-ink-3">{t("tutor.context")}</div>
         </div>
       </div>
 
       {/* Quick Tools */}
       <div className="asst-tools grid grid-cols-2 gap-2 p-4 border-b border-line">
-        {TOOLS.map((t) => (
+        {tools.map((t) => (
           <button
             key={t.id}
             onClick={() => handleToolClick(t.id)}
@@ -115,7 +137,7 @@ export function MentorChat({
         {messages.map((m, i) => (
           <div key={i} className={`msg max-w-[88%] ${m.role === 'mentor' ? 'ai self-start' : 'me self-end'}`}>
             <div className="who font-mono text-[9px] text-ink-3 mb-1.5 uppercase tracking-wider">
-              {m.role === 'mentor' ? 'ANKA AI' : 'ICH'}
+              {m.role === 'mentor' ? 'ANKA AI' : (language === 'en' ? 'ME' : 'ICH')}
             </div>
             <div 
               className={`bubble p-4 text-xs leading-relaxed ${
@@ -155,7 +177,7 @@ export function MentorChat({
               handleSubmit(e);
             }
           }}
-          placeholder="Frag Anka..."
+          placeholder={t("tutor.placeholder")}
           className="flex-1 border border-line rounded-xl px-4 py-3 outline-none bg-paper text-xs text-ink focus:border-ink placeholder-ink-3 transition-colors"
         />
         <button 

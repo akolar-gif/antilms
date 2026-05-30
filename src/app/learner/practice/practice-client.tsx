@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { AIglyph, I } from "@/components/layout/icons";
+import { useTranslation } from "@/components/layout/language-context";
 
 interface QuizQuestion {
   id: string;
@@ -24,6 +25,7 @@ export function LearnerPracticeClient({
   const [picked, setPicked] = useState<number | null>(null);
   const [done, setDone] = useState(false);
   const [score, setScore] = useState(0);
+  const { language, t } = useTranslation();
 
   const q = initialQuizzes[idx];
   const total = initialQuizzes.length;
@@ -59,16 +61,20 @@ export function LearnerPracticeClient({
         <header className="topbar">
           <div className="tb-left">
             <div>
-              <div className="eyebrow">DAILY PRACTICE · COMPLETE</div>
+              <div className="eyebrow">
+                {language === "de" ? "TÄGLICHES TRAINING · BEENDET" : "DAILY PRACTICE · COMPLETE"}
+              </div>
               <div style={{ fontFamily: "var(--f-display)", fontWeight: 800, fontSize: 18, marginTop: 2, textTransform: "uppercase", letterSpacing: "-.01em" }}>
-                Training
+                {t("nav.train")}
               </div>
             </div>
           </div>
         </header>
 
         <div className="quiz px-6 py-12 max-w-2xl mx-auto">
-          <div className="eyebrow text-slate-500 font-mono">Sitzung Beendet</div>
+          <div className="eyebrow text-slate-500 font-mono">
+            {language === "de" ? "Sitzung beendet" : "Session completed"}
+          </div>
           <h1 className="display big font-black text-slate-800 text-6xl mt-2 mb-6">
             {score} / {total}
           </h1>
@@ -80,23 +86,37 @@ export function LearnerPracticeClient({
             </div>
             <div className="fb p-5 text-sm text-ink-2 leading-relaxed">
               {pct >= 66 ? (
-                <span>
-                  Hervorragende Sitzung! Du hast die Kernkonzepte zum <b>kombinatorischen Lernen</b> gut verinnerlicht. 
-                  Als nächsten Schritt empfehle ich dir, dein Wissen in den Projektarbeiten praktisch anzuwenden. Ein kurzes Refresher-Element wurde in deinen Pfad eingereiht.
-                </span>
+                language === "de" ? (
+                  <span>
+                    Hervorragende Sitzung! Du hast die Kernkonzepte zum <b>kombinatorischen Lernen</b> gut verinnerlicht. 
+                    Als nächsten Schritt empfehle ich dir, dein Wissen in den Projektarbeiten praktisch anzuwenden. Ein kurzes Refresher-Element wurde in deinen Pfad eingereiht.
+                  </span>
+                ) : (
+                  <span>
+                    Excellent session! You have grasped the core concepts of <b>combinatorial learning</b> well. 
+                    As a next step, I recommend applying your knowledge practically in the projects. A short refresher element has been queued in your path.
+                  </span>
+                )
               ) : (
-                <span>
-                  Guter Versuch! Konzentriere dich beim nächsten Durchlauf darauf, dass <b>neue Ideen oft Rekombinationen bestehender Konzepte</b> sind.
-                  Ich habe dir ein kurzes Erklärvideo vorbereitet und werde diese Fragen in deiner nächsten Übungseinheit in zwei Tagen wieder einstreuen.
-                </span>
+                language === "de" ? (
+                  <span>
+                    Guter Versuch! Konzentriere dich beim nächsten Durchlauf darauf, dass <b>neue Ideen oft Rekombinationen bestehender Konzepte</b> sind.
+                    Ich habe dir ein kurzes Erklärvideo vorbereitet und werde diese Fragen in deiner nächsten Übungseinheit in zwei Tagen wieder einstreuen.
+                  </span>
+                ) : (
+                  <span>
+                    Good try! For the next round, focus on the fact that <b>new ideas are often recombinations of existing concepts</b>. 
+                    I have prepared a short explanation video for you and will reintroduce these questions in your next training session in two days.
+                  </span>
+                )
               )}
             </div>
           </div>
 
           <div className="flex flex-wrap gap-3 mt-8">
-            <button className="btn solid" onClick={reset}>Noch einmal</button>
+            <button className="btn solid" onClick={reset}>{t("practice.restart")}</button>
             <button className="btn ghost" onClick={() => router.push("/learner")}>
-              Zurück zum Studio <I.arrow className="arrow" style={{ width: 18, height: 18 }} />
+              {language === "de" ? "Zurück zum Studio" : "Back to Studio"} <I.arrow className="arrow" style={{ width: 18, height: 18 }} />
             </button>
           </div>
         </div>
@@ -110,9 +130,11 @@ export function LearnerPracticeClient({
       <header className="topbar">
         <div className="tb-left">
           <div>
-            <div className="eyebrow">DAILY PRACTICE · AI-COACHED</div>
+            <div className="eyebrow">
+              {language === "de" ? "TÄGLICHES TRAINING · KI-COACHED" : "DAILY PRACTICE · AI-COACHED"}
+            </div>
             <div style={{ fontFamily: "var(--f-display)", fontWeight: 800, fontSize: 18, marginTop: 2, textTransform: "uppercase", letterSpacing: "-.01em" }}>
-              Training
+              {t("nav.train")}
             </div>
           </div>
         </div>
@@ -121,7 +143,7 @@ export function LearnerPracticeClient({
       <div className="quiz px-6 py-12 max-w-2xl mx-auto">
         <div className="qtop flex justify-between items-center mb-8">
           <div className="eyebrow font-mono text-xs text-ink-2">
-            FRAGE {String(idx + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+            {language === "de" ? "FRAGE" : "QUESTION"} {String(idx + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
           </div>
           <div className="qprog flex gap-1.5">
             {initialQuizzes.map((_, i) => (
@@ -185,7 +207,7 @@ export function LearnerPracticeClient({
               <div className="fh flex items-center gap-2.5 px-4 py-3 bg-ink text-paper text-xs font-semibold uppercase font-display tracking-wider">
                 <AIglyph size={16} />
                 <span>
-                  {isCorrect ? "Richtig" : "Nicht ganz"} · AI Feedback
+                  {(isCorrect ? t("practice.feedback_correct") : t("practice.feedback_wrong"))} · AI Feedback
                 </span>
               </div>
               <div 
@@ -199,7 +221,7 @@ export function LearnerPracticeClient({
         {picked !== null && (
           <div className="flex justify-end mt-6">
             <button className="btn solid flex items-center gap-2" onClick={next}>
-              {idx + 1 >= total ? "Ergebnisse ansehen" : "Nächste Frage"} 
+              {idx + 1 >= total ? (language === "de" ? "Ergebnisse ansehen" : "View results") : t("practice.next")} 
               <I.arrow className="arrow" style={{ width: 18, height: 18 }} />
             </button>
           </div>

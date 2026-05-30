@@ -7,6 +7,7 @@ export interface GenerateTextInput {
   targetGroup: string;
   tone: string;
   length: "short" | "medium" | "long";
+  language?: string;
 }
 
 export interface GenerateTextResult {
@@ -21,6 +22,7 @@ export interface GenerateBlockInput {
   moduleObjective: string;
   context?: string; // Existing text or previous block
   prompt?: string; // Custom instructions from the user
+  language?: string;
 }
 
 export interface MentorReplyInput {
@@ -29,6 +31,7 @@ export interface MentorReplyInput {
   moduleContext: string;
   blockContext?: string;
   learnerConfidence?: number;
+  language?: string;
 }
 
 export interface MentorReplyResult {
@@ -43,6 +46,7 @@ export interface CoDesignerInput {
   moduleTitle: string;
   moduleDescription: string;
   existingBlocksInfo: string;
+  language?: string;
 }
 
 export interface CoDesignerResult {
@@ -58,6 +62,7 @@ export interface CoDesignerResult {
 export interface GenerateCurriculumInput {
   title: string;
   description: string;
+  language?: string;
 }
 
 export interface GeneratedBlock {
@@ -92,4 +97,5 @@ export interface GenerateModuleInput {
   topic: string;
   description: string;
   existingModulesInfo?: string;
+  language?: string;
 }

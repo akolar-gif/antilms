@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Brain, Star, Clock, Trophy, Target, Sparkles, LogOut, ArrowRight } from "lucide-react";
 import { GDPRControls } from "@/components/learner/gdpr-controls";
 import { I, Mark, AIChip } from "@/components/layout/icons";
+import { cookies } from "next/headers";
+import { translations } from "@/components/layout/language-context";
 
 export const dynamic = 'force-dynamic';
 
@@ -11,15 +13,28 @@ export default async function LearnerDashboard() {
   const reflections = await store.getReflections("learner-1");
   const publishedCourses = courses.filter(c => c.status === "published");
 
-  // Format current date
+  const cookieStore = await cookies();
+  const lang = (cookieStore.get("lang")?.value || "de") as "de" | "en";
+  const dict = translations[lang] || translations.de;
+  const t = (key: keyof typeof translations.de, params?: Record<string, string>) => {
+    let text = dict[key] || translations.de[key] || String(key);
+    if (params) {
+      Object.entries(params).forEach(([k, v]) => {
+        text = text.replace(`{${k}}`, v);
+      });
+    }
+    return text;
+  };
+
+  // Format current date based on language
   const now = new Date();
-  const dateStr = now.toLocaleDateString('de-DE', {
+  const dateStr = now.toLocaleDateString(lang === "de" ? 'de-DE' : 'en-US', {
     weekday: 'long',
     day: 'numeric',
     month: 'long'
   }).toUpperCase();
 
-  // Calculate course progress percentages and find active course
+  // Calculate course progress percentages
   const courseProgresses = [];
   let completedBlocksTotal = 0;
   let totalPunkGamesCompleted = 0;
@@ -40,8 +55,8 @@ export default async function LearnerDashboard() {
         if (userProgress.completedBlocks.includes(block.id)) {
           completedInCourse++;
           completedBlocksTotal++;
-          if (block.type === "punk_game") totalPunkGamesCompleted++;
-          if (block.type === "quiz") totalQuizzesCompleted++;
+          if (block.type === 'punk_game') totalPunkGamesCompleted++;
+          if (block.type === 'quiz') totalQuizzesCompleted++;
         }
       }
     }
@@ -50,58 +65,54 @@ export default async function LearnerDashboard() {
     courseProgresses.push({
       course,
       percentage,
-      totalBlocks,
-      completedInCourse,
-      completedBlocks: userProgress.completedBlocks,
-      modules
+      totalBlocks
     });
   }
 
-  // Find first active in-progress course, fallback to first course
-  const activeCourseProgress = courseProgresses.find(p => p.percentage > 0 && p.percentage < 100) || courseProgresses[0];
-  
-  let resumeLink = "/learner";
-  let resumeBlockTitle = "Start Learning";
-  let resumeModuleTitle = "No Active Modules";
+  // Active course progress is the first in-progress course, or first published course
+  const activeCourseProgress = courseProgresses.find(p => p.percentage > 0 && p.percentage < 100) 
+    || courseProgresses.find(p => p.percentage === 0) 
+    || courseProgresses[0];
+
+  // Find next uncompleted block to resume
+  let resumeModuleTitle = t("dashboard.no_active_course");
+  let resumeBlockTitle = t("dashboard.no_courses_sub");
+  let resumeLink = "/learner/library";
   let resumeProgress = 0;
 
   if (activeCourseProgress) {
-    resumeProgress = activeCourseProgress.percentage;
-    const { course, modules, completedBlocks } = activeCourseProgress;
+    const courseId = activeCourseProgress.course.id;
+    const userProgress = await store.getUserProgress("learner-1", courseId);
+    const modules = await store.getModules(courseId);
     
-    // Find first uncompleted block
-    let found = false;
+    let foundResume = false;
     for (const mod of modules) {
       const blocks = await store.getBlocks(mod.id);
-      const uncompletedBlock = blocks.find(b => !completedBlocks.includes(b.id));
-      if (uncompletedBlock) {
-        resumeLink = `/learner/courses/${course.id}/modules/${mod.id}`;
-        resumeBlockTitle = uncompletedBlock.title;
-        resumeModuleTitle = mod.title;
-        found = true;
-        break;
+      for (const block of blocks) {
+        if (!userProgress.completedBlocks.includes(block.id)) {
+          resumeModuleTitle = mod.title;
+          resumeBlockTitle = block.title;
+          resumeLink = `/learner/courses/${courseId}/modules/${mod.id}`;
+          foundResume = true;
+          break;
+        }
       }
+      if (foundResume) break;
     }
-    
-    // If all blocks are completed, link to first block
-    if (!found && modules.length > 0) {
-      resumeLink = `/learner/courses/${course.id}/modules/${modules[0].id}`;
-      resumeBlockTitle = "Review course";
-      resumeModuleTitle = modules[0].title;
-    }
+    resumeProgress = activeCourseProgress.percentage;
   }
 
-  // Future Skills scores
-  const criticalThinking = Math.min(100, reflections.length * 20 + 20);
-  const complexProblemSolving = Math.min(100, totalPunkGamesCompleted * 25 + 20);
-  const aiLiteracy = Math.min(100, totalQuizzesCompleted * 20 + 20);
-  const agileMindset = Math.min(100, completedBlocksTotal * 5 + 20);
+  // Adaptive future skills calculation based on completed blocks
+  const criticalThinking = Math.min(100, Math.round(totalQuizzesCompleted * 25));
+  const complexProblemSolving = Math.min(100, Math.round(totalPunkGamesCompleted * 35));
+  const aiLiteracy = Math.min(100, Math.round(completedBlocksTotal * 8));
+  const agileMindset = Math.min(100, Math.round(reflections.length * 20));
 
   const futureSkills = [
-    { name: "Critical Thinking", score: criticalThinking, color: "var(--ink-2)", strokeColor: "bg-plum" },
-    { name: "Complex Problem Solving", score: complexProblemSolving, color: "var(--ink-2)", strokeColor: "bg-emerald-green" },
+    { name: lang === "de" ? "Kritisches Denken" : "Critical Thinking", score: criticalThinking, color: "var(--ink-2)", strokeColor: "bg-plum" },
+    { name: lang === "de" ? "Komplexe Problemlösung" : "Complex Problem Solving", score: complexProblemSolving, color: "var(--ink-2)", strokeColor: "bg-emerald-green" },
     { name: "AI Literacy", score: aiLiteracy, color: "var(--ink-2)", strokeColor: "bg-royal-blue" },
-    { name: "Agile Mindset", score: agileMindset, color: "var(--ink-2)", strokeColor: "bg-amber-500" }
+    { name: lang === "de" ? "Agiles Mindset" : "Agile Mindset", score: agileMindset, color: "var(--ink-2)", strokeColor: "bg-amber-500" }
   ];
 
   return (
@@ -112,7 +123,7 @@ export default async function LearnerDashboard() {
           <div>
             <div className="eyebrow">{dateStr}</div>
             <div style={{ fontFamily: "var(--f-display)", fontWeight: 800, fontSize: 18, marginTop: 2, textTransform: "uppercase", letterSpacing: "-.01em" }}>
-              Studio Dashboard
+              {t("nav.home")} Dashboard
             </div>
           </div>
         </div>
@@ -120,7 +131,7 @@ export default async function LearnerDashboard() {
           <div className="streak">
             <span className="dot"></span>
             <span className="num">{completedBlocksTotal}</span>
-            <span className="lbl" style={{ color: "var(--ink-2)", fontWeight: 400 }}>Aktivitäten</span>
+            <span className="lbl" style={{ color: "var(--ink-2)", fontWeight: 400 }}>{t("dashboard.activities")}</span>
           </div>
         </div>
       </header>
@@ -129,23 +140,27 @@ export default async function LearnerDashboard() {
       <div className="lattice hero-grid">
         {/* Left Welcome Cell */}
         <div className="cell">
-          <div className="eyebrow" style={{ marginBottom: 18 }}>WILLKOMMEN ZURÜCK, LERNER</div>
+          <div className="eyebrow" style={{ marginBottom: 18 }}>{t("dashboard.welcome_back")}</div>
           <h1 className="display hero-display">
-            Was wirst du<br/>heute <span className="stroke">erschaffen</span>?
+            {lang === "de" ? (
+              <>Was wirst du<br/>heute <span className="stroke">erschaffen</span>?</>
+            ) : (
+              <>What will you<br/>create <span className="stroke">today</span>?</>
+            )}
           </h1>
           <p className="lede" style={{ marginTop: 22, maxWidth: 520 }}>
-            Deine persönliche Lernumgebung. Setze deinen Kurs fort, trainiere Zukunftsfähigkeiten oder lasse dir neue Themen per KI aufbereiten.
+            {t("dashboard.hero_desc")}
           </p>
         </div>
 
         {/* Right Continue Card */}
         <div className="cell blue">
-          <span className="corner-no" style={{ color: "color-mix(in oklab, var(--on-blue) 70%, transparent)" }}>AKTUELL</span>
+          <span className="corner-no" style={{ color: "color-mix(in oklab, var(--on-blue) 70%, transparent)" }}>{t("dashboard.current")}</span>
           
           <div className="continue">
             <div className="meta">
               <span className="eyebrow" style={{ color: "color-mix(in oklab, var(--on-blue) 70%, transparent)" }}>
-                FORTSETZEN · {activeCourseProgress?.course.title || "Kein aktiver Kurs"}
+                {t("dashboard.resume")} · {activeCourseProgress?.course.title || t("dashboard.no_active_course")}
               </span>
             </div>
             <div>
@@ -159,17 +174,17 @@ export default async function LearnerDashboard() {
                 <i style={{ width: `${resumeProgress}%` }}></i>
               </div>
               <div className="num" style={{ fontSize: 12, marginTop: 8, opacity: .8 }}>
-                {resumeProgress}% abgeschlossen
+                {resumeProgress}% {t("dashboard.completed")}
               </div>
             </div>
             
             {activeCourseProgress ? (
               <Link href={resumeLink} className="resume">
-                Lernpfad fortsetzen <I.arrow className="arrow" style={{ width: 22, height: 22 }} />
+                {t("dashboard.continue")} <I.arrow className="arrow" style={{ width: 22, height: 22 }} />
               </Link>
             ) : (
               <Link href="/learner/library" className="resume">
-                Bibliothek durchstöbern <I.arrow className="arrow" style={{ width: 22, height: 22 }} />
+                {t("dashboard.library_btn")} <I.arrow className="arrow" style={{ width: 22, height: 22 }} />
               </Link>
             )}
           </div>
@@ -178,8 +193,8 @@ export default async function LearnerDashboard() {
 
       {/* Dynamic Future Skills Competence Signals */}
       <div className="sec-head">
-        <h2>Zukunftsfähigkeiten</h2>
-        <span className="meta">COMPETENCE SIGNALS</span>
+        <h2>{t("dashboard.skills_title")}</h2>
+        <span className="meta">{t("dashboard.skills_signals")}</span>
       </div>
       <div className="pad">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1.5 bg-line border border-line">
@@ -193,7 +208,7 @@ export default async function LearnerDashboard() {
                 <div className="progress-line bg-paper-3 h-1 rounded-full overflow-hidden">
                   <div className={`h-full ${skill.strokeColor}`} style={{ width: `${skill.score}%` }}></div>
                 </div>
-                <div className="text-[9px] text-ink-3 font-mono tracking-wide uppercase">Signalstärke</div>
+                <div className="text-[9px] text-ink-3 font-mono tracking-wide uppercase">{t("dashboard.skills_strength")}</div>
               </div>
             </div>
           ))}
@@ -202,14 +217,14 @@ export default async function LearnerDashboard() {
 
       {/* Library Preview */}
       <div className="sec-head">
-        <h2>Meine Lernpfade</h2>
-        <span className="meta">{publishedCourses.length} PUBLIZIERTE KURSE</span>
+        <h2>{t("dashboard.paths_title")}</h2>
+        <span className="meta">{t("dashboard.paths_meta", { count: publishedCourses.length.toString() })}</span>
       </div>
       
       {publishedCourses.length === 0 ? (
         <div className="pad">
           <div className="p-8 text-center bg-paper-2 border border-line-soft rounded-2xl">
-            <p className="text-sm text-ink-2">Aktuell sind keine Kurse publiziert.</p>
+            <p className="text-sm text-ink-2">{t("dashboard.paths_no_courses")}</p>
           </div>
         </div>
       ) : (
@@ -233,8 +248,8 @@ export default async function LearnerDashboard() {
                     </div>
                     <div className="ptitle">{course.title}</div>
                     <div className="pmeta">
-                      <span>{p.totalBlocks} Blöcke</span>
-                      <span>{p.percentage}% erledigt</span>
+                      <span>{t("dashboard.paths_blocks", { count: p.totalBlocks.toString() })}</span>
+                      <span>{t("dashboard.paths_done", { percentage: p.percentage.toString() })}</span>
                     </div>
                     {p.percentage > 0 && (
                       <div className="pbar"><i style={{ width: `${p.percentage}%` }}></i></div>
@@ -252,8 +267,8 @@ export default async function LearnerDashboard() {
                 </div>
                 <div className="ptitle">{course.title}</div>
                 <div className="pmeta mt-auto">
-                  <span>{p.totalBlocks} Blöcke</span>
-                  <span>{p.percentage}% erledigt</span>
+                  <span>{t("dashboard.paths_blocks", { count: p.totalBlocks.toString() })}</span>
+                  <span>{t("dashboard.paths_done", { percentage: p.percentage.toString() })}</span>
                 </div>
                 {p.percentage > 0 ? (
                   <div className="pbar"><i style={{ width: `${p.percentage}%` }}></i></div>
@@ -270,8 +285,8 @@ export default async function LearnerDashboard() {
 
       {/* Daily Training Teaser */}
       <div className="sec-head">
-        <h2>Tägliches Training</h2>
-        <span className="meta">DAILY TRAINING</span>
+        <h2>{t("dashboard.practice_title")}</h2>
+        <span className="meta">{t("dashboard.practice_title").toUpperCase()}</span>
       </div>
       
       <div className="pad">
@@ -279,15 +294,15 @@ export default async function LearnerDashboard() {
           <div className="cell ink flex flex-col justify-between gap-6 p-6 min-h-[220px]">
             <div className="eyebrow" style={{ color: "color-mix(in oklab, var(--paper) 70%, transparent)" }}>TRAINING WORKSHOP</div>
             <h2 className="h-lg" style={{ fontSize: "clamp(24px, 3.4vw, 40px)", textTransform: "uppercase", lineHeight: 0.95 }}>
-              Drei Fragen.<br/>KI bewertet dich.
+              {t("dashboard.train_teaser_title")}
             </h2>
             <Link href="/learner/practice" className="btn coral self-start">
-              Training starten <I.arrow className="arrow" style={{ width: 18, height: 18 }} />
+              {t("dashboard.practice_btn")} <I.arrow className="arrow" style={{ width: 18, height: 18 }} />
             </Link>
           </div>
           
           <div className="cell flex flex-col justify-center gap-4 p-6 bg-paper">
-            <div className="eyebrow">DIESE WOCHE</div>
+            <div className="eyebrow">{t("dashboard.train_teaser_weekly")}</div>
             <div className="flex gap-2.5 items-end h-24">
               {[40, 65, 30, 80, 55, 90, 20].map((h, i) => (
                 <div 
@@ -297,15 +312,15 @@ export default async function LearnerDashboard() {
                 ></div>
               ))}
             </div>
-            <div className="num" style={{ fontSize: 12, color: "var(--ink-2)" }}>MON — SON · 6 von 7 Tagen aktiv</div>
+            <div className="num" style={{ fontSize: 12, color: "var(--ink-2)" }}>{t("dashboard.train_teaser_active", { activeCount: "6", totalCount: "7" })}</div>
           </div>
         </div>
       </div>
 
       {/* GDPR Data Controls Panel */}
       <div className="sec-head">
-        <h2>Datenschutz &amp; Privatsphäre</h2>
-        <span className="meta">GDPR MANAGEMENT</span>
+        <h2>{t("dashboard.privacy_title")}</h2>
+        <span className="meta">{t("dashboard.privacy_meta")}</span>
       </div>
       <div className="pad">
         <div className="cell border border-line bg-paper p-6">

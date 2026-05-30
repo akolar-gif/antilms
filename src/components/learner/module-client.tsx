@@ -16,6 +16,7 @@ import { markBlockCompletedAction, saveReflectionAction } from "@/app/actions/pr
 import { TopBar, I, AIglyph } from "@/components/layout/icons";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "@/components/layout/language-context";
 
 export function LearnerModuleClient({
   moduleTitle,
@@ -38,6 +39,7 @@ export function LearnerModuleClient({
   const [completed, setCompleted] = useState<string[]>(completedBlocks);
   const [reflections, setReflections] = useState<Reflection[]>(initialReflections);
   const [tutorOpen, setTutorOpen] = useState(false);
+  const { language, t } = useTranslation();
 
   const handleComplete = async (blockId: string) => {
     if (completed.includes(blockId)) return;
@@ -99,7 +101,7 @@ export function LearnerModuleClient({
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden">
       {/* TopBar Header */}
-      <TopBar title={moduleTitle} sub="LERNPFAD MODUL" />
+      <TopBar title={moduleTitle} sub={language === "de" ? "LERNPFAD MODUL" : "LEARNING PATH MODULE"} />
 
       {/* Reader Wrap: split reader / assistant */}
       <div className={`reader-wrap flex-1 overflow-hidden relative ${tutorOpen ? "tutor-open" : ""}`}>
@@ -108,7 +110,7 @@ export function LearnerModuleClient({
           <div className="w-full max-w-[820px] mx-auto">
             {/* Header Description Cover Card */}
           <div className="cell p2 border border-line rounded-2xl mb-12 flex flex-col gap-5">
-            <span className="eyebrow text-ink-3">Modul-Einführung</span>
+            <span className="eyebrow text-ink-3">{t("reader.intro")}</span>
             <h1 className="h-lg text-ink font-display font-extrabold text-3xl leading-tight">
               {moduleTitle}
             </h1>
@@ -120,7 +122,7 @@ export function LearnerModuleClient({
               <div className="progress-line bg-paper-3 h-1.5 rounded-full overflow-hidden">
                 <i style={{ width: `${progressPercentage}%` }}></i>
               </div>
-              <p className="text-[10px] font-mono text-ink-3 uppercase mt-2">{progressPercentage}% abgeschlossen</p>
+              <p className="text-[10px] font-mono text-ink-3 uppercase mt-2">{progressPercentage}% {t("dashboard.completed")}</p>
             </div>
 
             {/* Dynamic Adaptive Recommendation Card */}
@@ -206,7 +208,7 @@ export function LearnerModuleClient({
                       <div className="mt-4 flex justify-end">
                         {isBlockDone ? (
                           <span className="inline-flex items-center gap-1 text-xs font-mono uppercase text-blue-d bg-blue/10 border border-blue px-3 py-1 rounded-full">
-                            <Check className="w-3.5 h-3.5" /> Erledigt
+                            <Check className="w-3.5 h-3.5" /> {t("reader.done")}
                           </span>
                         ) : (
                           <button 
@@ -216,7 +218,7 @@ export function LearnerModuleClient({
                             }}
                             className="btn sm solid flex items-center gap-1.5"
                           >
-                            <Play className="w-3 h-3 fill-current" /> Abschließen
+                            <Play className="w-3 h-3 fill-current" /> {t("reader.complete")}
                           </button>
                         )}
                       </div>
@@ -233,13 +235,13 @@ export function LearnerModuleClient({
             
             {/* End of Module panel */}
             <div className="pt-12 border-t border-line flex flex-col items-center gap-4 text-center">
-              <h4 className="font-display font-extrabold text-xl text-ink">Modul abgeschlossen</h4>
+              <h4 className="font-display font-extrabold text-xl text-ink">{t("reader.module_done")}</h4>
               <p className="text-ink-2 max-w-sm text-xs leading-relaxed">
-                Nimm dir einen Moment Zeit für eine Reflexion oder gehe zum nächsten Modul deines Kurses über.
+                {t("reader.reflection_text")}
               </p>
               <div className="flex gap-3">
-                <button className="btn sm ghost border border-line" onClick={() => setTutorOpen(true)}>AI Tutor befragen</button>
-                <Link href="/learner" className="btn sm solid">Zurück zur Übersicht</Link>
+                <button className="btn sm ghost border border-line" onClick={() => setTutorOpen(true)}>{t("reader.ask_tutor")}</button>
+                <Link href="/learner" className="btn sm solid">{t("reader.back")}</Link>
               </div>
             </div>
           </div>
@@ -265,7 +267,7 @@ export function LearnerModuleClient({
         aria-label="AI Tutor"
       >
         <AIglyph size={22} color="var(--on-blue)" />
-        <span className="ml-2">Anka AI fragen</span>
+        <span className="ml-2">{t("reader.tutor_fab")}</span>
       </button>
     </div>
   );

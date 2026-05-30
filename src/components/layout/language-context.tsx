@@ -1,0 +1,282 @@
+"use client";
+
+import React, { createContext, useContext, useState, useEffect } from "react";
+
+export type Language = "de" | "en";
+
+export const translations = {
+  de: {
+    // Navigation
+    "nav.home": "Home",
+    "nav.library": "Mediathek",
+    "nav.train": "Trainieren",
+    "nav.studio": "Studio",
+    "nav.create": "Erstellen",
+    "nav.signals": "Signale",
+    "nav.profile_role": "Profil & Rolle",
+    "nav.role_learner": "Lerner-Ansicht",
+    "nav.role_trainer": "Trainer-Studio",
+    "nav.role_admin": "Admin-Bereich",
+    "nav.logout": "Abmelden",
+
+    // Dashboard
+    "dashboard.welcome": "Willkommen bei",
+    "dashboard.continue": "Lernpfad fortsetzen",
+    "dashboard.completed": "abgeschlossen",
+    "dashboard.future_skills": "Zukunftskompetenzen",
+    "dashboard.library_title": "Deine aktive Mediathek",
+    "dashboard.no_courses": "Keine aktiven Kurse. Besuche die Mediathek, um zu stöbern!",
+    "dashboard.no_courses_sub": "Wähle einen Kurs aus, um deine Lernreise zu beginnen.",
+    "dashboard.library_btn": "Mediathek durchsuchen",
+    "dashboard.practice_title": "Tägliches Training",
+    "dashboard.practice_desc": "Halte deine Streak aktiv und stärke dein Wissen mit einer schnellen Fragerunde.",
+    "dashboard.practice_btn": "Training starten",
+    
+    // Dashboard (extended)
+    "dashboard.welcome_back": "WILLKOMMEN ZURÜCK, LERNER",
+    "dashboard.hero_title_1": "Was wirst du",
+    "dashboard.hero_title_2": "heute erschaffen?",
+    "dashboard.hero_desc": "Deine persönliche Lernumgebung. Setze deinen Kurs fort, trainiere Zukunftsfähigkeiten oder lasse dir neue Themen per KI aufbereiten.",
+    "dashboard.current": "AKTUELL",
+    "dashboard.resume": "FORTSETZEN",
+    "dashboard.no_active_course": "Kein aktiver Kurs",
+    "dashboard.activities": "Aktivitäten",
+    "dashboard.skills_title": "Zukunftsfähigkeiten",
+    "dashboard.skills_signals": "COMPETENCE SIGNALS",
+    "dashboard.skills_strength": "Signalstärke",
+    "dashboard.paths_title": "Meine Lernpfade",
+    "dashboard.paths_meta": "{count} PUBLIZIERTE KURSE",
+    "dashboard.paths_no_courses": "Aktuell sind keine Kurse publiziert.",
+    "dashboard.paths_blocks": "{count} Blöcke",
+    "dashboard.paths_done": "{percentage}% erledigt",
+    "dashboard.train_teaser_title": "Drei Fragen. KI bewertet dich.",
+    "dashboard.train_teaser_weekly": "DIESE WOCHE",
+    "dashboard.train_teaser_active": "MON — SON · {activeCount} von {totalCount} Tagen aktiv",
+    "dashboard.privacy_title": "Datenschutz & Privatsphäre",
+    "dashboard.privacy_meta": "GDPR MANAGEMENT",
+
+    // Library
+    "library.title": "Mediathek",
+    "library.subtitle": "DURCHSUCHEN UND ENTDECKEN",
+    "library.enrolled": "Eingeschrieben",
+    "library.not_enrolled": "Verfügbar",
+    "library.start": "Kurs starten",
+    "library.continue": "Fortsetzen",
+
+    // Reader & Module view
+    "reader.intro": "Modul-Einführung",
+    "reader.completed_label": "abgeschlossen",
+    "reader.ask_tutor": "AI Tutor befragen",
+    "reader.back": "Zurück zur Übersicht",
+    "reader.complete": "Abschließen",
+    "reader.done": "Erledigt",
+    "reader.module_done": "Modul abgeschlossen",
+    "reader.reflection_text": "Nimm dir einen Moment Zeit für eine Reflexion oder gehe zum nächsten Modul deines Kurses über.",
+    "reader.tutor_fab": "Anka AI fragen",
+
+    // AI Tutor Sidebar (Anka)
+    "tutor.title": "Anka AI",
+    "tutor.context": "KONTEXT: LERNFORTSCHRITT",
+    "tutor.sum_name": "Zusammenfassen",
+    "tutor.sum_desc": "3 Kernpunkte des Moduls",
+    "tutor.explain_name": "Erklären",
+    "tutor.explain_desc": "Einfacher, mit Analogie",
+    "tutor.quiz_name": "Abfragen",
+    "tutor.quiz_desc": "Verständnistest starten",
+    "tutor.deeper_name": "Vertiefen",
+    "tutor.deeper_desc": "Experten-Blickwinkel",
+    "tutor.placeholder": "Frag Anka...",
+    "tutor.connection_error": "Entschuldigung, ich habe gerade Verbindungsschwierigkeiten. Bitte versuche es noch einmal.",
+    "tutor.greeting_default": "Hallo! Ich unterstütze dich bei deiner Lernreise. Ich kann sehen, woran du gerade arbeitest. Frag mich einfach, wenn du nicht weiterkommst!",
+    "tutor.greeting_module": "Hallo! Ich bin Anka, deine Lernbegleiterin. Ich unterstütze dich im Modul \"{moduleTitle}\". Ich kenne deinen aktuellen Lernfortschritt, frage mich also gerne alles!",
+
+    // Daily Practice
+    "practice.title": "Tägliches Training",
+    "practice.subtitle": "WISSEN FESTIGEN",
+    "practice.welcome": "Bereit für deine tägliche Dosis Wissen?",
+    "practice.welcome_desc": "Wir haben eine personalisierte Fragerunde zusammengestellt, basierend auf deinen kürzlich abgeschlossenen Modulen.",
+    "practice.start_btn": "Fragerunde starten",
+    "practice.streak": "Tage Streak",
+    "practice.question": "Frage",
+    "practice.of": "von",
+    "practice.feedback_correct": "Richtig!",
+    "practice.feedback_wrong": "Nicht ganz richtig.",
+    "practice.next": "Nächste Frage",
+    "practice.complete": "Training beendet!",
+    "practice.complete_desc": "Super gemacht! Du hast dein heutiges Training erfolgreich absolviert.",
+    "practice.score": "Dein Score",
+    "practice.restart": "Noch einmal",
+    "practice.back_home": "Zurück zum Dashboard",
+
+    // Search placeholder
+    "topbar.search": "Suchen oder fragen...",
+  },
+  en: {
+    // Navigation
+    "nav.home": "Home",
+    "nav.library": "Library",
+    "nav.train": "Train",
+    "nav.studio": "Studio",
+    "nav.create": "Create",
+    "nav.signals": "Signals",
+    "nav.profile_role": "Profile & Role",
+    "nav.role_learner": "Learner View",
+    "nav.role_trainer": "Trainer Studio",
+    "nav.role_admin": "Admin Panel",
+    "nav.logout": "Logout",
+
+    // Dashboard
+    "dashboard.welcome": "Welcome to",
+    "dashboard.continue": "Resume Learning Path",
+    "dashboard.completed": "completed",
+    "dashboard.future_skills": "Future Skills",
+    "dashboard.library_title": "Your Active Mediathek",
+    "dashboard.no_courses": "No active courses. Visit the library to start browsing!",
+    "dashboard.no_courses_sub": "Select a course to start your learning journey.",
+    "dashboard.library_btn": "Browse Library",
+    "dashboard.practice_title": "Daily Training",
+    "dashboard.practice_desc": "Keep your streak active and reinforce your knowledge with a quick quiz.",
+    "dashboard.practice_btn": "Start Training",
+    
+    // Dashboard (extended)
+    "dashboard.welcome_back": "WELCOME BACK, LEARNER",
+    "dashboard.hero_title_1": "What will you",
+    "dashboard.hero_title_2": "create today?",
+    "dashboard.hero_desc": "Your personal learning environment. Resume your course, train future skills, or let AI prepare new topics for you.",
+    "dashboard.current": "CURRENT",
+    "dashboard.resume": "RESUME",
+    "dashboard.no_active_course": "No active course",
+    "dashboard.activities": "Activities",
+    "dashboard.skills_title": "Future Skills",
+    "dashboard.skills_signals": "COMPETENCE SIGNALS",
+    "dashboard.skills_strength": "Signal Strength",
+    "dashboard.paths_title": "My Learning Paths",
+    "dashboard.paths_meta": "{count} PUBLISHED COURSES",
+    "dashboard.paths_no_courses": "No courses are currently published.",
+    "dashboard.paths_blocks": "{count} Blocks",
+    "dashboard.paths_done": "{percentage}% completed",
+    "dashboard.train_teaser_title": "Three questions. AI evaluates you.",
+    "dashboard.train_teaser_weekly": "THIS WEEK",
+    "dashboard.train_teaser_active": "MON — SUN · {activeCount} of {totalCount} days active",
+    "dashboard.privacy_title": "Data Protection & Privacy",
+    "dashboard.privacy_meta": "GDPR MANAGEMENT",
+
+    // Library
+    "library.title": "Library",
+    "library.subtitle": "BROWSE AND DISCOVER",
+    "library.enrolled": "Enrolled",
+    "library.not_enrolled": "Available",
+    "library.start": "Start Course",
+    "library.continue": "Continue",
+
+    // Reader & Module view
+    "reader.intro": "Module Introduction",
+    "reader.completed_label": "completed",
+    "reader.ask_tutor": "Ask AI Tutor",
+    "reader.back": "Back to Overview",
+    "reader.complete": "Complete",
+    "reader.done": "Done",
+    "reader.module_done": "Module Completed",
+    "reader.reflection_text": "Take a moment for reflection or move on to the next module of your course.",
+    "reader.tutor_fab": "Ask Anka AI",
+
+    // AI Tutor Sidebar (Anka)
+    "tutor.title": "Anka AI",
+    "tutor.context": "CONTEXT: LESSON PROGRESS",
+    "tutor.sum_name": "Summarize",
+    "tutor.sum_desc": "3 core points of the module",
+    "tutor.explain_name": "Explain",
+    "tutor.explain_desc": "Simpler, with analogy",
+    "tutor.quiz_name": "Quiz",
+    "tutor.quiz_desc": "Start understanding check",
+    "tutor.deeper_name": "Deepen",
+    "tutor.deeper_desc": "Expert perspective",
+    "tutor.placeholder": "Ask Anka...",
+    "tutor.connection_error": "Sorry, I am having connection difficulties right now. Please try again.",
+    "tutor.greeting_default": "Hello! I am here to support your learning journey. I can see what you are working on. Just ask if you get stuck!",
+    "tutor.greeting_module": "Hello! I am Anka, your learning companion. I am here to help you in module \"{moduleTitle}\". I know your current progress, so feel free to ask me anything!",
+
+    // Daily Practice
+    "practice.title": "Daily Training",
+    "practice.subtitle": "REINFORCE KNOWLEDGE",
+    "practice.welcome": "Ready for your daily dose of knowledge?",
+    "practice.welcome_desc": "We have put together a personalized quiz round based on your recently completed modules.",
+    "practice.start_btn": "Start Training",
+    "practice.streak": "days streak",
+    "practice.question": "Question",
+    "practice.of": "of",
+    "practice.feedback_correct": "Correct!",
+    "practice.feedback_wrong": "Not quite correct.",
+    "practice.next": "Next Question",
+    "practice.complete": "Training Complete!",
+    "practice.complete_desc": "Great job! You have successfully completed your training today.",
+    "practice.score": "Your Score",
+    "practice.restart": "Try Again",
+    "practice.back_home": "Back to Dashboard",
+
+    // Search placeholder
+    "topbar.search": "Search or ask anything...",
+  }
+};
+
+type TranslationKey = keyof typeof translations.de;
+
+interface LanguageContextType {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (key: TranslationKey, params?: Record<string, string>) => string;
+}
+
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  const [language, setLanguageState] = useState<Language>("de");
+
+  // Load language from localStorage/cookie on mount
+  useEffect(() => {
+    const savedLang = localStorage.getItem("lang") as Language;
+    if (savedLang === "de" || savedLang === "en") {
+      setLanguageState(savedLang);
+    } else {
+      // Try to detect browser language
+      const browserLang = navigator.language.slice(0, 2).toLowerCase();
+      if (browserLang === "en") {
+        setLanguageState("en");
+      }
+    }
+  }, []);
+
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
+    localStorage.setItem("lang", lang);
+    // Write cookie so server components can access if needed
+    document.cookie = `lang=${lang}; path=/; max-age=31536000; SameSite=Lax`;
+  };
+
+  const t = (key: TranslationKey, params?: Record<string, string>): string => {
+    const dict = translations[language] || translations.de;
+    let text = dict[key] || translations.de[key] || String(key);
+
+    if (params) {
+      Object.entries(params).forEach(([k, v]) => {
+        text = text.replace(`{${k}}`, v);
+      });
+    }
+
+    return text;
+  };
+
+  return (
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+}
+
+export function useTranslation() {
+  const context = useContext(LanguageContext);
+  if (context === undefined) {
+    throw new Error("useTranslation must be used within a LanguageProvider");
+  }
+  return context;
+}

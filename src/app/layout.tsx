@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo, Space_Grotesk, Space_Mono } from "next/font/google";
 import { Toaster } from "sonner";
+import { LanguageProvider } from "@/components/layout/language-context";
 import "./globals.css";
 
 const archivo = Archivo({
@@ -32,7 +33,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${archivo.variable} ${spaceGrotesk.variable} ${spaceMono.variable} antialiased`}>
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
         <Toaster position="top-center" richColors />
       </body>
     </html>

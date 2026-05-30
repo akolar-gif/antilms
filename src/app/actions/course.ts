@@ -120,6 +120,7 @@ export async function updateModuleAction(courseId: string, moduleId: string, inp
 
 import { RealAIProvider } from "@/lib/ai/real-provider";
 import { GeneratedCurriculumResult } from "@/lib/ai/provider";
+import { cookies } from "next/headers";
 
 const aiProvider = new RealAIProvider();
 
@@ -127,7 +128,9 @@ export async function generateCurriculumAction(title: string, description: strin
   if (!title || !description) {
     throw new Error("Title and description are required.");
   }
-  return await aiProvider.generateCurriculum({ title, description });
+  const cookieStore = await cookies();
+  const language = cookieStore.get("lang")?.value || "de";
+  return await aiProvider.generateCurriculum({ title, description, language });
 }
 
 export async function saveCurriculumAction(
@@ -207,11 +210,15 @@ export async function generateModuleAction(courseId: string, topic: string, desc
     `- Module ${idx + 1}: "${m.title}" (Description: ${m.description || "none"})`
   ).join("\n");
 
+  const cookieStore = await cookies();
+  const language = cookieStore.get("lang")?.value || "de";
+
   const generated = await aiProvider.generateModule({
     courseTitle: course.title,
     topic,
     description,
-    existingModulesInfo
+    existingModulesInfo,
+    language
   });
 
   // Create module

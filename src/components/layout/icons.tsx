@@ -1,5 +1,8 @@
+"use client";
+
 import React from "react";
 import { Search } from "lucide-react";
+import { useTranslation } from "@/components/layout/language-context";
 
 // Atelier UI shared geometric icon sets
 export const I = {
@@ -44,6 +47,7 @@ export function AIChip({ label = "AI" }: { label?: string }) {
 }
 
 export function TopBar({ title, sub, right }: { title: string; sub?: string; right?: React.ReactNode }) {
+  const { t } = useTranslation();
   return (
     <header className="topbar">
       <div className="tb-left">
@@ -55,7 +59,7 @@ export function TopBar({ title, sub, right }: { title: string; sub?: string; rig
       <div className="tb-right">
         <label className="search">
           <Search style={{ width: 18, height: 18 }} className="text-ink-3" />
-          <input placeholder="Search or ask anything…" />
+          <input placeholder={t("topbar.search")} />
         </label>
         {right}
       </div>

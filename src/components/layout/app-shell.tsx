@@ -9,6 +9,7 @@ import { loginAction, logoutAction } from "@/app/actions/auth";
 import { toast } from "sonner";
 
 import { I, Mark, AIglyph, AIChip, TopBar } from "./icons";
+import { useTranslation } from "@/components/layout/language-context";
 
 
 
@@ -31,26 +32,27 @@ export function AppShell({
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const { language, setLanguage, t } = useTranslation();
 
   // Define dynamic nav items based on the active role
   const getNavItems = (): NavItem[] => {
     if (currentRole === "trainer") {
       return [
-        { id: "home", href: "/trainer", icon: I.home, label: "Studio" },
-        { id: "create", href: "/trainer?create=true", icon: I.create, label: "Create", create: true },
+        { id: "home", href: "/trainer", icon: I.home, label: t("nav.studio") },
+        { id: "create", href: "/trainer?create=true", icon: I.create, label: t("nav.create"), create: true },
       ];
     }
     if (currentRole === "admin") {
       return [
-        { id: "home", href: "/admin", icon: I.home, label: "Signals" },
-        { id: "studio", href: "/trainer", icon: I.library, label: "Studio" },
+        { id: "home", href: "/admin", icon: I.home, label: t("nav.signals") },
+        { id: "studio", href: "/trainer", icon: I.library, label: t("nav.studio") },
       ];
     }
     // Default Learner
     return [
-      { id: "home", href: "/learner", icon: I.home, label: "Home" },
-      { id: "library", href: "/learner/library", icon: I.library, label: "Library" },
-      { id: "practice", href: "/learner/practice", icon: I.practice, label: "Train" },
+      { id: "home", href: "/learner", icon: I.home, label: t("nav.home") },
+      { id: "library", href: "/learner/library", icon: I.library, label: t("nav.library") },
+      { id: "practice", href: "/learner/practice", icon: I.practice, label: t("nav.train") },
     ];
   };
 
@@ -109,6 +111,17 @@ export function AppShell({
 
         <div className="spacer flex-1" />
 
+        {/* Language Switcher Toggle */}
+        <button
+          onClick={() => setLanguage(language === "de" ? "en" : "de")}
+          className="w-11 h-11 mb-4 rounded-xl flex flex-col items-center justify-center font-mono font-bold border border-line-soft hover:bg-paper-3 transition-colors cursor-pointer text-ink text-[11px] leading-tight select-none"
+          title={language === "de" ? "Switch to English" : "Auf Deutsch umstellen"}
+        >
+          <span className={language === "de" ? "text-blue font-extrabold" : "text-ink-3"}>DE</span>
+          <span className="w-4 h-[1px] bg-line-soft" />
+          <span className={language === "en" ? "text-blue font-extrabold" : "text-ink-3"}>EN</span>
+        </button>
+
         {/* User profile avatar / Role switcher */}
         <div className="relative">
           <button
@@ -132,7 +145,7 @@ export function AppShell({
                   className="absolute bottom-12 left-2 w-56 bg-paper border border-line rounded-2xl shadow-xl z-50 p-3 flex flex-col gap-1.5"
                 >
                   <div className="px-3 py-1.5 border-b border-line-soft mb-1 text-[10px] font-mono uppercase tracking-wider text-ink-3">
-                    Profil &amp; Rolle
+                    {t("nav.profile_role")}
                   </div>
 
                   {/* Switch to Learner */}
@@ -141,7 +154,7 @@ export function AppShell({
                     className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold rounded-xl text-left hover:bg-paper-2 text-ink"
                   >
                     <span className="flex items-center gap-2">
-                      <User className="w-3.5 h-3.5 text-blue-500" /> Lerner-Ansicht
+                      <User className="w-3.5 h-3.5 text-blue-500" /> {t("nav.role_learner")}
                     </span>
                     {currentRole === "learner" && <Check className="w-3.5 h-3.5 text-ink-2" />}
                   </button>
@@ -152,7 +165,7 @@ export function AppShell({
                     className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold rounded-xl text-left hover:bg-paper-2 text-ink"
                   >
                     <span className="flex items-center gap-2">
-                      <Award className="w-3.5 h-3.5 text-emerald-500" /> Trainer-Studio
+                      <Award className="w-3.5 h-3.5 text-emerald-500" /> {t("nav.role_trainer")}
                     </span>
                     {currentRole === "trainer" && <Check className="w-3.5 h-3.5 text-ink-2" />}
                   </button>
@@ -163,7 +176,7 @@ export function AppShell({
                     className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold rounded-xl text-left hover:bg-paper-2 text-ink"
                   >
                     <span className="flex items-center gap-2">
-                      <Shield className="w-3.5 h-3.5 text-amber-500" /> Admin-Bereich
+                      <Shield className="w-3.5 h-3.5 text-amber-500" /> {t("nav.role_admin")}
                     </span>
                     {currentRole === "admin" && <Check className="w-3.5 h-3.5 text-ink-2" />}
                   </button>
@@ -176,7 +189,7 @@ export function AppShell({
                       type="submit"
                       className="flex items-center gap-2 w-full px-3 py-2 text-xs font-semibold text-coral-d hover:bg-paper-2 rounded-xl text-left"
                     >
-                      <LogOut className="w-3.5 h-3.5" /> Abmelden
+                      <LogOut className="w-3.5 h-3.5" /> {t("nav.logout")}
                     </button>
                   </form>
                 </motion.div>
@@ -230,9 +243,9 @@ export function AppShell({
                 className="fixed bottom-16 left-4 right-4 bg-paper border border-line rounded-2xl p-4 shadow-2xl z-50 flex flex-col gap-2"
               >
                 <div className="text-center font-mono text-[10px] uppercase tracking-wider text-ink-3 pb-2 border-b border-line-soft">
-                  Rolle auswählen
+                  {language === "de" ? "Rolle auswählen" : "Select Role"}
                 </div>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-2 mb-2">
                   <button
                     onClick={() => handleRoleSwitch("learner")}
                     className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border border-line text-xs font-semibold ${
@@ -240,7 +253,7 @@ export function AppShell({
                     }`}
                   >
                     <User className="w-4 h-4" />
-                    <span>Lerner</span>
+                    <span>{language === "de" ? "Lerner" : "Learner"}</span>
                   </button>
                   <button
                     onClick={() => handleRoleSwitch("trainer")}
@@ -249,7 +262,7 @@ export function AppShell({
                     }`}
                   >
                     <Award className="w-4 h-4" />
-                    <span>Trainer</span>
+                    <span>{language === "de" ? "Trainer" : "Trainer"}</span>
                   </button>
                   <button
                     onClick={() => handleRoleSwitch("admin")}
@@ -261,13 +274,36 @@ export function AppShell({
                     <span>Admin</span>
                   </button>
                 </div>
+                
+                <div className="text-center font-mono text-[10px] uppercase tracking-wider text-ink-3 pb-2 border-b border-line-soft mt-1">
+                  {language === "de" ? "Sprache wählen" : "Select Language"}
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setLanguage("de")}
+                    className={`p-3 rounded-xl border border-line text-xs font-semibold ${
+                      language === "de" ? "bg-ink text-paper" : "bg-paper text-ink"
+                    }`}
+                  >
+                    Deutsch
+                  </button>
+                  <button
+                    onClick={() => setLanguage("en")}
+                    className={`p-3 rounded-xl border border-line text-xs font-semibold ${
+                      language === "en" ? "bg-ink text-paper" : "bg-paper text-ink"
+                    }`}
+                  >
+                    English
+                  </button>
+                </div>
+
                 <div className="h-px bg-line-soft my-1" />
                 <form action={logoutAction} className="w-full">
                   <button
                     type="submit"
                     className="flex items-center justify-center gap-2 w-full py-3 text-xs font-semibold text-coral-d border border-line rounded-xl"
                   >
-                    <LogOut className="w-4 h-4" /> Abmelden
+                    <LogOut className="w-4 h-4" /> {t("nav.logout")}
                   </button>
                 </form>
               </motion.div>

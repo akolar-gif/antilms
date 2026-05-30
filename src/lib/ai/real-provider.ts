@@ -1,9 +1,18 @@
-import { AIProvider, GenerateTextInput, GenerateTextResult, GenerateBlockInput, MentorReplyInput, MentorReplyResult, CoDesignerInput, CoDesignerResult } from "./provider";
+import { AIProvider, GenerateTextInput, GenerateTextResult, GenerateBlockInput, MentorReplyInput, MentorReplyResult, CoDesignerInput, CoDesignerResult, GenerateCurriculumInput, GeneratedCurriculumResult, GenerateModuleInput, GeneratedModule } from "./provider";
 import { LearningBlock } from "@/types";
 import { generateText, generateObject } from "ai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
 import { PROMPT_TEMPLATES } from "./prompts";
+
+function getLanguageInstruction(language?: string): string {
+  const lang = language?.toLowerCase();
+  if (lang === "en") {
+    return "\n\nCRITICAL REQUIREMENT: You MUST generate all text, titles, descriptions, objectives, content, questions, scenarios, and replies in ENGLISH (EN).";
+  }
+  // Default to German since the app is originally in German
+  return "\n\nCRITICAL REQUIREMENT: Sie MÜSSEN alle Texte, Titel, Beschreibungen, Lernziele, Inhalte, Fragen, Szenarien und Antworten auf DEUTSCH (DE) generieren.";
+}
 
 export class RealAIProvider implements AIProvider {
   // We use gemini-2.5-flash as the default fast and capable model
@@ -16,7 +25,8 @@ export class RealAIProvider implements AIProvider {
       .replace("{{learningObjective}}", input.learningObjective)
       .replace("{{targetGroup}}", input.targetGroup)
       .replace("{{tone}}", input.tone)
-      .replace("{{length}}", input.length);
+      .replace("{{length}}", input.length)
+      + getLanguageInstruction(input.language);
 
     const { object } = await generateObject({
       model: this.model,
@@ -32,7 +42,8 @@ export class RealAIProvider implements AIProvider {
   }
 
   async generateStructuredBlock(input: GenerateBlockInput): Promise<Partial<LearningBlock>> {
-    const customPromptStr = input.prompt ? `\n\nUSER CUSTOM INSTRUCTIONS: ${input.prompt}\nCRITICAL: You MUST follow these custom instructions above all else.` : "";
+    const langInst = getLanguageInstruction(input.language);
+    const customPromptStr = (input.prompt ? `\n\nUSER CUSTOM INSTRUCTIONS: ${input.prompt}\nCRITICAL: You MUST follow these custom instructions above all else.` : "") + langInst;
 
     if (input.type === "quiz") {
       const prompt = PROMPT_TEMPLATES.generateQuiz
@@ -186,7 +197,8 @@ export class RealAIProvider implements AIProvider {
       .replace("{{moduleContext}}", input.moduleContext)
       .replace("{{blockContext}}", input.blockContext || "General")
       .replace("{{learnerMessage}}", input.learnerMessage)
-      .replace("{{learnerConfidence}}", (input.learnerConfidence || 50).toString());
+      .replace("{{learnerConfidence}}", (input.learnerConfidence || 50).toString())
+      + getLanguageInstruction(input.language);
 
     const { object } = await generateObject({
       model: this.model,
@@ -216,7 +228,7 @@ Trainer Message:
 ${input.trainerMessage}
 
 If the trainer asks for suggestions or to create a block, provide an actionable idea and propose a block. If the trainer is just asking a question, provide a helpful reply and omit the proposedBlock.
-Format your reply in Markdown.`;
+Format your reply in Markdown.` + getLanguageInstruction(input.language);
 
     const { object } = await generateObject({
       model: this.model,
@@ -235,10 +247,11 @@ Format your reply in Markdown.`;
     return object as CoDesignerResult;
   }
 
-  async generateCurriculum(input: { title: string; description: string }): Promise<any> {
+  async generateCurriculum(input: GenerateCurriculumInput): Promise<GeneratedCurriculumResult> {
     const prompt = PROMPT_TEMPLATES.generateCurriculum
       .replace("{{title}}", input.title)
-      .replace("{{description}}", input.description);
+      .replace("{{description}}", input.description)
+      + getLanguageInstruction(input.language);
 
     const { object } = await generateObject({
       model: this.model,
@@ -261,7 +274,7 @@ Format your reply in Markdown.`;
     return object;
   }
 
-  async generateModule(input: { courseTitle: string; topic: string; description: string; existingModulesInfo?: string }): Promise<any> {
+  async generateModule(input: GenerateModuleInput): Promise<GeneratedModule> {
     const existingInstructions = input.existingModulesInfo
       ? `CRITICAL REQUIREMENT:\nThe course already contains the following modules:\n${input.existingModulesInfo}\n\nYou MUST NOT repeat any topics, learning objectives, or content of these existing modules. Focus entirely on new, complementary concepts that build upon them logically.`
       : "";
@@ -270,7 +283,8 @@ Format your reply in Markdown.`;
       .replace("{{courseTitle}}", input.courseTitle)
       .replace("{{topic}}", input.topic)
       .replace("{{description}}", input.description)
-      .replace("{{existingModulesInstructions}}", existingInstructions);
+      .replace("{{existingModulesInstructions}}", existingInstructions)
+      + getLanguageInstruction(input.language);
 
     const { object } = await generateObject({
       model: this.model,
