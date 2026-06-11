@@ -319,6 +319,22 @@ export const translations = {
     "editor.preview": "Vorschau",
     "editor.edit": "Bearbeiten",
     "editor.title": "MODUL EDITOR",
+    // Audio Player
+    "audio.badge": "AUDIO-LERNEINHEIT",
+    "audio.play": "Abspielen",
+    "audio.pause": "Pause",
+    "audio.track": "Audio-Track",
+    "audio.upload_btn": "MP3 Datei hochladen",
+    "audio.upload_success": "MP3 erfolgreich hochgeladen",
+    "audio.upload_failed": "Upload der MP3 fehlgeschlagen",
+    "audio.url_placeholder": "Audio-URL (z.B. https://example.com/audio.mp3)",
+    // Wrap Up Chat
+    "wrapup.title": "Modul-Abschlussgespräch",
+    "wrapup.desc": "Beantworte Ankas Fragen, um das Modul abzuschließen.",
+    "wrapup.turn": "Schritt {current} von {total}",
+    "wrapup.placeholder": "Antworte Anka...",
+    "wrapup.completed": "Abschlussgespräch beendet! Du hast das Modul erfolgreich abgeschlossen.",
+    "wrapup.complete_btn": "Modul abschließen",
   },
   en: {
     // Navigation
@@ -640,5 +656,21 @@ export const translations = {
     "editor.preview": "Preview",
     "editor.edit": "Edit",
     "editor.title": "MODULE EDITOR",
+    // Audio Player
+    "audio.badge": "AUDIO LESSON",
+    "audio.play": "Play",
+    "audio.pause": "Pause",
+    "audio.track": "Audio Track",
+    "audio.upload_btn": "Upload MP3 File",
+    "audio.upload_success": "MP3 uploaded successfully",
+    "audio.upload_failed": "MP3 upload failed",
+    "audio.url_placeholder": "Audio URL (e.g. https://example.com/audio.mp3)",
+    // Wrap Up Chat
+    "wrapup.title": "Module Wrap-up",
+    "wrapup.desc": "Answer Anka's questions to complete the module.",
+    "wrapup.turn": "Step {current} of {total}",
+    "wrapup.placeholder": "Reply to Anka...",
+    "wrapup.completed": "Wrap-up conversation completed! You successfully reflected on the module.",
+    "wrapup.complete_btn": "Complete Module",
   }
 };

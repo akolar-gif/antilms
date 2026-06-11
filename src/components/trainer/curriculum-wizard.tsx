@@ -7,7 +7,7 @@ import { saveCurriculumAction } from "@/app/actions/course";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trash2, Plus, Sparkles, ChevronDown, ChevronUp, BookOpen, AlertCircle, FileText, CheckSquare, HelpCircle, Gamepad2, PenTool } from "lucide-react";
+import { Trash2, Plus, Sparkles, ChevronDown, ChevronUp, BookOpen, AlertCircle, FileText, CheckSquare, HelpCircle, Gamepad2, PenTool, Headphones } from "lucide-react";
 
 interface CurriculumWizardProps {
   courseData: {
@@ -74,6 +74,8 @@ export function CurriculumWizard({ courseData, initialCurriculum, onCancel }: Cu
       ? JSON.stringify({ scenario: "Brief setup...", task: "Action plan...", timeboxMinutes: 10, evaluationCriteria: ["Criteria 1"] })
       : type === "project_task"
       ? JSON.stringify({ title: "Project Assignment", scenario: "Write a case study...", task: "Deliver a mockup...", deliverable: "Mockup file", constraints: [], reflectionPrompt: "How did it go?" })
+      : type === "audio"
+      ? "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
       : "Write your reading content here...";
 
     const newBlock: GeneratedBlock = {
@@ -134,6 +136,7 @@ export function CurriculumWizard({ courseData, initialCurriculum, onCancel }: Cu
       case "project_task": return <PenTool className="w-4 h-4 text-royal-blue" />;
       case "video": return <BookOpen className="w-4 h-4 text-red-500" />;
       case "code": return <FileText className="w-4 h-4 text-blue-500" />;
+      case "audio": return <Headphones className="w-4 h-4 text-coral" />;
       default: return <FileText className="w-4 h-4 text-slate-500" />;
     }
   };

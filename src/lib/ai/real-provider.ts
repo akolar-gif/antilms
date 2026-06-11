@@ -1,4 +1,4 @@
-import { AIProvider, GenerateTextInput, GenerateTextResult, GenerateBlockInput, MentorReplyInput, MentorReplyResult, CoDesignerInput, CoDesignerResult, GenerateCurriculumInput, GeneratedCurriculumResult, GenerateModuleInput, GeneratedModule } from "./provider";
+import { AIProvider, GenerateTextInput, GenerateTextResult, GenerateBlockInput, MentorReplyInput, MentorReplyResult, CoDesignerInput, CoDesignerResult, GenerateCurriculumInput, GeneratedCurriculumResult, GenerateModuleInput, GeneratedModule, WrapUpReplyInput, WrapUpReplyResult } from "./provider";
 import { LearningBlock } from "@/types";
 import { generateText, generateObject } from "ai";
 import { google } from "@ai-sdk/google";
@@ -172,6 +172,20 @@ export class RealAIProvider implements AIProvider {
       return { type: "code", title: object.title, content: object.code, learningMode: "apply", source: "ai_assisted" };
     }
 
+    if (input.type === "audio") {
+      const prompt = `Suggest a relevant audio title for a course about "${input.courseTopic}", focusing on "${input.moduleObjective}". Provide a placeholder audio URL (e.g. sample MP3 like https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3). ${customPromptStr}`;
+      const { object } = await generateObject({
+        model: this.model,
+        schema: z.object({
+          title: z.string(),
+          audioUrl: z.string().url().describe("A valid MP3 audio URL"),
+        }),
+        prompt,
+      });
+      return { type: "audio", title: object.title, content: object.audioUrl, learningMode: "understand", source: "ai_assisted" };
+    }
+
+
     // Default Text Block
     const { object } = await generateObject({
       model: this.model,
@@ -235,7 +249,7 @@ Format your reply in Markdown.` + getLanguageInstruction(input.language);
       schema: z.object({
         reply: z.string().describe("Your conversational reply in Markdown."),
         proposedBlock: z.object({
-          type: z.enum(["text", "video", "quiz", "code", "reflection", "punk_game"]),
+          type: z.enum(["text", "video", "quiz", "code", "reflection", "punk_game", "audio"]),
           title: z.string().describe("A concise title for the block"),
           content: z.string().describe("The actual content of the block. For quizzes/reflection/punk_game, this should be a JSON string representation. For video, just the embed URL. For text/code, the raw string."),
           learningMode: z.enum(["understand", "apply", "test", "reflect", "challenge"])
@@ -261,7 +275,7 @@ Format your reply in Markdown.` + getLanguageInstruction(input.language);
           description: z.string(),
           learningObjectives: z.array(z.string()).min(1),
           blocks: z.array(z.object({
-            type: z.enum(["text", "quiz", "reflection", "punk_game", "project_task", "video", "code"]),
+            type: z.enum(["text", "quiz", "reflection", "punk_game", "project_task", "video", "code", "audio"]),
             title: z.string(),
             content: z.string(),
             learningMode: z.enum(["understand", "practice", "reflect", "apply", "create", "discuss", "test", "transfer", "challenge"])
@@ -293,11 +307,46 @@ Format your reply in Markdown.` + getLanguageInstruction(input.language);
         description: z.string(),
         learningObjectives: z.array(z.string()).min(1),
         blocks: z.array(z.object({
-          type: z.enum(["text", "quiz", "reflection", "punk_game", "project_task", "video", "code"]),
+          type: z.enum(["text", "quiz", "reflection", "punk_game", "project_task", "video", "code", "audio"]),
           title: z.string(),
           content: z.string(),
           learningMode: z.enum(["understand", "practice", "reflect", "apply", "create", "discuss", "test", "transfer", "challenge"])
         })).min(1)
+      }),
+      prompt,
+    });
+
+    return object;
+  }
+
+  async wrapUpReply(input: WrapUpReplyInput): Promise<WrapUpReplyResult> {
+    const prompt = `You are Anka AI, the supportive learning companion. You are conducting the end-of-module wrap-up discussion with the learner about the module "${input.moduleTitle}" in the course "${input.courseTitle}".
+Module Objectives: ${input.moduleObjectives.join(", ")}
+
+Dialogue Status: This is step ${input.currentTurn} of ${input.totalTurns}.
+Your goal is to check their understanding, summarize key points, and encourage critical thinking.
+Keep your responses extremely short, focused, and conversational (max 2-3 sentences).
+
+Conversation History:
+${input.messageHistory.map(m => `${m.role === 'user' ? 'Learner' : 'Anka'}: ${m.content}`).join("\n")}
+Learner's latest response: "${input.userMessage}"
+
+If currentTurn < totalTurns:
+Respond in a conversational tone, give brief feedback on what they said, and ask ONE engaging, relevant check question about the module topic to continue the discussion.
+If currentTurn === totalTurns (final turn):
+Acknowledge their answer, summarize their key insight, congratulate them on finishing the module, and say goodbye. Do not ask any more questions.
+
+Output a JSON object matching this schema:
+{
+  "reply": "your conversation reply",
+  "finished": boolean (true if currentTurn >= totalTurns, false otherwise)
+}` + getLanguageInstruction(input.language);
+
+    const { object } = await generateObject({
+      model: this.model,
+      schema: z.object({
+        reply: z.string(),
+        finished: z.boolean(),
       }),
       prompt,
     });

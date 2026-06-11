@@ -83,6 +83,22 @@ export interface GeneratedCurriculumResult {
   modules: GeneratedModule[];
 }
 
+export interface WrapUpReplyInput {
+  courseTitle: string;
+  moduleTitle: string;
+  moduleObjectives: string[];
+  messageHistory: { role: "user" | "assistant"; content: string }[];
+  userMessage: string;
+  currentTurn: number;
+  totalTurns: number;
+  language?: string;
+}
+
+export interface WrapUpReplyResult {
+  reply: string;
+  finished: boolean;
+}
+
 export interface AIProvider {
   generateText(input: GenerateTextInput): Promise<GenerateTextResult>;
   generateStructuredBlock(input: GenerateBlockInput): Promise<Partial<LearningBlock>>;
@@ -90,6 +106,7 @@ export interface AIProvider {
   coDesignerReply(input: CoDesignerInput): Promise<CoDesignerResult>;
   generateCurriculum(input: GenerateCurriculumInput): Promise<GeneratedCurriculumResult>;
   generateModule(input: GenerateModuleInput): Promise<GeneratedModule>;
+  wrapUpReply(input: WrapUpReplyInput): Promise<WrapUpReplyResult>;
 }
 
 export interface GenerateModuleInput {

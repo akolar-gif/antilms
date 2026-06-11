@@ -1,4 +1,4 @@
-import { AIProvider, GenerateTextInput, GenerateTextResult, GenerateBlockInput, MentorReplyInput, MentorReplyResult, CoDesignerInput, CoDesignerResult, GenerateCurriculumInput, GeneratedCurriculumResult, GenerateModuleInput, GeneratedModule } from "./provider";
+import { AIProvider, GenerateTextInput, GenerateTextResult, GenerateBlockInput, MentorReplyInput, MentorReplyResult, CoDesignerInput, CoDesignerResult, GenerateCurriculumInput, GeneratedCurriculumResult, GenerateModuleInput, GeneratedModule, WrapUpReplyInput, WrapUpReplyResult } from "./provider";
 import { LearningBlock } from "@/types";
 
 export class MockAIProvider implements AIProvider {
@@ -130,6 +130,16 @@ export class MockAIProvider implements AIProvider {
         title: isEn ? "Code Example" : "Code-Beispiel",
         content: promptPrefix + "function example() {\n  console.log('Hello World');\n}",
         learningMode: "apply",
+        source: "ai_assisted"
+      };
+    }
+
+    if (input.type === "audio") {
+      return {
+        type: "audio",
+        title: isEn ? "Audio Podcast: Topic Overview" : "Audio-Podcast: Themenübersicht",
+        content: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        learningMode: "understand",
         source: "ai_assisted"
       };
     }
@@ -377,6 +387,36 @@ export class MockAIProvider implements AIProvider {
           learningMode: "test"
         }
       ]
+    };
+  }
+
+  async wrapUpReply(input: WrapUpReplyInput): Promise<WrapUpReplyResult> {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    const isEn = input.language === "en";
+    
+    if (input.currentTurn >= input.totalTurns) {
+      return {
+        reply: isEn 
+          ? "Excellent insights! You have completed the module wrap-up. You're ready to proceed." 
+          : "Hervorragende Gedanken! Du hast das Modul-Abschlussgespräch abgeschlossen. Du bist bereit fortzufahren.",
+        finished: true
+      };
+    }
+    
+    if (input.currentTurn === 1) {
+      return {
+        reply: isEn
+          ? `That's interesting. Regarding the objective: "${input.moduleObjectives[0] || 'Learning Objectives'}", how do you plan to apply this in your daily routine?`
+          : `Das ist interessant. In Bezug auf das Lernziel: "${input.moduleObjectives[0] || 'Lernziele'}", wie planst du, dies in deinem Alltag anzuwenden?`,
+        finished: false
+      };
+    }
+    
+    return {
+      reply: isEn
+        ? "Got it. One last question: What do you think was the most challenging part of this topic?"
+        : "Verstanden. Eine letzte Frage: Was war deiner Meinung nach der anspruchsvollste Teil dieses Themas?",
+      finished: false
     };
   }
 }

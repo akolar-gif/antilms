@@ -32,7 +32,7 @@ export interface Module {
   learningObjectives: string[];
 }
 
-export type BlockType = "text" | "quiz" | "reflection" | "ai_chat" | "project_task" | "media" | "video" | "code" | "punk_game";
+export type BlockType = "text" | "quiz" | "reflection" | "ai_chat" | "project_task" | "media" | "video" | "code" | "punk_game" | "audio";
 export type LearningMode = "understand" | "practice" | "reflect" | "apply" | "create" | "discuss" | "test" | "transfer" | "challenge";
 export type BlockSource = "trainer" | "ai_assisted" | "imported";
 

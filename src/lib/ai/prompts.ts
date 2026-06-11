@@ -94,6 +94,7 @@ For each module:
    - "project_task": For comprehensive, project-based applied learning. Content MUST be a JSON string of schema: {"title": string, "scenario": string, "task": string, "deliverable": string, "constraints": string[], "reflectionPrompt": string}.
    - "video": For visual learners. Content MUST be a valid YouTube embed URL, or fallback like "https://www.youtube.com/embed/dQw4w9WgXcQ".
    - "code": For technical, programming, or scripting concepts. Content is raw code.
+   - "audio": For audio content, podcasts, or spoken explanations. Content MUST be a valid MP3 file URL, e.g. "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3".
 
 Ensure that the blocks form a logical sequence (e.g. text -> quiz/reflection -> punk_game/project_task) and that the contents of quiz, reflection, punk_game, and project_task are valid, stringified JSON strings matching their respective schemas exactly.
 The overall curriculum should feel premium, engaging, and modern. Make the block contents detailed and fully complete (do NOT use placeholders like "Write your text here" or "TODO").
@@ -120,6 +121,7 @@ You must generate:
    - "project_task": Complex project assignment. Content MUST be a JSON string of schema: {"title": string, "scenario": string, "task": string, "deliverable": string, "constraints": string[], "reflectionPrompt": string}.
    - "video": YouTube embed URL or placeholder.
    - "code": Raw code snippet.
+   - "audio": Audio content or podcast. Content MUST be a valid MP3 file URL, e.g. "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3".
 
 Ensure that the blocks form a logical sequence (e.g. text -> quiz/reflection -> punk_game/project_task) and that the contents of quiz, reflection, punk_game, and project_task are valid, stringified JSON strings matching their respective schemas exactly.
 Make the block contents detailed and fully complete (do NOT use placeholders like "Write your text here" or "TODO").

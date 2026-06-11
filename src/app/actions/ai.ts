@@ -79,3 +79,35 @@ export async function askCoDesignerAction(input: any): Promise<CoDesignerResult>
   return await aiProvider.coDesignerReply({ ...input, language });
 }
 
+export async function askWrapUpAction(input: {
+  courseId: string;
+  moduleId: string;
+  messageHistory: { role: "user" | "assistant"; content: string }[];
+  userMessage: string;
+  currentTurn: number;
+  totalTurns: number;
+}) {
+  const cookieStore = await cookies();
+  const language = cookieStore.get("lang")?.value || "de";
+
+  const course = await store.getCourse(input.courseId);
+  const modules = await store.getModules(input.courseId);
+  const module = modules.find(m => m.id === input.moduleId);
+
+  if (!course || !module) {
+    throw new Error("Course or Module not found.");
+  }
+
+  return await aiProvider.wrapUpReply({
+    courseTitle: course.title,
+    moduleTitle: module.title,
+    moduleObjectives: module.learningObjectives || [],
+    messageHistory: input.messageHistory,
+    userMessage: input.userMessage,
+    currentTurn: input.currentTurn,
+    totalTurns: input.totalTurns,
+    language
+  });
+}
+
+

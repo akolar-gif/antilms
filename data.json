@@ -7,7 +7,7 @@
       "targetGroup": "General",
       "status": "published",
       "createdAt": "2026-05-22T15:50:11.215Z",
-      "updatedAt": "2026-05-24T16:33:43.563Z",
+      "updatedAt": "2026-06-01T13:59:24.414Z",
       "category": "Agile, Leadership",
       "imageUrl": "/uploads/1779640423517-216.png"
     },
@@ -146,6 +146,17 @@
       "status": "published",
       "createdAt": "2026-05-30T12:13:12.626Z",
       "updatedAt": "2026-05-30T12:17:50.548Z"
+    },
+    {
+      "id": "course-1780144168422",
+      "title": "tomate",
+      "description": "asdasdfc",
+      "category": "gemüse",
+      "targetGroup": "General",
+      "createdBy": "Trainer",
+      "status": "published",
+      "createdAt": "2026-05-30T12:29:28.422Z",
+      "updatedAt": "2026-05-30T12:29:55.302Z"
     }
   ],
   "modules": [
@@ -503,6 +514,52 @@
         "Develop a framework for adaptive management and continuous learning within evolving Rhabarber environments."
       ],
       "order": 2
+    },
+    {
+      "id": "module-1780144168429",
+      "courseId": "course-1780144168422",
+      "title": "Die Essenz der Tomate: Verständnis und Grundlagen",
+      "description": "Tauchen Sie ein in die faszinierende Welt der 'Tomate', um ihre grundlegenden Eigenschaften, ihre Geschichte und ihre vielfältige Bedeutung zu verstehen. Dieser Modul legt das Fundament für eine tiefgreifende Auseinandersetzung mit diesem zentralen Konzept.",
+      "learningObjectives": [
+        "Die fundamentalen Konzepte und Charakteristika der 'Tomate' präzise identifizieren und beschreiben können.",
+        "Die historische Entwicklung und den kulturellen Einfluss der 'Tomate' in verschiedenen Kontexten nachvollziehen.",
+        "Die grundlegende Bedeutung und die potenziellen Anwendungsbereiche der 'Tomate' erkennen und erläutern können."
+      ],
+      "order": 0
+    },
+    {
+      "id": "module-1780144168466",
+      "courseId": "course-1780144168422",
+      "title": "Die Kultivierung der Tomate: Wachstum und Entwicklung",
+      "description": "Dieser Modul konzentriert sich auf die praktischen Aspekte der 'Tomaten'-Kultivierung. Sie lernen bewährte Methoden und innovative Techniken kennen, um das Wachstum zu fördern, Herausforderungen zu meistern und nachhaltige Ergebnisse zu erzielen.",
+      "learningObjectives": [
+        "Effektive Strategien und Methoden zur nachhaltigen 'Tomaten'-Kultivierung und -Pflege anwenden können.",
+        "Häufige Hürden im 'Tomaten'-Wachstum identifizieren und strategische Lösungsansätze entwickeln.",
+        "Prinzipien der kontinuierlichen Verbesserung und Anpassung in der 'Tomaten'-Entwicklung integrieren können."
+      ],
+      "order": 1
+    },
+    {
+      "id": "module-1780144168500",
+      "courseId": "course-1780144168422",
+      "title": "Die Veredelung der Tomate: Innovation und Anwendung",
+      "description": "Dieser Modul führt Sie über die einfache Kultivierung hinaus. Entdecken Sie fortgeschrittene Techniken der Veredelung, Verarbeitung und Transformation der 'Tomate', um ihren Wert zu maximieren und innovative Anwendungen zu schaffen, die die Grenzen des Möglichen erweitern.",
+      "learningObjectives": [
+        "Fortgeschrittene Techniken zur 'Tomaten'-Veredelung und Wertschöpfung identifizieren und anwenden können.",
+        "Das Potenzial der 'Tomate' in neuen und unkonventionellen Kontexten kritisch evaluieren können.",
+        "Eine eigene innovative 'Tomaten'-basierte Lösung oder Produktidee von der Konzeption bis zur Präsentation entwickeln können."
+      ],
+      "order": 2
+    },
+    {
+      "id": "module-1780319871642",
+      "courseId": "course-1779465011215",
+      "title": "New Module 6",
+      "description": "Description for the new module",
+      "learningObjectives": [
+        "New Objective"
+      ],
+      "order": 5
     }
   ],
   "blocks": [
@@ -1465,6 +1522,146 @@
       "learningMode": "transfer",
       "source": "ai_assisted",
       "order": 3
+    },
+    {
+      "id": "block-1780144168436547",
+      "moduleId": "module-1780144168429",
+      "type": "text",
+      "title": "Was ist eine \"Tomate\" wirklich? Eine Einführung",
+      "content": "Die 'Tomate' ist weit mehr als nur ein einfaches Objekt. Sie repräsentiert ein fundamentales Element, eine Idee oder ein System, dessen Verständnis entscheidend für viele Bereiche ist. In diesem Abschnitt beleuchten wir die Definition der 'Tomate', ihre Kernbestandteile und die Prinzipien, die ihr zugrunde liegen. Betrachten Sie die 'Tomate' als eine Metapher für ein komplexes Thema, das wir im Laufe dieses Kurses dekonstruieren und neu zusammensetzen werden. Wir werden ihre Struktur, ihre Funktion und ihre Interaktionen mit ihrer Umgebung erforschen. Denken Sie über die verschiedenen Dimensionen der 'Tomate' nach: Ist sie eine Ressource, ein Prozess, ein Symbol oder eine Informationsquelle? Verinnerlichen Sie die Idee, dass ein tiefes Verständnis der Grundlagen der Schlüssel zur Meisterschaft ist.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1780144168443471",
+      "moduleId": "module-1780144168429",
+      "type": "video",
+      "title": "Die globale Reise der \"Tomate\"",
+      "content": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1780144168450467",
+      "moduleId": "module-1780144168429",
+      "type": "quiz",
+      "title": "Tomaten-Fakten-Check: Ihr Basiswissen",
+      "content": "{\"question\":\"Welche der folgenden Aussagen beschreibt die 'Tomate' im Kontext dieses Kurses am besten?\",\"options\":[\"Ein spezifisches Gemüse, das weltweit angebaut wird.\",\"Eine Metapher für ein fundamentales Konzept, System oder eine Idee.\",\"Eine neue Technologie, die revolutionäre Veränderungen mit sich bringt.\",\"Ein historisches Artefakt aus der Antike.\"],\"correctAnswer\":\"Eine Metapher für ein fundamentales Konzept, System oder eine Idee.\",\"explanation\":\"Im Kurskontext dient die 'Tomate' als symbolische Darstellung eines komplexen Themas, das in seinen Grundfesten verstanden werden soll, bevor tiefer in dessen Kultivierung und Veredelung eingetaucht wird.\"}",
+      "learningMode": "test",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1780144168457108",
+      "moduleId": "module-1780144168429",
+      "type": "reflection",
+      "title": "Meine \"Tomaten\"-Wahrnehmung",
+      "content": "{\"reflectionPrompt\":\"Bevor wir tiefer in die Materie eintauchen, denken Sie darüber nach, was die 'Tomate' für Sie persönlich repräsentiert oder welche Assoziationen Sie damit verbinden. Gibt es ein ähnliches Konzept in Ihrem Fachgebiet oder Alltag, das Sie als 'Tomate' bezeichnen würden?\",\"followUpQuestions\":[\"Welche Eigenschaften der 'Tomate' faszinieren Sie am meisten?\",\"Wie könnte ein tieferes Verständnis der 'Tomate' Ihnen in Ihren zukünftigen Projekten helfen?\",\"Welche Herausforderungen erwarten Sie beim Erlernen dieses neuen Konzepts ('Tomate')?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1780144168472670",
+      "moduleId": "module-1780144168466",
+      "type": "text",
+      "title": "Anbaumethoden: Von der Aussaat bis zur Ernte",
+      "content": "Die Kultivierung der 'Tomate' erfordert sorgfältige Planung und Ausführung. In diesem Abschnitt werden wir uns mit den Schlüsselphasen des 'Tomaten'-Wachstums befassen: von der initialen 'Aussaat' (Konzeptualisierung) über die 'Pflege' (Entwicklung und Iteration) bis hin zur 'Ernte' (Implementierung und Evaluierung). Wir beleuchten Techniken wie 'optimale Standortwahl' (Analyse des Anwendungsbereichs), 'Bewässerung' (Ressourcenmanagement) und 'Schädlingsbekämpfung' (Problemlösung). Der Fokus liegt darauf, wie man ein gesundes und produktives Umfeld für die 'Tomate' schafft und aufrecht erhält, um ihr volles Potenzial zu entfalten.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1780144168480803",
+      "moduleId": "module-1780144168466",
+      "type": "punk_game",
+      "title": "Der schnelle \"Tomaten\"-Gärtner: Herausforderungen meistern",
+      "content": "{\"scenario\":\"Sie sind ein spezialisierter 'Tomaten'-Gärtner in einer schnelllebigen Umgebung. Plötzlich tauchen fünf unterschiedliche 'Schädlinge' (Probleme oder Bugs) auf, die Ihre 'Tomatenpflanze' (Ihr Projekt oder System) bedrohen. Sie müssen schnell die richtigen Maßnahmen ergreifen, um jeden 'Schädling' zu identifizieren und zu beseitigen, bevor er Schaden anrichtet.\",\"task\":\"Für jeden der fünf 'Schädlinge' (z.B. falsche Daten, ineffiziente Prozesse, unklare Kommunikation, technische Fehler, Ressourcenmangel) müssen Sie innerhalb des Zeitlimits die bestmögliche 'Bekämpfungsstrategie' (Lösung) auswählen oder formulieren und kurz begründen.\",\"timeboxMinutes\":5,\"evaluationCriteria\":[\"Geschwindigkeit der Entscheidungsfindung\",\"Effektivität der gewählten Strategie pro 'Schädling'\",\"Kurze, prägnante Begründung der Strategie\"]}",
+      "learningMode": "practice",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1780144168488910",
+      "moduleId": "module-1780144168466",
+      "type": "project_task",
+      "title": "Mein \"Tomaten\"-Garten-Prototyp",
+      "content": "{\"title\":\"Mein 'Tomaten'-Garten-Prototyp\",\"scenario\":\"Stellen Sie sich vor, Sie haben die Aufgabe, einen kleinen, aber hochproduktiven 'Tomaten'-Garten (ein Miniaturprojekt oder ein Konzeptmodell) zu entwerfen, der spezifische Anforderungen erfüllt. Sie müssen sowohl die äußeren Bedingungen (Umweltfaktoren) als auch die inneren Prozesse (Systemlogik) berücksichtigen, um optimale 'Erträge' zu erzielen.\",\"task\":\"Entwickeln Sie ein detailliertes Konzept für Ihren 'Tomaten'-Garten-Prototyp. Beschreiben Sie die 'Anbaufläche' (den Anwendungsbereich), die 'Pflanzenauswahl' (Kernkomponenten oder Features), das 'Bewässerungssystem' (Ressourcenfluss oder Datenarchitektur) und das 'Schutzsystem' (Fehlermanagement oder Sicherheitskonzepte). Illustrieren Sie, wie Ihr Prototyp 'wächst' und 'Früchte trägt'.\",\"deliverable\":\"Ein schriftliches Konzeptdokument (ca. 500-700 Wörter) mit Skizzen oder Diagrammen, das alle genannten Aspekte Ihres 'Tomaten'-Garten-Prototyps detailliert darstellt.\",\"constraints\":[\"Nutzen Sie nur 'nachhaltige' Methoden und 'ressourcenschonende' Ansätze.\",\"Der Prototyp muss mindestens drei unterschiedliche 'Tomatensorten' (Funktionalitäten oder Anwendungsfälle) unterstützen.\",\"Beschreiben Sie, wie Sie 'Probleme' (Herausforderungen) während des Wachstums erkennen und beheben würden.\"],\"reflectionPrompt\":\"Welche unerwarteten Herausforderungen sind Ihnen bei der Konzeption Ihres 'Tomaten'-Gartens begegnet und wie haben Sie diese gelöst? Was haben Sie aus diesem Designprozess über die Komplexität der 'Tomaten'-Kultivierung gelernt?\"}",
+      "learningMode": "apply",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1780144168508809",
+      "moduleId": "module-1780144168500",
+      "type": "text",
+      "title": "Jenseits der Ernte: Tomaten-Innovationen",
+      "content": "Nachdem die 'Tomate' erfolgreich 'geerntet' wurde, beginnt die Phase der Veredelung und Innovation. Dies umfasst die Transformation der Rohform in wertvollere Produkte oder Anwendungen. Wir werden uns mit Konzepten wie 'Sortenentwicklung' (Feature-Erweiterung), 'Verarbeitungsmethoden' (Optimierung von Prozessen oder Architekturen) und 'Markterschließung' (Identifikation neuer Anwendungsbereiche) befassen. Entdecken Sie, wie man durch kreatives Denken und strategische Planung den Nutzen der 'Tomate' exponentiell steigern kann, von einfachen 'Saucen' bis hin zu komplexen 'biotechnologischen Produkten'.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1780144168517626",
+      "moduleId": "module-1780144168500",
+      "type": "code",
+      "title": "Algorithmus für die ideale Tomaten-Zubereitung",
+      "content": "```pythondef generiere_tomatenrezept(tomaten_zustand, praeferenz_fuer_scharf, mit_kraeutern):\n    rezept = {\n        'name': 'Einfaches Tomatenrezept',\n        'zutaten': ['Frische Tomaten', 'Olivenöl', 'Salz', 'Pfeffer'],\n        'zubereitung': []\n    }\n\n    if tomaten_zustand == 'sehr_reif':\n        rezept['name'] = 'Tomatensuppe Deluxe'\n        rezept['zutaten'].extend(['Zwiebel', 'Knoblauch', 'Gemüsebrühe'])\n        rezept['zubereitung'].append('Tomaten schälen und vierteln.')\n        rezept['zubereitung'].append('Zwiebel und Knoblauch andünsten.')\n        rezept['zubereitung'].append('Tomaten und Brühe hinzufügen, 20 Min. köcheln.')\n        rezept['zubereitung'].append('Pürieren und abschmecken.')\n    elif tomaten_zustand == 'fest_unreif':\n        rezept['name'] = 'Gegrillte Tomatenhälften'\n        rezept['zutaten'].extend(['Balsamico', 'Rosmarin'])\n        rezept['zubereitung'].append('Tomaten halbieren.')\n        rezept['zubereitung'].append('Mit Olivenöl, Balsamico und Rosmarin marinieren.')\n        rezept['zubereitung'].append('Auf dem Grill 5-7 Min. grillen.')\n    else: # normal_reif\n        rezept['name'] = 'Frischer Tomatensalat'\n        rezept['zutaten'].extend(['Gurke', 'Feta', 'Rote Zwiebel'])\n        rezept['zubereitung'].append('Tomaten, Gurke, Feta und Zwiebel würfeln.')\n        rezept['zubereitung'].append('Mit Olivenöl, Salz und Pfeffer anmachen.')\n\n    if praeferenz_fuer_scharf:\n        rezept['zutaten'].append('Chiliflocken')\n        rezept['zubereitung'][len(rezept['zubereitung'])-1] += ' Mit Chiliflocken bestreuen.'\n\n    if mit_kraeutern:\n        rezept['zutaten'].append('Frische Basilikumblätter')\n        rezept['zubereitung'].insert(len(rezept['zubereitung'])-1, 'Mit frischen Kräutern garnieren.')\n\n    return rezept\n\n# Beispielaufruf\nprint(generiere_tomatenrezept('sehr_reif', True, True))\nprint(generiere_tomatenrezept('fest_unreif', False, True))```",
+      "learningMode": "create",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1780144168525882",
+      "moduleId": "module-1780144168500",
+      "type": "reflection",
+      "title": "Die Zukunft der \"Tomate\": Meine Vision",
+      "content": "{\"reflectionPrompt\":\"Stellen Sie sich vor, die 'Tomate' ist eine Technologie oder ein Konzept, das in den nächsten fünf Jahren exponentiell wachsen wird. Welche drei bahnbrechenden Innovationen oder Anwendungen sehen Sie für die 'Tomate' in der Zukunft? Begründen Sie Ihre Visionen und überlegen Sie, welche Auswirkungen diese auf die Gesellschaft haben könnten.\",\"followUpQuestions\":[\"Welche aktuellen Trends könnten die Entwicklung Ihrer 'Tomaten'-Innovationen beeinflussen?\",\"Wie würden Sie die Machbarkeit Ihrer Visionen bewerten?\",\"Welche ethischen Überlegungen sind mit Ihren zukünftigen 'Tomaten'-Anwendungen verbunden?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1780144168533182",
+      "moduleId": "module-1780144168500",
+      "type": "project_task",
+      "title": "Die ultimative \"Tomaten\"-Anwendung",
+      "content": "{\"title\":\"Die ultimative 'Tomaten'-Anwendung\",\"scenario\":\"Sie sind Teil eines Innovations-Teams, das beauftragt wurde, eine 'Tomaten'-basierte Lösung zu entwickeln, die ein reales Problem löst oder einen signifikanten Mehrwert schafft. Dies kann ein Produkt, ein Service, eine Plattform oder ein Prozess sein, der die Essenz der 'Tomate' auf innovative Weise nutzt.\",\"task\":\"Konzipieren Sie eine innovative 'Tomaten'-Anwendung. Beschreiben Sie das Problem, das sie löst, die Zielgruppe, die Kernfunktionen und wie sie sich von bestehenden Lösungen abhebt. Erstellen Sie einen Mini-Business-Case, der das Potenzial der Lösung aufzeigt. Skizzieren Sie zudem einen Prototypen oder ein Mockup Ihrer Anwendung.\",\"deliverable\":\"Eine Präsentation (als Text-Outline oder Slides-Konzept) von 5-7 Folien (virtuell), die Ihre 'Tomaten'-Anwendung vorstellt, inklusive Problemstellung, Lösung, Zielgruppe, Kernfunktionen und einem Visualisierungs-Konzept (Skizze/Mockup-Beschreibung).\",\"constraints\":[\"Die Lösung muss wirklich innovativ sein und einen klaren Bezug zur metaphorischen 'Tomate' haben.\",\"Es muss einen nachweisbaren Nutzen für eine spezifische Zielgruppe bieten.\",\"Die Präsentation muss überzeugend und professionell strukturiert sein.\"],\"reflectionPrompt\":\"Welche größten Herausforderungen gab es bei der Entwicklung Ihrer ultimativen 'Tomaten'-Anwendung und wie haben Sie sie gemeistert? Welche neuen Erkenntnisse haben Sie über die Markteinführung innovativer Konzepte gewonnen?\"}",
+      "learningMode": "create",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1780231245573244",
+      "moduleId": "module-1779465011248",
+      "type": "text",
+      "title": "New Block",
+      "content": "Write your content here...",
+      "source": "trainer",
+      "learningMode": "understand",
+      "order": 9
+    },
+    {
+      "id": "block-1780231285243290",
+      "moduleId": "module-1779465011248",
+      "type": "audio",
+      "title": "Einführung in Scrum",
+      "content": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 10
+    },
+    {
+      "id": "block-1780231944287645",
+      "moduleId": "module-1779890156383",
+      "type": "audio",
+      "title": "New Audio Block",
+      "content": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      "source": "trainer",
+      "learningMode": "understand",
+      "order": 0
     }
   ],
   "progress": [
@@ -1498,6 +1695,13 @@
         "block-1779882572046941",
         "block-1779882590912913",
         "block-1779882654249816"
+      ]
+    },
+    {
+      "userId": "learner-1",
+      "courseId": "course-1780144168422",
+      "completedBlocks": [
+        "block-1780144168517626"
       ]
     }
   ]

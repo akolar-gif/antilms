@@ -7,6 +7,8 @@ import { QuizBlock } from "./quiz-block";
 import { ReflectionBlock } from "./reflection-block";
 import { PunkGameBlock } from "./punk-game-block";
 import { ProjectTaskBlock } from "./project-task-block";
+import { AudioBlock } from "./audio-block";
+import { WrapUpChat } from "./wrap-up-chat";
 import { MentorChat } from "@/components/ai/mentor-chat";
 import { RecommendationCard } from "@/components/learning/recommendation-card";
 import { generateRecommendation } from "@/lib/learning/adaptive-engine";
@@ -39,6 +41,7 @@ export function LearnerModuleClient({
   const [completed, setCompleted] = useState<string[]>(completedBlocks);
   const [reflections, setReflections] = useState<Reflection[]>(initialReflections);
   const [tutorOpen, setTutorOpen] = useState(false);
+  const [wrapUpCompleted, setWrapUpCompleted] = useState(false);
   const { language, t } = useTranslation();
 
   const handleComplete = async (blockId: string) => {
@@ -148,7 +151,7 @@ export function LearnerModuleClient({
                     onClick={() => setActiveBlock(block)}
                   >
                     {/* Content blocks rendered in Atelier cell sheets */}
-                    {block.type !== 'quiz' && block.type !== 'reflection' && block.type !== 'video' && block.type !== 'code' && block.type !== 'punk_game' && block.type !== 'project_task' && (
+                    {block.type !== 'quiz' && block.type !== 'reflection' && block.type !== 'video' && block.type !== 'code' && block.type !== 'punk_game' && block.type !== 'project_task' && block.type !== 'audio' && (
                       <div className="cell border border-line rounded-2xl bg-paper p-6 flex flex-col gap-4">
                         <span className="corner-no">0{index + 1}</span>
                         <h3 className="font-display font-extrabold text-xl text-ink leading-tight pr-8">{block.title}</h3>
@@ -193,6 +196,13 @@ export function LearnerModuleClient({
                       </div>
                     )}
 
+                    {block.type === 'audio' && (
+                      <AudioBlock 
+                        block={block} 
+                        onComplete={() => handleComplete(block.id)}
+                      />
+                    )}
+
                     {block.type === 'code' && (
                       <div className="cell border border-line rounded-2xl bg-paper p-6 flex flex-col gap-4">
                         <span className="corner-no">0{index + 1}</span>
@@ -204,7 +214,7 @@ export function LearnerModuleClient({
                     )}
                     
                     {/* Completion action for standard non-interactive blocks */}
-                    {block.type !== 'reflection' && block.type !== 'project_task' && block.type !== 'punk_game' && (
+                    {block.type !== 'reflection' && block.type !== 'project_task' && block.type !== 'punk_game' && block.type !== 'audio' && (
                       <div className="mt-4 flex justify-end">
                         {isBlockDone ? (
                           <span className="inline-flex items-center gap-1 text-xs font-mono uppercase text-blue-d bg-blue/10 border border-blue px-3 py-1 rounded-full">
@@ -233,6 +243,14 @@ export function LearnerModuleClient({
               })}
             </AnimatePresence>
             
+            {/* Fixed End-of-Module Wrap-Up Conversation */}
+            <WrapUpChat 
+              courseId={courseId} 
+              moduleId={moduleId} 
+              moduleTitle={moduleTitle}
+              onChatComplete={() => setWrapUpCompleted(true)}
+            />
+            
             {/* End of Module panel */}
             <div className="pt-12 border-t border-line flex flex-col items-center gap-4 text-center">
               <h4 className="font-display font-extrabold text-xl text-ink">{t("reader.module_done")}</h4>
@@ -241,7 +259,11 @@ export function LearnerModuleClient({
               </p>
               <div className="flex gap-3">
                 <button className="btn sm ghost border border-line" onClick={() => setTutorOpen(true)}>{t("reader.ask_tutor")}</button>
-                <Link href="/learner" className="btn sm solid">{t("reader.back")}</Link>
+                {wrapUpCompleted ? (
+                  <Link href="/learner" className="btn sm solid bg-emerald-green hover:bg-emerald-green-d text-white">{t("wrapup.complete_btn") || "Complete Module"}</Link>
+                ) : (
+                  <button className="btn sm solid opacity-50 cursor-not-allowed" disabled>{t("wrapup.complete_btn") || "Complete Module"}</button>
+                )}
               </div>
             </div>
           </div>

@@ -26,6 +26,7 @@ export function CourseBuilder({
 }) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [editingBlockId, setEditingBlockId] = useState<string | null>(null);
+  const [showAddTypeSelector, setShowAddTypeSelector] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -77,17 +78,44 @@ export function CourseBuilder({
     }
   };
 
-  const handleAddManualBlock = async () => {
+  const handleAddManualBlock = async (type: LearningBlock["type"]) => {
+    let defaultContent = "Write your reading content here...";
+    let learningMode: LearningBlock["learningMode"] = "understand";
+    
+    if (type === "quiz") {
+      defaultContent = JSON.stringify({ question: "Sample Question?", options: ["Option A", "Option B", "Option C"], correctAnswer: "Option A", explanation: "Explanation..." });
+      learningMode = "test";
+    } else if (type === "reflection") {
+      defaultContent = JSON.stringify({ reflectionPrompt: "Reflect on this module.", followUpQuestions: [] });
+      learningMode = "reflect";
+    } else if (type === "audio") {
+      defaultContent = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+      learningMode = "understand";
+    } else if (type === "video") {
+      defaultContent = "https://www.youtube.com/embed/dQw4w9WgXcQ";
+      learningMode = "understand";
+    } else if (type === "code") {
+      defaultContent = "// Write your code here";
+      learningMode = "apply";
+    } else if (type === "punk_game") {
+      defaultContent = JSON.stringify({ scenario: "Brief setup...", task: "Action plan...", timeboxMinutes: 10, evaluationCriteria: ["Criteria 1"] });
+      learningMode = "challenge";
+    } else if (type === "project_task") {
+      defaultContent = JSON.stringify({ title: "Project Assignment", scenario: "Write a case study...", task: "Deliver a mockup...", deliverable: "Mockup file", constraints: [], reflectionPrompt: "How did it go?" });
+      learningMode = "apply";
+    }
+
     const newBlock = await createBlockAction(course.id, {
       moduleId: module.id,
-      type: 'text',
-      title: 'New Block',
-      content: 'Write your content here...',
+      type,
+      title: `New ${type.charAt(0).toUpperCase() + type.slice(1)} Block`,
+      content: defaultContent,
       source: 'trainer',
-      learningMode: 'understand'
+      learningMode
     });
     setBlocks([...blocks, newBlock]);
     setEditingBlockId(newBlock.id);
+    setShowAddTypeSelector(false);
   };
 
   const handleSaveEdit = async (id: string, content: string, title?: string) => {
@@ -175,17 +203,50 @@ export function CourseBuilder({
         </div>
       )}
       
-      <div className="pt-4 flex items-center justify-center space-x-4">
-        <Button variant="outline" className="border-dashed border-2" onClick={handleAddManualBlock}>
-          + Add Block
-        </Button>
-        <Button 
-          variant="outline" 
-          className="border-dashed border-2 text-emerald-green border-emerald-green/50 hover:bg-emerald-green/5"
-          onClick={() => setIsGenerateModalOpen(true)}
-        >
-          ✨ Generate Block
-        </Button>
+      <div className="pt-4 flex flex-col items-center gap-4">
+        {showAddTypeSelector ? (
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-wrap justify-center gap-2 max-w-xl animate-in fade-in zoom-in-95">
+            {(["text", "audio", "video", "quiz", "reflection", "code", "punk_game", "project_task"] as LearningBlock["type"][]).map((type) => (
+              <Button
+                key={type}
+                variant="outline"
+                size="sm"
+                className="text-xs capitalize font-semibold"
+                onClick={() => handleAddManualBlock(type)}
+              >
+                {type === "text" ? "📝 Text" :
+                 type === "audio" ? "📻 Audio" :
+                 type === "video" ? "🎥 Video" :
+                 type === "quiz" ? "❓ Quiz" :
+                 type === "reflection" ? "🧠 Reflection" :
+                 type === "code" ? "💻 Code" :
+                 type === "punk_game" ? "🎮 Challenge" :
+                 "📁 Project"}
+              </Button>
+            ))}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs text-red-500 hover:text-red-600 hover:bg-red-50 font-bold"
+              onClick={() => setShowAddTypeSelector(false)}
+            >
+              Cancel
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center space-x-4">
+            <Button variant="outline" className="border-dashed border-2" onClick={() => setShowAddTypeSelector(true)}>
+              + Add Block Manually
+            </Button>
+            <Button 
+              variant="outline" 
+              className="border-dashed border-2 text-emerald-green border-emerald-green/50 hover:bg-emerald-green/5"
+              onClick={() => setIsGenerateModalOpen(true)}
+            >
+              ✨ Generate Block
+            </Button>
+          </div>
+        )}
       </div>
 
       <GenerateBlockModal 

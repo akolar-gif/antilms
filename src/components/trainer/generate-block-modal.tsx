@@ -60,6 +60,7 @@ export function GenerateBlockModal({
               <option value="code">Code Snippet</option>
               <option value="punk_game">Practical Challenge</option>
               <option value="project_task">Project Assignment</option>
+              <option value="audio">Audio Track (MP3)</option>
             </select>
           </div>
 
