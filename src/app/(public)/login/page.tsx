@@ -43,7 +43,10 @@ function LoginContent() {
           const res = await loginAction(email, password);
           if (res.success) {
             toast.success("Erfolgreich angemeldet!");
-            router.push(callbackUrl);
+            const dest = callbackUrl === "/" 
+              ? (res.role === "admin" ? "/admin" : res.role === "trainer" ? "/trainer" : "/learner")
+              : callbackUrl;
+            router.push(dest);
             router.refresh();
           } else {
             toast.error(res.error || "Anmeldung fehlgeschlagen.");
@@ -64,7 +67,10 @@ function LoginContent() {
           const res = await registerAction(name, email, password, registerRole);
           if (res.success) {
             toast.success("Registrierung erfolgreich! Willkommen bei Innoversity.");
-            router.push(callbackUrl);
+            const dest = callbackUrl === "/" 
+              ? (res.role === "admin" ? "/admin" : res.role === "trainer" ? "/trainer" : "/learner")
+              : callbackUrl;
+            router.push(dest);
             router.refresh();
           } else {
             toast.error(res.error || "Registrierung fehlgeschlagen.");

@@ -9,7 +9,7 @@ import { Role } from "@/types";
 export async function loginAction(
   emailInput: string,
   passwordInput: string
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; role?: Role; error?: string }> {
   if (!emailInput || !passwordInput) {
     return { success: false, error: "Bitte füllen Sie alle Felder aus." };
   }
@@ -35,13 +35,13 @@ export async function loginAction(
     const cookieStore = await cookies();
     cookieStore.set("user_session", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false, // Set to false to support plain HTTP deployments (e.g. raw IP)
       sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
-    return { success: true };
+    return { success: true, role: user.role };
   } catch (error: any) {
     console.error("Login action error:", error);
     return { success: false, error: "Ein unerwarteter Fehler ist aufgetreten." };
@@ -53,7 +53,7 @@ export async function registerAction(
   email: string,
   passwordInput: string,
   role: "learner" | "trainer" = "learner"
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; role?: Role; error?: string }> {
   if (!name || !email || !passwordInput) {
     return { success: false, error: "Bitte füllen Sie alle Felder aus." };
   }
@@ -83,13 +83,13 @@ export async function registerAction(
     const cookieStore = await cookies();
     cookieStore.set("user_session", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false, // Set to false to support plain HTTP deployments (e.g. raw IP)
       sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
-    return { success: true };
+    return { success: true, role: newUser.role };
   } catch (error: any) {
     console.error("Registration action error:", error);
     return { success: false, error: error.message || "Ein unerwarteter Fehler ist aufgetreten." };
