@@ -40,6 +40,11 @@ RUN chown nextjs:nodejs .next
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/data.json ./data.json
+
+# Ensure the nextjs user has write permission to /app and the data.json file
+RUN chown nextjs:nodejs /app
+RUN chmod 755 /app
 
 USER nextjs
 
