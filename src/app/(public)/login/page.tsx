@@ -86,23 +86,20 @@ function LoginContent() {
   return (
     <div className="w-full max-w-lg p-6 relative z-10">
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 md:p-10 shadow-2xl relative overflow-hidden"
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="bg-paper border-1.5 border-line rounded-3xl p-8 md:p-10 shadow-[8px_8px_0px_0px_var(--line-soft)] relative overflow-hidden"
       >
-        {/* Top visual accent line */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-400 to-blue-500" />
-        
         <div className="flex flex-col items-center text-center mb-6">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-teal-400 text-xs font-semibold mb-4">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-paper-2 border border-line-soft text-blue text-xs font-semibold mb-4">
             <Sparkles className="w-3.5 h-3.5" /> Portal-Zugang
           </div>
           
-          <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-slate-300 tracking-tight mb-2">
+          <h1 className="display text-4xl mb-2 text-ink">
             Innoversity LMS
           </h1>
-          <p className="text-sm text-slate-400 max-w-sm">
+          <p className="text-sm text-ink-2 max-w-sm mt-1">
             {mode === "login" 
               ? "Melde dich mit deinen individuellen Zugangsdaten an." 
               : "Erstelle ein neues Benutzerkonto, um mit dem Lernen zu beginnen."}
@@ -110,14 +107,14 @@ function LoginContent() {
         </div>
 
         {/* Mode Toggle Tabs */}
-        <div className="flex bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800/80 mb-6">
+        <div className="flex bg-paper-2 p-1 rounded-2xl border-1.5 border-line-soft mb-6">
           <button
             type="button"
             onClick={() => setMode("login")}
-            className={`flex-1 py-2.5 px-4 text-sm font-medium rounded-xl transition-all ${
+            className={`flex-1 py-2.5 px-4 text-xs font-bold uppercase tracking-wider font-mono rounded-xl transition-all ${
               mode === "login"
-                ? "bg-slate-800 text-white shadow-md"
-                : "text-slate-400 hover:text-slate-200"
+                ? "bg-ink text-paper shadow-sm"
+                : "text-ink-2 hover:text-ink"
             }`}
           >
             Anmelden
@@ -125,10 +122,10 @@ function LoginContent() {
           <button
             type="button"
             onClick={() => setMode("register")}
-            className={`flex-1 py-2.5 px-4 text-sm font-medium rounded-xl transition-all ${
+            className={`flex-1 py-2.5 px-4 text-xs font-bold uppercase tracking-wider font-mono rounded-xl transition-all ${
               mode === "register"
-                ? "bg-slate-800 text-white shadow-md"
-                : "text-slate-400 hover:text-slate-200"
+                ? "bg-ink text-paper shadow-sm"
+                : "text-ink-2 hover:text-ink"
             }`}
           >
             Registrieren
@@ -148,51 +145,51 @@ function LoginContent() {
               >
                 {/* Name */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
+                  <label className="eyebrow block text-left text-ink-2">
                     Vollständiger Name
                   </label>
                   <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-3" />
                     <input
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Max Mustermann"
                       disabled={isPending}
-                      className="w-full bg-slate-950/60 border border-slate-800 rounded-2xl py-3 pl-11 pr-4 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/30 transition-all text-sm"
+                      className="w-full bg-paper border-1.5 border-line rounded-2xl py-3 pl-11 pr-4 text-ink placeholder-ink-3 focus:outline-none focus:border-blue transition-all text-sm"
                     />
                   </div>
                 </div>
 
                 {/* Role selection for registration */}
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
+                  <label className="eyebrow block text-left text-ink-2">
                     Gewünschte Rolle
                   </label>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => setRegisterRole("learner")}
-                      className={`flex items-center justify-center py-3 px-4 rounded-xl border transition-all duration-200 gap-2 ${
+                      className={`flex items-center justify-center py-3 px-4 rounded-xl border-1.5 transition-all duration-200 gap-2 ${
                         registerRole === "learner"
-                          ? "bg-blue-950/40 border-blue-500/80 text-blue-400"
-                          : "bg-slate-950/30 border-slate-800 text-slate-400 hover:border-slate-700"
+                          ? "bg-paper-2 border-blue text-blue"
+                          : "bg-paper border-line-soft text-ink-2 hover:border-line hover:text-ink"
                       }`}
                     >
                       <UserCheck className="w-4 h-4" />
-                      <span className="text-xs font-medium">Lerner (Learner)</span>
+                      <span className="text-xs font-bold font-heading uppercase">Lernende/r</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setRegisterRole("trainer")}
-                      className={`flex items-center justify-center py-3 px-4 rounded-xl border transition-all duration-200 gap-2 ${
+                      className={`flex items-center justify-center py-3 px-4 rounded-xl border-1.5 transition-all duration-200 gap-2 ${
                         registerRole === "trainer"
-                          ? "bg-emerald-950/40 border-emerald-500/80 text-emerald-400"
-                          : "bg-slate-950/30 border-slate-800 text-slate-400 hover:border-slate-700"
+                          ? "bg-paper-2 border-emerald-green text-emerald-green-d"
+                          : "bg-paper border-line-soft text-ink-2 hover:border-line hover:text-ink"
                       }`}
                     >
                       <Award className="w-4 h-4" />
-                      <span className="text-xs font-medium">Trainer (Trainer)</span>
+                      <span className="text-xs font-bold font-heading uppercase">Lehrende/r</span>
                     </button>
                   </div>
                 </div>
@@ -202,11 +199,11 @@ function LoginContent() {
 
           {/* Email */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
+            <label className="eyebrow block text-left text-ink-2">
               E-Mail-Adresse
             </label>
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-3" />
               <input
                 type="email"
                 value={email}
@@ -214,18 +211,18 @@ function LoginContent() {
                 placeholder="name@beispiel.de"
                 disabled={isPending}
                 required
-                className="w-full bg-slate-950/60 border border-slate-800 rounded-2xl py-3 pl-11 pr-4 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/30 transition-all text-sm"
+                className="w-full bg-paper border-1.5 border-line rounded-2xl py-3 pl-11 pr-4 text-ink placeholder-ink-3 focus:outline-none focus:border-blue transition-all text-sm"
               />
             </div>
           </div>
 
           {/* Password */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
+            <label className="eyebrow block text-left text-ink-2">
               Passwort
             </label>
             <div className="relative">
-              <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+              <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-3" />
               <input
                 type="password"
                 value={password}
@@ -233,7 +230,7 @@ function LoginContent() {
                 placeholder="••••••••"
                 disabled={isPending}
                 required
-                className="w-full bg-slate-950/60 border border-slate-800 rounded-2xl py-3 pl-11 pr-4 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/30 transition-all text-sm"
+                className="w-full bg-paper border-1.5 border-line rounded-2xl py-3 pl-11 pr-4 text-ink placeholder-ink-3 focus:outline-none focus:border-blue transition-all text-sm"
               />
             </div>
           </div>
@@ -242,14 +239,14 @@ function LoginContent() {
           <button
             type="submit"
             disabled={isPending}
-            className="w-full mt-2 relative overflow-hidden bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-[0.98] text-slate-950 font-semibold py-3.5 px-6 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-teal-500/20 transition-all group disabled:opacity-50 disabled:pointer-events-none"
+            className="btn solid w-full justify-center py-3.5 mt-2 rounded-2xl"
           >
             {isPending ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
               <>
                 {mode === "login" ? "Anmelden" : "Konto erstellen"}
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="w-4 h-4 arrow" />
               </>
             )}
           </button>
@@ -257,25 +254,25 @@ function LoginContent() {
 
         {/* Info panel showing standard seeded credentials */}
         {mode === "login" && (
-          <div className="mt-8 border-t border-slate-800/80 pt-6">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-3">
+          <div className="mt-8 border-t border-line-soft pt-6">
+            <span className="eyebrow block mb-3 text-ink-2">
               Standard-Testbenutzer:
             </span>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] text-slate-400">
-              <div className="bg-slate-950/40 border border-slate-800/60 p-2.5 rounded-xl hover:border-blue-500/20 transition-colors">
-                <span className="font-semibold text-blue-400 block">Learner</span>
-                <span className="block truncate">learner@innoversity.com</span>
-                <span className="text-slate-500 block">Passwort: learner123</span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[10px] text-ink-2">
+              <div className="bg-paper-2 border border-line-soft p-2.5 rounded-xl hover:border-blue/50 transition-colors">
+                <span className="font-bold text-blue uppercase font-mono block">Learner</span>
+                <span className="block truncate font-mono text-[9px] mt-0.5">learner@innoversity.com</span>
+                <span className="text-ink-3 font-mono text-[9px] block">PW: learner123</span>
               </div>
-              <div className="bg-slate-950/40 border border-slate-800/60 p-2.5 rounded-xl hover:border-emerald-500/20 transition-colors">
-                <span className="font-semibold text-emerald-400 block">Trainer</span>
-                <span className="block truncate">trainer@innoversity.com</span>
-                <span className="text-slate-500 block">Passwort: trainer123</span>
+              <div className="bg-paper-2 border border-line-soft p-2.5 rounded-xl hover:border-emerald-green/50 transition-colors">
+                <span className="font-bold text-emerald-green-d uppercase font-mono block">Trainer</span>
+                <span className="block truncate font-mono text-[9px] mt-0.5">trainer@innoversity.com</span>
+                <span className="text-ink-3 font-mono text-[9px] block">PW: trainer123</span>
               </div>
-              <div className="bg-slate-950/40 border border-slate-800/60 p-2.5 rounded-xl hover:border-teal-500/20 transition-colors">
-                <span className="font-semibold text-teal-400 block">Admin</span>
-                <span className="block truncate">admin@innoversity.com</span>
-                <span className="text-slate-500 block">Passwort: admin123</span>
+              <div className="bg-paper-2 border border-line-soft p-2.5 rounded-xl hover:border-ink/50 transition-colors">
+                <span className="font-bold text-ink uppercase font-mono block">Admin</span>
+                <span className="block truncate font-mono text-[9px] mt-0.5">admin@innoversity.com</span>
+                <span className="text-ink-3 font-mono text-[9px] block">PW: admin123</span>
               </div>
             </div>
           </div>
@@ -287,7 +284,7 @@ function LoginContent() {
         <button
           type="button"
           onClick={() => router.push("/")}
-          className="text-xs text-slate-600 hover:text-slate-400 transition-colors bg-transparent border-none cursor-pointer"
+          className="eyebrow text-xs hover:text-blue transition-colors bg-transparent border-none cursor-pointer"
         >
           Zurück zur Startseite
         </button>
@@ -298,15 +295,14 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center relative overflow-hidden font-sans">
-      {/* Decorative Aurora Orbs */}
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none -translate-y-1/2" />
-      <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none translate-y-1/2" />
+    <div className="min-h-screen bg-paper text-ink flex items-center justify-center relative overflow-hidden font-sans">
+      {/* Subtle Grid Lines to match Atelier aesthetic */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--line-soft)_1px,transparent_1px),linear-gradient(to_bottom,var(--line-soft)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none opacity-40" />
       
       <Suspense fallback={
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-10 h-10 animate-spin text-teal-400" />
-          <p className="text-sm text-slate-400">Lade Portal-Zugang...</p>
+          <Loader2 className="w-10 h-10 animate-spin text-blue" />
+          <p className="eyebrow text-ink-2">Lade Portal-Zugang...</p>
         </div>
       }>
         <LoginContent />
