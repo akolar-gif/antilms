@@ -8,6 +8,10 @@ export interface User {
   createdAt: string;
 }
 
+export interface UserRecord extends User {
+  passwordHash: string;
+}
+
 export type CourseStatus = "draft" | "published" | "archived";
 
 export interface Course {

@@ -1,9 +1,19 @@
 import { AppShell } from "@/components/layout/app-shell";
+import { cookies } from "next/headers";
+import { verifySession } from "@/lib/session";
 
-export default function LearnerLayout({
+export default async function LearnerLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <AppShell currentRole="learner">{children}</AppShell>;
+  const cookieStore = await cookies();
+  const token = cookieStore.get("user_session")?.value;
+  const user = token ? await verifySession(token) : null;
+
+  return (
+    <AppShell currentRole="learner" currentUser={user}>
+      {children}
+    </AppShell>
+  );
 }

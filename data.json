@@ -157,6 +157,17 @@
       "status": "published",
       "createdAt": "2026-05-30T12:29:28.422Z",
       "updatedAt": "2026-05-30T12:29:55.302Z"
+    },
+    {
+      "id": "course-1782135872975",
+      "title": "Resilenz",
+      "description": "Wie werden menschen und Organsisation resilenter in turbulenteren Zeiten",
+      "category": "Soft Skills",
+      "targetGroup": "General",
+      "createdBy": "Trainer",
+      "status": "published",
+      "createdAt": "2026-06-22T13:44:32.976Z",
+      "updatedAt": "2026-06-22T15:46:49.580Z"
     }
   ],
   "modules": [
@@ -560,6 +571,50 @@
         "New Objective"
       ],
       "order": 5
+    },
+    {
+      "id": "module-1782135872984",
+      "courseId": "course-1782135872975",
+      "title": "Die Essenz der Resilienz verstehen",
+      "description": "Dieser Modul führt in die Konzepte der Resilienz ein, sowohl auf individueller als auch auf organisationaler Ebene, und beleuchtet deren Bedeutung in der heutigen volatilen Welt.",
+      "learningObjectives": [
+        "Definition und Komponenten von Resilienz auf individueller Ebene erklären können.",
+        "Die Notwendigkeit organisationaler Resilienz in einer VUCA-Welt analysieren können."
+      ],
+      "order": 0
+    },
+    {
+      "id": "module-1782135873065",
+      "courseId": "course-1782135872975",
+      "title": "Individuelle Resilienz stärken",
+      "description": "Dieser Modul konzentriert sich auf Strategien und Techniken, um die individuelle Resilienz zu fördern, inklusive Achtsamkeit, Stressmanagement und Aufbau eines unterstützenden Netzwerks.",
+      "learningObjectives": [
+        "Praktische Techniken zur Stärkung der persönlichen Resilienz anwenden können.",
+        "Strategien zur Bewältigung von Stress und Rückschlägen identifizieren können."
+      ],
+      "order": 1
+    },
+    {
+      "id": "module-1782135873108",
+      "courseId": "course-1782135872975",
+      "title": "Organisationale Resilienz aufbauen",
+      "description": "Dieser Modul befasst sich mit den Prinzipien und Methoden zur Entwicklung robuster und anpassungsfähiger Organisationen, die in der Lage sind, auf unvorhergesehene Herausforderungen zu reagieren und sich davon zu erholen.",
+      "learningObjectives": [
+        "Konzepte organisationaler Resilienz auf Geschäftsprozesse übertragen können.",
+        "Methoden zur Identifizierung und Minderung von Risiken in Organisationen erläutern können."
+      ],
+      "order": 2
+    },
+    {
+      "id": "module-1782135873149",
+      "courseId": "course-1782135872975",
+      "title": "Resilienz in Aktion und Zukunftsgestaltung",
+      "description": "Dieser Modul betrachtet Resilienz nicht als statischen Zustand, sondern als kontinuierlichen Anpassungsprozess und wie man eine Kultur der Resilienz in Organisationen fördert.",
+      "learningObjectives": [
+        "Resilienz als dynamischen, fortlaufenden Prozess verstehen und beschreiben.",
+        "Strategien zur Förderung einer resilienten Kultur in Teams und Organisationen entwickeln können."
+      ],
+      "order": 3
     }
   ],
   "blocks": [
@@ -1662,6 +1717,186 @@
       "source": "trainer",
       "learningMode": "understand",
       "order": 0
+    },
+    {
+      "id": "block-1782135872997243",
+      "moduleId": "module-1782135872984",
+      "type": "text",
+      "title": "Was ist Resilienz? Eine Einführung",
+      "content": "Resilienz bezeichnet die Fähigkeit von Individuen, Teams und Organisationen, sich nach Rückschlägen, Krisen oder Traumata zu erholen und sogar gestärkt daraus hervorzugehen. Es ist die psychische Widerstandsfähigkeit, die hilft, schwierige Lebenssituationen ohne dauerhafte Beeinträchtigung zu überstehen. Im Kontext von Organisationen bedeutet Resilienz die Fähigkeit, sich an neue Gegebenheiten anzupassen, Störungen zu absorbieren und schnell wieder handlungsfähig zu werden. In turbulenten Zeiten, die oft durch Volatilität, Unsicherheit, Komplexität und Ambiguität (VUCA) gekennzeichnet sind, wird Resilienz zu einer Schlüsselkompetenz für Überleben und Erfolg.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1782135873010795",
+      "moduleId": "module-1782135872984",
+      "type": "video",
+      "title": "Resilienz: Die Kraft der inneren Stärke",
+      "content": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1782135873028844",
+      "moduleId": "module-1782135872984",
+      "type": "reflection",
+      "title": "Meine persönliche Resilienz",
+      "content": "{\"reflectionPrompt\": \"Was bedeutet Resilienz für Sie persönlich in Ihrem Leben und Berufsalltag?\", \"followUpQuestions\": [\"Können Sie sich an eine Situation erinnern, in der Sie persönlich resilient waren? Welche Faktoren haben Ihnen dabei geholfen?\", \"Wo sehen Sie aktuell die größten Herausforderungen, die Resilienz von Ihnen oder Ihrem Umfeld fordern?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1782135873039928",
+      "moduleId": "module-1782135872984",
+      "type": "quiz",
+      "title": "Konzepte der Resilienz testen",
+      "content": "{\"question\": \"Welche Aussage beschreibt Resilienz am besten?\", \"options\": [\"Die Fähigkeit, Probleme zu ignorieren und sich nicht beeinflussen zu lassen.\", \"Die unveränderliche Eigenschaft, niemals Fehler zu machen.\", \"Die Fähigkeit, sich an Veränderungen anzupassen und nach Rückschlägen wieder aufzustehen.\", \"Die psychische Immunität gegen jeglichen Stress.\"], \"correctAnswer\": \"Die Fähigkeit, sich an Veränderungen anzupassen und nach Rückschlägen wieder aufzustehen.\", \"explanation\": \"Resilienz ist die dynamische Fähigkeit, sich trotz widriger Umstände zu erholen und weiterzuentwickeln, nicht das Ignorieren von Problemen oder eine vollständige Immunität.\", \"quizType\": \"singleChoice\"}",
+      "learningMode": "test",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1782135873049190",
+      "moduleId": "module-1782135872984",
+      "type": "project_task",
+      "title": "New Project_task Block",
+      "content": "{\"title\":\"Project Assignment\",\"scenario\":\"Write a case study...\",\"task\":\"Deliver a mockup...\",\"deliverable\":\"Mockup file\",\"constraints\":[],\"reflectionPrompt\":\"How did it go?\"}",
+      "learningMode": "apply",
+      "source": "ai_assisted",
+      "order": 4
+    },
+    {
+      "id": "block-1782135873056800",
+      "moduleId": "module-1782135872984",
+      "type": "punk_game",
+      "title": "New Punk_game Block",
+      "content": "{\"scenario\":\"Brief setup...\",\"task\":\"Action plan...\",\"timeboxMinutes\":10,\"evaluationCriteria\":[\"Criteria 1\"]}",
+      "learningMode": "challenge",
+      "source": "ai_assisted",
+      "order": 5
+    },
+    {
+      "id": "block-178213587307416",
+      "moduleId": "module-1782135873065",
+      "type": "text",
+      "title": "Die sieben Säulen der individuellen Resilienz",
+      "content": "Die Forschung hat sieben Kernelemente identifiziert, die maßgeblich zur individuellen Resilienz beitragen: Optimismus (die Überzeugung, dass sich die Dinge zum Besseren wenden werden), Akzeptanz (die Fähigkeit, Fakten zu akzeptieren, die man nicht ändern kann), Lösungsorientierung (sich auf die Suche nach Lösungen statt auf Probleme zu konzentrieren), Selbstwirksamkeit (das Vertrauen in die eigenen Fähigkeiten), Verantwortung (die Fähigkeit, das Ruder selbst in die Hand zu nehmen), Netzwerkorientierung (der Aufbau und die Nutzung sozialer Unterstützung) und Zukunftsplanung (das Setzen von realistischen Zielen und das Planen von Schritten). Das Bewusstsein und die gezielte Stärkung dieser Säulen sind entscheidend für eine höhere Widerstandsfähigkeit.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1782135873082526",
+      "moduleId": "module-1782135873065",
+      "type": "audio",
+      "title": "Achtsamkeitsübung für mehr Gelassenheit",
+      "content": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      "learningMode": "practice",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1782135873089999",
+      "moduleId": "module-1782135873065",
+      "type": "punk_game",
+      "title": "Die unerwartete E-Mail-Flut",
+      "content": "{\"scenario\": \"Sie kommen morgens ins Büro und stellen fest, dass Ihr Posteingang über Nacht mit 50 ungelesenen E-Mails gefüllt wurde, darunter mehrere als 'dringend' markierte Anfragen von verschiedenen Stakeholdern. Gleichzeitig haben Sie eine wichtige Deadline in zwei Stunden.\", \"task\": \"Innerhalb von 10 Minuten müssen Sie einen Aktionsplan erstellen, wie Sie mit dieser Situation umgehen. Priorisieren Sie die E-Mails, skizzieren Sie Kommunikationsstrategien und entscheiden Sie, welche sofortige Maßnahmen Sie ergreifen würden.\", \"timeboxMinutes\": 10, \"evaluationCriteria\": [\"Effektivität der Priorisierung\", \"Klarheit der Kommunikationsstrategie\", \"Realismus des Aktionsplans\", \"Fähigkeit, den Überblick zu behalten\"]}",
+      "learningMode": "challenge",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1782135873099362",
+      "moduleId": "module-1782135873065",
+      "type": "reflection",
+      "title": "Meine persönliche Resilienz-Strategie",
+      "content": "{\"reflectionPrompt\": \"Welche der sieben Säulen der individuellen Resilienz ist bei Ihnen am stärksten ausgeprägt, und welche benötigt noch Übung?\", \"followUpQuestions\": [\"Wie könnten Sie gezielt an der Stärkung der weniger ausgeprägten Säulen arbeiten? Nennen Sie eine konkrete Maßnahme.\", \"Welche erste kleine Übung könnten Sie in den nächsten 24 Stunden umsetzen, um Ihre persönliche Resilienz zu fördern?\"]}",
+      "learningMode": "apply",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1782135873115431",
+      "moduleId": "module-1782135873108",
+      "type": "text",
+      "title": "Merkmale resilienter Organisationen",
+      "content": "Resiliente Organisationen zeichnen sich durch mehrere Schlüsselfaktoren aus: Agilität (die Fähigkeit, schnell auf Veränderungen zu reagieren), Diversität (Vielfalt in Teams, Produkten und Strategien schafft breitere Lösungsansätze), Redundanz (bestimmte Kapazitäten oder Backup-Systeme, um Ausfälle zu kompensieren), Lernfähigkeit (die Bereitschaft, aus Fehlern zu lernen und Wissen zu teilen) und eine starke Führung, die Vertrauen schafft und eine klare Vision vermittelt. Diese Merkmale ermöglichen es Organisationen, nicht nur Krisen zu überstehen, sondern auch proaktiv Chancen in turbulenten Zeiten zu erkennen und zu nutzen.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1782135873125726",
+      "moduleId": "module-1782135873108",
+      "type": "project_task",
+      "title": "Resilienz-Check für Ihr Team/Abteilung",
+      "content": "{\"title\": \"Resilienz-Check für Ihr Team/Abteilung\", \"scenario\": \"Analysieren Sie die aktuelle Situation in Ihrem Team oder Ihrer Abteilung im Hinblick auf organisationale Resilienz. Berücksichtigen Sie die besprochenen Merkmale wie Agilität, Diversität und Lernfähigkeit.\", \"task\": \"Identifizieren Sie mindestens drei potenzielle Schwachstellen, die die Resilienz Ihres Teams beeinträchtigen könnten. Schlagen Sie anschließend für jede Schwachstelle eine konkrete Maßnahme vor, um die Resilienz zu erhöhen.\", \"deliverable\": \"Ein kurzer Bericht oder eine Präsentation (max. 2 Seiten/Folien) mit den identifizierten Schwachstellen und den vorgeschlagenen Maßnahmen.\", \"constraints\": [\"Fokus auf drei Kernbereiche der organisationalen Resilienz.\", \"Maßnahmen sollen realistisch und umsetzbar sein.\"], \"reflectionPrompt\": \"Was waren die größten Herausforderungen bei der Identifizierung von Schwachstellen und der Entwicklung von Maßnahmen zur Steigerung der Resilienz in Ihrem Kontext?\"}",
+      "learningMode": "apply",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-1782135873134289",
+      "moduleId": "module-1782135873108",
+      "type": "quiz",
+      "title": "Organisationale Resilienz-Faktoren",
+      "content": "{\"question\": \"Welches der folgenden Merkmale ist KEIN typisches Kennzeichen einer resilienten Organisation?\", \"options\": [\"Hohe Agilität und Anpassungsfähigkeit\", \"Starre Hierarchien und Prozesse\", \"Fähigkeit zum Lernen aus Fehlern\", \"Diversität in Teams und Strategien\"], \"correctAnswer\": \"Starre Hierarchien und Prozesse\", \"explanation\": \"Starre Hierarchien und Prozesse sind oft ein Hindernis für organisationale Resilienz, da sie die Anpassungsfähigkeit und schnelle Reaktion auf Veränderungen hemmen. Resiliente Organisationen zeichnen sich eher durch Flexibilität und flache Strukturen aus.\", \"quizType\": \"singleChoice\"}",
+      "learningMode": "test",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1782135873143213",
+      "moduleId": "module-1782135873108",
+      "type": "reflection",
+      "title": "Implementierung von Resilienz",
+      "content": "{\"reflectionPrompt\": \"Stellen Sie sich vor, Sie müssten morgen eine Maßnahme zur Steigerung der organisationalen Resilienz in Ihrer Abteilung oder Ihrem Unternehmen vorschlagen. Was wäre Ihr erster konkreter Schritt und warum?\", \"followUpQuestions\": [\"Welche potenziellen Widerstände könnten Sie bei der Implementierung dieser Maßnahme erwarten?\", \"Wie würden Sie diesen Widerständen begegnen und Stakeholder überzeugen?\"]}",
+      "learningMode": "reflect",
+      "source": "ai_assisted",
+      "order": 3
+    },
+    {
+      "id": "block-1782135873156800",
+      "moduleId": "module-1782135873149",
+      "type": "text",
+      "title": "Eine Kultur der Resilienz schaffen",
+      "content": "Resilienz ist nicht nur die Summe individueller Widerstandsfähigkeit, sondern auch das Ergebnis einer organisationalen Kultur, die Lernen, Anpassung und Unterstützung fördert. Dies beinhaltet eine offene Fehlerkultur, in der aus Rückschlägen gelernt wird, statt Schuldige zu suchen. Eine transparente Kommunikation, die Unsicherheiten anspricht, und eine Führung, die proaktiv eine Umgebung schafft, in der Mitarbeiter sich sicher fühlen, Herausforderungen anzunehmen. Eine solche Kultur ermöglicht es, auch in schwierigen Zeiten handlungsfähig zu bleiben und innovative Lösungen zu finden, die die Organisation langfristig stärken.",
+      "learningMode": "understand",
+      "source": "ai_assisted",
+      "order": 0
+    },
+    {
+      "id": "block-1782135873164503",
+      "moduleId": "module-1782135873149",
+      "type": "punk_game",
+      "title": "Die plötzliche IT-Störung",
+      "content": "{\"scenario\": \"Ihr Unternehmen ist von einem plötzlichen, schwerwiegenden IT-Ausfall betroffen, der den Zugriff auf wichtige Systeme blockiert. Es gibt keine klare Kommunikation von der IT-Abteilung, und die Panik unter den Kollegen steigt. Kundenanfragen häufen sich.\", \"task\": \"Sie haben 15 Minuten Zeit, um als Teamleiter einen Krisenreaktionsplan für Ihr Team zu entwickeln. Dieser Plan sollte beinhalten: Priorisierung der Aufgaben, Kommunikationsstrategien (intern und extern), Maßnahmen zur Beruhigung des Teams und erste Schritte zur Problemumgehung.\", \"timeboxMinutes\": 15, \"evaluationCriteria\": [\"Geschwindigkeit der Reaktion und Entscheidungsfindung\", \"Klarheit und Kohärenz der Kommunikationsstrategie\", \"Realismus der Sofortmaßnahmen\", \"Fähigkeit, das Team zu führen und zu beruhigen\"]}",
+      "learningMode": "challenge",
+      "source": "ai_assisted",
+      "order": 1
+    },
+    {
+      "id": "block-178213587317583",
+      "moduleId": "module-1782135873149",
+      "type": "project_task",
+      "title": "Resilienz-Roadmap für die Zukunft",
+      "content": "{\"title\": \"Resilienz-Roadmap für die Zukunft\", \"scenario\": \"Sie sind beauftragt, eine 6-monatige Roadmap zu entwerfen, um die Resilienz in einer fiktiven mittelständischen Organisation zu stärken. Die Organisation hat in letzter Zeit mit erhöhtem Stress und Fluktuation zu kämpfen.\", \"task\": \"Entwickeln Sie eine Roadmap, die mindestens drei Schlüsselinitiativen (z.B. Leadership-Training, Prozessoptimierung, Mitarbeiter-Wellbeing-Programme), Meilensteine und messbare Erfolgsindikatoren umfasst. Beschreiben Sie kurz die Begründung für jede Initiative.\", \"deliverable\": \"Eine strukturierte Übersicht der Roadmap (z.B. als Gliederung für eine Präsentation oder als Kurzkonzept, max. 3 Seiten).\", \"constraints\": [\"Fokus auf konkrete, umsetzbare Maßnahmen.\", \"Berücksichtigung sowohl individueller als auch organisationaler Resilienz.\", \"Klare Zuordnung von Zeitrahmen und Verantwortlichkeiten (hypothetisch).\"], \"reflectionPrompt\": \"Welche langfristigen Vorteile würde dieser Resilienz-Plan für die Organisation bringen, und welche Herausforderungen könnten bei der Umsetzung entstehen?\"}",
+      "learningMode": "create",
+      "source": "ai_assisted",
+      "order": 2
+    },
+    {
+      "id": "block-1782135873183930",
+      "moduleId": "module-1782135873149",
+      "type": "reflection",
+      "title": "Meine Rolle als Resilienz-Gestalter",
+      "content": "{\"reflectionPrompt\": \"Wie sehen Sie Ihre eigene Rolle als Multiplikator für Resilienz in Ihrem Arbeits- und Privatleben nach Abschluss dieses Kurses?\", \"followUpQuestions\": [\"Welche konkreten Schritte können Sie in den nächsten Wochen unternehmen, um Resilienz aktiv vorzuleben und in Ihrem Umfeld zu fördern?\", \"Was ist die eine zentrale Erkenntnis aus diesem Kurs, die Sie am dringendsten umsetzen oder teilen möchten?\"]}",
+      "learningMode": "transfer",
+      "source": "ai_assisted",
+      "order": 3
     }
   ],
   "progress": [
@@ -1703,6 +1938,47 @@
       "completedBlocks": [
         "block-1780144168517626"
       ]
+    },
+    {
+      "userId": "learner-1",
+      "courseId": "course-1782135872975",
+      "completedBlocks": [
+        "block-178213587307416"
+      ]
+    }
+  ],
+  "users": [
+    {
+      "id": "user-admin",
+      "name": "Innoversity Admin",
+      "email": "admin@innoversity.com",
+      "passwordHash": "8a543db2d94a8038c983bad5cffc718c:fc4adcf15d34f80d397042181d08dbc4e988312f131733ebaf7a5b4b17bf61b17b5730e72f733c9c2bfb928adbb5b706394761a6980674a9c736931a89888d17",
+      "role": "admin",
+      "createdAt": "2026-06-22T13:39:58.833Z"
+    },
+    {
+      "id": "user-trainer",
+      "name": "Innoversity Trainer",
+      "email": "trainer@innoversity.com",
+      "passwordHash": "4fad1a9fb16412e3318b199daca5683d:3c1abe54396e0f545558c1b63a7981af6d12347f4ba83b9a8ef626315e3d7cc9d97afa02da34e2ede00fd9bfad96639329a01d06a80da29d605b103f0fb46080",
+      "role": "trainer",
+      "createdAt": "2026-06-22T13:39:58.934Z"
+    },
+    {
+      "id": "user-learner",
+      "name": "Innoversity Learner",
+      "email": "learner@innoversity.com",
+      "passwordHash": "e54d48d74f6f9de651476bc6d45613db:190beefe37a1e97b0e3b15bf4734015c00d5e03da1bbd1bcfb9788758b3d7c5c8788db0e05eec6c3de2db443d8c407cea0d4b425ccdcc46f457bd5677a9f34e3",
+      "role": "learner",
+      "createdAt": "2026-06-22T13:39:59.022Z"
+    },
+    {
+      "id": "user-1782135645820",
+      "name": "Andreas Kolar",
+      "email": "andreas@kolar.biz",
+      "passwordHash": "b0b8955c42f35d59686059b5a7598b8b:548354d95ac51bf845feac7c50a4200fdcae9efab0c2c261ea4fac61c9784ef31826216c0645ac725bb3c258738a86ac78b53f571546d062a172c351414a55a9",
+      "role": "trainer",
+      "createdAt": "2026-06-22T13:40:45.820Z"
     }
   ]
 }

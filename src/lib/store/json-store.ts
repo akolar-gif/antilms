@@ -1,11 +1,10 @@
 import { LearningStore, CreateCourseInput, UpdateCourseInput, CreateModuleInput, UpdateModuleInput, CreateBlockInput, UpdateBlockInput } from "./types";
-import { Course, Module, LearningBlock } from "@/types";
+import { Course, Module, LearningBlock, UserProgress, Reflection, User, UserRecord, Role } from "@/types";
+import { hashPassword } from "../crypto";
 import fs from "fs/promises";
 import path from "path";
 
 const DATA_FILE = path.join(process.cwd(), "data.json");
-
-import { UserProgress, Reflection } from "@/types";
 
 type Database = {
   courses: Course[];
@@ -13,21 +12,54 @@ type Database = {
   blocks: LearningBlock[];
   progress?: UserProgress[];
   reflections?: Reflection[];
+  users?: UserRecord[];
 };
 
 export class JsonStore implements LearningStore {
-  private async readData(): Promise<Database> {
+  private async readData(): Promise<Database & { users: UserRecord[] }> {
+    let parsed: any;
     try {
       const data = await fs.readFile(DATA_FILE, "utf-8");
-      return JSON.parse(data);
+      parsed = JSON.parse(data);
     } catch (e: any) {
       if (e.code === "ENOENT") {
-        const defaultData: Database = { courses: [], modules: [], blocks: [] };
-        await fs.writeFile(DATA_FILE, JSON.stringify(defaultData, null, 2));
-        return defaultData;
+        parsed = { courses: [], modules: [], blocks: [], users: [] };
+      } else {
+        throw e;
       }
-      throw e;
     }
+
+    if (!parsed.users || parsed.users.length === 0) {
+      parsed.users = [
+        {
+          id: "user-admin",
+          name: "Innoversity Admin",
+          email: "admin@innoversity.com",
+          passwordHash: hashPassword("admin123"),
+          role: "admin",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: "user-trainer",
+          name: "Innoversity Trainer",
+          email: "trainer@innoversity.com",
+          passwordHash: hashPassword("trainer123"),
+          role: "trainer",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: "user-learner",
+          name: "Innoversity Learner",
+          email: "learner@innoversity.com",
+          passwordHash: hashPassword("learner123"),
+          role: "learner",
+          createdAt: new Date().toISOString()
+        }
+      ];
+      await fs.writeFile(DATA_FILE, JSON.stringify(parsed, null, 2));
+    }
+
+    return parsed;
   }
 
   private async writeData(data: Database): Promise<void> {
@@ -254,5 +286,43 @@ export class JsonStore implements LearningStore {
     }
 
     await this.writeData(data);
+  }
+
+  async getUser(id: string): Promise<User | null> {
+    const data = await this.readData();
+    const user = data.users.find(u => u.id === id);
+    if (!user) return null;
+    const { passwordHash, ...safeUser } = user;
+    return safeUser;
+  }
+
+  async getUserByEmail(email: string): Promise<UserRecord | null> {
+    const data = await this.readData();
+    const user = data.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    return user || null;
+  }
+
+  async createUser(input: { name: string; email: string; passwordHash: string; role: Role }): Promise<User> {
+    const data = await this.readData();
+    if (data.users.some(u => u.email.toLowerCase() === input.email.toLowerCase())) {
+      throw new Error("Email already registered");
+    }
+    const newUser: UserRecord = {
+      id: "user-" + Date.now(),
+      name: input.name,
+      email: input.email,
+      passwordHash: input.passwordHash,
+      role: input.role,
+      createdAt: new Date().toISOString()
+    };
+    data.users.push(newUser);
+    await this.writeData(data);
+    const { passwordHash, ...safeUser } = newUser;
+    return safeUser;
+  }
+
+  async getUsers(): Promise<User[]> {
+    const data = await this.readData();
+    return data.users.map(({ passwordHash, ...safeUser }) => safeUser);
   }
 }

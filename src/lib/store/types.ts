@@ -1,4 +1,4 @@
-import { Course, Module, LearningBlock, Reflection } from "@/types";
+import { Course, Module, LearningBlock, Reflection, User, UserRecord, Role } from "@/types";
 
 export interface CreateCourseInput {
   title: string;
@@ -63,6 +63,12 @@ export interface LearningStore {
   getReflections(userId: string): Promise<Reflection[]>;
   saveReflection(userId: string, blockId: string, content: string, confidence: number, difficulty: number): Promise<Reflection>;
   
+  // User methods
+  getUser(id: string): Promise<User | null>;
+  getUserByEmail(email: string): Promise<UserRecord | null>;
+  createUser(input: { name: string; email: string; passwordHash: string; role: Role }): Promise<User>;
+  getUsers(): Promise<User[]>;
+
   // Data administration (GDPR)
   clearUserData(userId: string): Promise<void>;
 }

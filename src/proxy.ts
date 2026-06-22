@@ -11,24 +11,24 @@ export async function proxy(request: NextRequest) {
   if (isTrainerRoute || isAdminRoute) {
     const sessionCookie = request.cookies.get("user_session")?.value;
 
-    let role: string | null = null;
+    let user = null;
     if (sessionCookie) {
-      role = await verifySession(sessionCookie);
+      user = await verifySession(sessionCookie);
     }
 
     // Redirect to login if not authenticated
-    if (!role) {
+    if (!user) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
     }
 
     // Admins have access to everything, trainers only to trainer routes
-    if (isAdminRoute && role !== "admin") {
+    if (isAdminRoute && user.role !== "admin") {
       return NextResponse.redirect(new URL("/login?error=admin-only", request.url));
     }
 
-    if (isTrainerRoute && role !== "trainer" && role !== "admin") {
+    if (isTrainerRoute && user.role !== "trainer" && user.role !== "admin") {
       return NextResponse.redirect(new URL("/login?error=trainer-only", request.url));
     }
   }

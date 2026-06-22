@@ -1,5 +1,5 @@
 import { LearningStore, CreateCourseInput, UpdateCourseInput, CreateModuleInput, UpdateModuleInput, CreateBlockInput, UpdateBlockInput } from "./types";
-import { Course, Module, LearningBlock, Reflection } from "@/types";
+import { Course, Module, LearningBlock, Reflection, User, UserRecord, Role } from "@/types";
 import { pool } from "../db";
 
 function mapCourseFromDb(row: any): Course {
@@ -53,6 +53,27 @@ function mapReflectionFromDb(row: any): Reflection {
     confidence: row.confidence,
     difficulty: row.difficulty,
     createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
+  };
+}
+
+function mapUserFromDb(row: any): User {
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    role: row.role as Role,
+    createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
+  };
+}
+
+function mapUserRecordFromDb(row: any): UserRecord {
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    role: row.role as Role,
+    createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
+    passwordHash: row.password_hash,
   };
 }
 
@@ -361,5 +382,31 @@ export class PostgresStore implements LearningStore {
     } finally {
       client.release();
     }
+  }
+
+  async getUser(id: string): Promise<User | null> {
+    const { rows } = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+    return rows.length > 0 ? mapUserFromDb(rows[0]) : null;
+  }
+
+  async getUserByEmail(email: string): Promise<UserRecord | null> {
+    const { rows } = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    return rows.length > 0 ? mapUserRecordFromDb(rows[0]) : null;
+  }
+
+  async createUser(input: { name: string; email: string; passwordHash: string; role: Role }): Promise<User> {
+    const id = "user-" + Date.now();
+    const { rows } = await pool.query(
+      `INSERT INTO users (id, name, email, password_hash, role, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+       RETURNING *`,
+      [id, input.name, input.email, input.passwordHash, input.role]
+    );
+    return mapUserFromDb(rows[0]);
+  }
+
+  async getUsers(): Promise<User[]> {
+    const { rows } = await pool.query("SELECT * FROM users ORDER BY created_at DESC");
+    return rows.map(mapUserFromDb);
   }
 }
