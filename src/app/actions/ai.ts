@@ -4,6 +4,8 @@ import { MockAIProvider } from "@/lib/ai/mock-provider";
 import { RealAIProvider } from "@/lib/ai/real-provider";
 import { MentorReplyInput, MentorReplyResult, GenerateBlockInput, CoDesignerResult } from "@/lib/ai/provider";
 import { LearningBlock } from "@/types";
+import { generateText } from "ai";
+import { google } from "@ai-sdk/google";
 
 import { store } from "@/lib/store";
 import { cookies } from "next/headers";
@@ -108,6 +110,51 @@ export async function askWrapUpAction(input: {
     totalTurns: input.totalTurns,
     language
   });
+}
+
+export async function testAiConnectionAction(): Promise<{
+  configured: boolean;
+  preview: string;
+  working: boolean;
+  errorMessage?: string;
+}> {
+  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  if (!apiKey) {
+    return {
+      configured: false,
+      preview: "Kein API-Key gesetzt",
+      working: false,
+      errorMessage: "Die Umgebungsvariable GOOGLE_GENERATIVE_AI_API_KEY ist nicht definiert."
+    };
+  }
+
+  // Generate preview e.g. "AIzaSy...XXXX"
+  const preview = apiKey.length > 8 
+    ? `${apiKey.substring(0, 7)}...${apiKey.substring(apiKey.length - 4)}` 
+    : "Gültiger Schlüsseltyp";
+
+  try {
+    const model = google("gemini-2.5-flash");
+    const { text } = await generateText({
+      model,
+      prompt: "Reply with the word 'OK'.",
+    });
+
+    const isOk = text.toUpperCase().includes("OK");
+    return {
+      configured: true,
+      preview,
+      working: true
+    };
+  } catch (error: any) {
+    console.error("AI diagnostics failed:", error);
+    return {
+      configured: true,
+      preview,
+      working: false,
+      errorMessage: error?.message || "Ein unbekannter Fehler ist bei der API-Anfrage aufgetreten."
+    };
+  }
 }
 
 

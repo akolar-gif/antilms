@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { translations } from "@/components/layout/translations";
+import { testAiConnectionAction } from "@/app/actions/ai";
 
 export const dynamic = 'force-dynamic';
 
@@ -16,6 +17,8 @@ export default async function AdminPage() {
     }
     return text;
   };
+
+  const aiStatus = await testAiConnectionAction();
 
   return (
     <div className="screen">
@@ -41,6 +44,40 @@ export default async function AdminPage() {
           <p className="lede" style={{ maxWidth: 560, marginTop: 18 }}>
             {t("admin.desc")}
           </p>
+        </div>
+      </div>
+
+      {/* KI-Systemdiagnose (Gemini API) */}
+      <div className="lattice" style={{ gridTemplateColumns: "1fr" }}>
+        <div className="cell" style={{ background: "var(--paper-2)", borderLeft: "4px solid " + (aiStatus.working ? "var(--emerald)" : aiStatus.configured ? "var(--coral)" : "var(--amber)") }}>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <span className="eyebrow" style={{ color: aiStatus.working ? "var(--emerald-d)" : aiStatus.configured ? "var(--coral-d)" : "var(--ink-3)" }}>
+                KI-Systemdiagnose (Gemini API)
+              </span>
+              <h2 style={{ fontFamily: "var(--f-display)", fontWeight: 800, fontSize: 20, marginTop: 6, textTransform: "uppercase" }}>
+                {aiStatus.working 
+                  ? "Verbindung erfolgreich & gesichert" 
+                  : aiStatus.configured 
+                    ? "Fehler bei der Verbindung" 
+                    : "Kein API-Key konfiguriert"}
+              </h2>
+              <p className="text-xs text-ink-2 mt-1.5" style={{ lineHeight: 1.4 }}>
+                {aiStatus.working 
+                  ? `Der API-Schlüssel ist aktiv. Diagnosetest erfolgreich. Schlüssel-Vorschau: ${aiStatus.preview}`
+                  : aiStatus.configured 
+                    ? `API-Schlüssel konfiguriert (${aiStatus.preview}), aber Test fehlgeschlagen: ${aiStatus.errorMessage}`
+                    : "Bitte füge GOOGLE_GENERATIVE_AI_API_KEY zu deiner .env-Datei hinzu, um KI-Funktionen zu aktivieren."}
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-2 md:self-center">
+              <span className={`w-2.5 h-2.5 rounded-full ${aiStatus.working ? "bg-emerald" : aiStatus.configured ? "bg-coral" : "bg-amber"}`} style={{ display: "inline-block" }} />
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-ink-2">
+                {aiStatus.working ? "Online" : aiStatus.configured ? "Fehlgeschlagen" : "Offline"}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
