@@ -1,0 +1,3 @@
+http://82.165.60.238, innoversity.berlin, www.innoversity.berlin {
+    reverse_proxy web:3000
+}

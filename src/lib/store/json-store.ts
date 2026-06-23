@@ -4,7 +4,7 @@ import { hashPassword } from "../crypto";
 import fs from "fs/promises";
 import path from "path";
 
-const DATA_FILE = path.join(process.cwd(), "data.json");
+const DATA_FILE = process.env.DATA_FILE_PATH || path.join(/*turbopackIgnore: true*/ process.cwd(), "data.json");
 
 type Database = {
   courses: Course[];
