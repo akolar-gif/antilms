@@ -10,33 +10,48 @@ if (!databaseUrl) {
   process.exit(1);
 }
 
-// Modify the connection URL to connect to the default 'postgres' database
-let postgresUrl = databaseUrl;
-try {
-  const url = new URL(databaseUrl);
-  url.pathname = "/postgres";
-  postgresUrl = url.toString();
-} catch (e) {
-  console.error("Error parsing DATABASE_URL:", e);
-}
+// Candidate database names to test
+const dbNames = ["akolar", "antilms", "innoversity"];
 
-const client = new Client({
-  connectionString: postgresUrl,
-});
+async function testDb(dbName: string) {
+  let urlStr = databaseUrl;
+  try {
+    const url = new URL(databaseUrl);
+    url.pathname = "/" + dbName;
+    urlStr = url.toString();
+  } catch (e) {
+    console.error(`Error parsing url for ${dbName}:`, e);
+    return false;
+  }
 
-async function main() {
-  console.log(`Connecting to database at ${postgresUrl.replace(/:[^:@/]+@/, ":****@")}...`);
+  const client = new Client({
+    connectionString: urlStr,
+  });
+
   try {
     await client.connect();
-    const res = await client.query("SELECT datname FROM pg_database WHERE datistemplate = false;");
-    console.log("\nAvailable Databases on this cluster:");
-    res.rows.forEach(row => {
-      console.log(` - ${row.datname}`);
-    });
-  } catch (err) {
-    console.error("Connection failed:", err);
-  } finally {
+    console.log(`[SUCCESS] Connected to database: "${dbName}"`);
     await client.end();
+    return true;
+  } catch (err: any) {
+    console.log(`[FAILED] Database "${dbName}": ${err.message}`);
+    return false;
+  }
+}
+
+async function main() {
+  console.log("Testing connection to candidate databases...");
+  let found = false;
+  for (const db of dbNames) {
+    const ok = await testDb(db);
+    if (ok) {
+      found = true;
+    }
+  }
+  
+  if (!found) {
+    console.log("\nNone of the candidate databases worked.");
+    console.log("Please check your IONOS Cloud Panel -> PostgreSQL -> Databases to find the exact database name you created.");
   }
 }
 
