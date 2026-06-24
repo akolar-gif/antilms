@@ -29,6 +29,17 @@ services:
     depends_on:
       - web
 
+  migration:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    env_file:
+      - .env
+    command: npm run migrate
+
 volumes:
   caddy_data:
   caddy_config:

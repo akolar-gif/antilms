@@ -186,12 +186,21 @@ export function LearnerModuleClient({
                         <span className="corner-no">0{index + 1}</span>
                         <h3 className="font-display font-extrabold text-xl text-ink leading-tight pr-8">{block.title}</h3>
                         <div className="aspect-video w-full rounded-xl overflow-hidden bg-slate-900 shadow-md">
-                          <iframe 
-                            src={block.content.includes("youtube.com") ? block.content : "https://www.youtube.com/embed/dQw4w9WgXcQ"} 
-                            className="w-full h-full border-none"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                          />
+                          {block.content && (block.content.includes("youtube.com") || block.content.includes("youtu.be") || block.content.includes("vimeo.com") || block.content.includes("embed")) ? (
+                            <iframe 
+                              src={block.content} 
+                              className="w-full h-full border-none"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                            />
+                          ) : (
+                            <video 
+                              src={block.content || undefined} 
+                              controls 
+                              className="w-full h-full object-contain bg-black"
+                              preload="metadata"
+                            />
+                          )}
                         </div>
                       </div>
                     )}

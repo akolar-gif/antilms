@@ -30,6 +30,10 @@ export async function GET(
     else if (ext === ".gif") contentType = "image/gif";
     else if (ext === ".svg") contentType = "image/svg+xml";
     else if (ext === ".webp") contentType = "image/webp";
+    else if (ext === ".mp3") contentType = "audio/mpeg";
+    else if (ext === ".mp4") contentType = "video/mp4";
+    else if (ext === ".webm") contentType = "video/webm";
+    else if (ext === ".pdf") contentType = "application/pdf";
 
     return new Response(fileBuffer, {
       status: 200,

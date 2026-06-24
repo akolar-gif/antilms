@@ -170,8 +170,26 @@ export function CourseBuilder({
                          {block.content}
                        </pre>
                     ) : block.type === 'video' ? (
-                      <div className="aspect-video bg-slate-100 flex items-center justify-center rounded-md border border-slate-200">
-                        <span className="text-slate-400">Video Embed: {block.content}</span>
+                      <div className="aspect-video max-w-sm bg-slate-900 flex items-center justify-center rounded-xl border border-slate-200 overflow-hidden relative shadow-sm">
+                        {block.content && (block.content.includes("youtube.com") || block.content.includes("youtu.be") || block.content.includes("vimeo.com") || block.content.includes("embed")) ? (
+                          <iframe 
+                            src={block.content} 
+                            className="w-full h-full border-none pointer-events-none"
+                            allowFullScreen
+                          />
+                        ) : block.content ? (
+                          <video 
+                            src={block.content} 
+                            className="w-full h-full object-contain"
+                            preload="metadata"
+                            muted
+                          />
+                        ) : (
+                          <span className="text-slate-400 text-xs uppercase font-bold font-mono">Kein Video hinterlegt</span>
+                        )}
+                        <div className="absolute inset-0 bg-black/10 flex items-center justify-center pointer-events-none">
+                          <span className="bg-white/90 px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider text-slate-800 shadow-md">Video Vorschau</span>
+                        </div>
                       </div>
                     ) : (
                       block.content

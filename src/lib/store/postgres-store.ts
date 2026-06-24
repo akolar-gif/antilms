@@ -74,6 +74,8 @@ function mapUserRecordFromDb(row: any): UserRecord {
     role: row.role as Role,
     createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
     passwordHash: row.password_hash,
+    resetToken: row.reset_token || undefined,
+    resetTokenExpiry: row.reset_token_expiry instanceof Date ? row.reset_token_expiry.toISOString() : row.reset_token_expiry || undefined,
   };
 }
 
@@ -340,6 +342,21 @@ export class PostgresStore implements LearningStore {
     }
   }
 
+  async getCourseProgress(courseId: string): Promise<{ userId: string; userName: string; completedBlocks: string[] }[]> {
+    const { rows } = await pool.query(
+      `SELECT p.user_id, u.name as user_name, p.completed_blocks
+       FROM progress p
+       JOIN users u ON u.id = p.user_id
+       WHERE p.course_id = $1`,
+      [courseId]
+    );
+    return rows.map(r => ({
+      userId: r.user_id,
+      userName: r.user_name,
+      completedBlocks: Array.isArray(r.completed_blocks) ? r.completed_blocks : []
+    }));
+  }
+
   async getReflections(userId: string): Promise<Reflection[]> {
     const { rows } = await pool.query("SELECT * FROM reflections WHERE learner_id = $1 ORDER BY created_at DESC", [userId]);
     return rows.map(mapReflectionFromDb);
@@ -367,6 +384,30 @@ export class PostgresStore implements LearningStore {
     } finally {
       client.release();
     }
+  }
+
+  async getCourseReflections(courseId: string): Promise<(Reflection & { userName: string; blockTitle: string })[]> {
+    const { rows } = await pool.query(
+      `SELECT r.*, u.name as user_name, b.title as block_title
+       FROM reflections r
+       JOIN users u ON u.id = r.learner_id
+       JOIN blocks b ON b.id = r.block_id
+       JOIN modules m ON m.id = b.module_id
+       WHERE m.course_id = $1
+       ORDER BY r.created_at DESC`,
+      [courseId]
+    );
+    return rows.map(r => ({
+      id: r.id,
+      learnerId: r.learner_id,
+      blockId: r.block_id,
+      content: r.content,
+      confidence: r.confidence,
+      difficulty: r.difficulty,
+      createdAt: r.created_at instanceof Date ? r.created_at.toISOString() : r.created_at,
+      userName: r.user_name,
+      blockTitle: r.block_title
+    }));
   }
 
   async clearUserData(userId: string): Promise<void> {
@@ -408,5 +449,33 @@ export class PostgresStore implements LearningStore {
   async getUsers(): Promise<User[]> {
     const { rows } = await pool.query("SELECT * FROM users ORDER BY created_at DESC");
     return rows.map(mapUserFromDb);
+  }
+
+  async setResetToken(email: string, token: string, expiry: Date): Promise<void> {
+    const { rowCount } = await pool.query(
+      "UPDATE users SET reset_token = $1, reset_token_expiry = $2, updated_at = NOW() WHERE LOWER(email) = LOWER($3)",
+      [token, expiry, email]
+    );
+    if (rowCount === 0) {
+      throw new Error("User not found");
+    }
+  }
+
+  async getUserByResetToken(token: string): Promise<UserRecord | null> {
+    const { rows } = await pool.query(
+      "SELECT * FROM users WHERE reset_token = $1 AND reset_token_expiry > NOW()",
+      [token]
+    );
+    return rows.length > 0 ? mapUserRecordFromDb(rows[0]) : null;
+  }
+
+  async updateUserPassword(userId: string, passwordHash: string): Promise<void> {
+    const { rowCount } = await pool.query(
+      "UPDATE users SET password_hash = $1, reset_token = NULL, reset_token_expiry = NULL, updated_at = NOW() WHERE id = $2",
+      [passwordHash, userId]
+    );
+    if (rowCount === 0) {
+      throw new Error("User not found");
+    }
   }
 }

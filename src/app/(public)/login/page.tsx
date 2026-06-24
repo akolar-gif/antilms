@@ -2,6 +2,7 @@
 
 import { useState, useTransition, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Shield, User, Award, Key, ArrowRight, Loader2, Mail, UserCheck } from "lucide-react";
 import { loginAction, registerAction } from "@/app/actions/auth";
@@ -229,6 +230,17 @@ function LoginContent() {
               />
             </div>
           </div>
+
+          {mode === "login" && (
+            <div className="flex justify-end text-xs mt-1">
+              <Link 
+                href="/forgot-password" 
+                className="text-ink-3 hover:text-blue transition-colors font-mono uppercase tracking-wider text-[10px]"
+              >
+                Passwort vergessen?
+              </Link>
+            </div>
+          )}
 
           {/* Submit Button */}
           <button

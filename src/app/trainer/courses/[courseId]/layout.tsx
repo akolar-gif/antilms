@@ -72,10 +72,18 @@ export default async function CourseEditorLayout({
         <div className="flex-1 overflow-y-auto p-5 space-y-4">
           <Link 
             href={`/trainer/courses/${course.id}`}
-            className="block p-3 rounded-xl border border-line text-xs font-mono uppercase tracking-wider text-center text-ink hover:bg-paper-3 transition-colors"
+            className="block p-3 rounded-xl border border-line text-xs font-mono uppercase tracking-wider text-center text-ink hover:bg-paper-3 transition-colors animate-fade-in"
             style={{ background: "var(--paper)" }}
           >
             {t("trainer.settings")}
+          </Link>
+
+          <Link 
+            href={`/trainer/courses/${course.id}/analytics`}
+            className="block p-3 rounded-xl border border-line text-xs font-mono uppercase tracking-wider text-center text-ink hover:bg-paper-3 transition-colors"
+            style={{ background: "var(--paper)" }}
+          >
+            {lang === 'en' ? 'Analytics & Reflections' : 'Fortschritt & Analysen'}
           </Link>
 
           <div>

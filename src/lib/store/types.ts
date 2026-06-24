@@ -58,16 +58,21 @@ export interface LearningStore {
   // Progress methods
   getUserProgress(userId: string, courseId: string): Promise<{ completedBlocks: string[] }>;
   markBlockCompleted(userId: string, courseId: string, blockId: string): Promise<void>;
+  getCourseProgress(courseId: string): Promise<{ userId: string; userName: string; completedBlocks: string[] }[]>;
 
   // Reflection methods
   getReflections(userId: string): Promise<Reflection[]>;
   saveReflection(userId: string, blockId: string, content: string, confidence: number, difficulty: number): Promise<Reflection>;
+  getCourseReflections(courseId: string): Promise<(Reflection & { userName: string; blockTitle: string })[]>;
   
   // User methods
   getUser(id: string): Promise<User | null>;
   getUserByEmail(email: string): Promise<UserRecord | null>;
   createUser(input: { name: string; email: string; passwordHash: string; role: Role }): Promise<User>;
   getUsers(): Promise<User[]>;
+  setResetToken(email: string, token: string, expiry: Date): Promise<void>;
+  getUserByResetToken(token: string): Promise<UserRecord | null>;
+  updateUserPassword(userId: string, passwordHash: string): Promise<void>;
 
   // Data administration (GDPR)
   clearUserData(userId: string): Promise<void>;

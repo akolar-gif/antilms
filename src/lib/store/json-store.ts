@@ -244,6 +244,19 @@ export class JsonStore implements LearningStore {
     await this.writeData(data);
   }
 
+  async getCourseProgress(courseId: string): Promise<{ userId: string; userName: string; completedBlocks: string[] }[]> {
+    const data = await this.readData();
+    const courseProgress = data.progress?.filter(p => p.courseId === courseId) || [];
+    return courseProgress.map(p => {
+      const user = data.users.find(u => u.id === p.userId);
+      return {
+        userId: p.userId,
+        userName: user ? user.name : "Unbekannter Lerner",
+        completedBlocks: p.completedBlocks
+      };
+    });
+  }
+
   async getReflections(userId: string): Promise<Reflection[]> {
     const data = await this.readData();
     return data.reflections?.filter(r => r.learnerId === userId) || [];
@@ -272,6 +285,26 @@ export class JsonStore implements LearningStore {
     return newReflection;
   }
 
+  async getCourseReflections(courseId: string): Promise<(Reflection & { userName: string; blockTitle: string })[]> {
+    const data = await this.readData();
+    const courseModules = data.modules.filter(m => m.courseId === courseId);
+    const moduleIds = courseModules.map(m => m.id);
+    const courseBlocks = data.blocks.filter(b => moduleIds.includes(b.moduleId));
+    const blockIds = courseBlocks.map(b => b.id);
+
+    const courseReflections = data.reflections?.filter(r => blockIds.includes(r.blockId)) || [];
+    
+    return courseReflections.map(r => {
+      const user = data.users.find(u => u.id === r.learnerId);
+      const block = courseBlocks.find(b => b.id === r.blockId);
+      return {
+        ...r,
+        userName: user ? user.name : "Unbekannter Lerner",
+        blockTitle: block ? block.title : "Unbekannter Block"
+      };
+    }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
   async clearUserData(userId: string): Promise<void> {
     const data = await this.readData();
     
@@ -292,7 +325,7 @@ export class JsonStore implements LearningStore {
     const data = await this.readData();
     const user = data.users.find(u => u.id === id);
     if (!user) return null;
-    const { passwordHash, ...safeUser } = user;
+    const { passwordHash, resetToken, resetTokenExpiry, ...safeUser } = user;
     return safeUser;
   }
 
@@ -317,12 +350,46 @@ export class JsonStore implements LearningStore {
     };
     data.users.push(newUser);
     await this.writeData(data);
-    const { passwordHash, ...safeUser } = newUser;
+    const { passwordHash, resetToken, resetTokenExpiry, ...safeUser } = newUser;
     return safeUser;
   }
 
   async getUsers(): Promise<User[]> {
     const data = await this.readData();
-    return data.users.map(({ passwordHash, ...safeUser }) => safeUser);
+    return data.users.map(({ passwordHash, resetToken, resetTokenExpiry, ...safeUser }) => safeUser);
+  }
+
+  async setResetToken(email: string, token: string, expiry: Date): Promise<void> {
+    const data = await this.readData();
+    const userIndex = data.users.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
+    if (userIndex === -1) {
+      throw new Error("User not found");
+    }
+    data.users[userIndex].resetToken = token;
+    data.users[userIndex].resetTokenExpiry = expiry.toISOString();
+    await this.writeData(data);
+  }
+
+  async getUserByResetToken(token: string): Promise<UserRecord | null> {
+    const data = await this.readData();
+    const user = data.users.find(u => u.resetToken === token);
+    if (!user) return null;
+    
+    if (user.resetTokenExpiry && new Date(user.resetTokenExpiry) > new Date()) {
+      return user;
+    }
+    return null;
+  }
+
+  async updateUserPassword(userId: string, passwordHash: string): Promise<void> {
+    const data = await this.readData();
+    const userIndex = data.users.findIndex(u => u.id === userId);
+    if (userIndex === -1) {
+      throw new Error("User not found");
+    }
+    data.users[userIndex].passwordHash = passwordHash;
+    data.users[userIndex].resetToken = undefined;
+    data.users[userIndex].resetTokenExpiry = undefined;
+    await this.writeData(data);
   }
 }

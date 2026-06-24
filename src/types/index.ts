@@ -10,6 +10,8 @@ export interface User {
 
 export interface UserRecord extends User {
   passwordHash: string;
+  resetToken?: string;
+  resetTokenExpiry?: string;
 }
 
 export type CourseStatus = "draft" | "published" | "archived";

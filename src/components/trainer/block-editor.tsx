@@ -207,6 +207,51 @@ export function BlockEditor({ block, onSave, onCancel }: BlockEditorProps) {
             </button>
           </div>
         </div>
+      ) : block.type === 'video' ? (
+        <div className="space-y-4">
+          <div>
+            <label className="text-xs text-slate-500 font-bold uppercase block mb-1">Video Source URL (YouTube, Vimeo, or direct link)</label>
+            <input 
+              type="text"
+              placeholder="https://www.youtube.com/embed/... or /uploads/video.mp4"
+              className="w-full p-2 border border-slate-300 rounded text-sm"
+              value={textContent}
+              onChange={e => setTextContent(e.target.value)}
+            />
+          </div>
+          <div className="border border-dashed border-slate-300 rounded-lg p-4 bg-white flex flex-col items-center justify-center">
+            <label className="text-xs text-slate-500 font-bold uppercase block mb-2">Or Upload MP4/WebM Video File</label>
+            <input 
+              type="file"
+              accept="video/mp4,video/webm,video/*"
+              className="hidden"
+              id="video-upload-input"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const formData = new FormData();
+                  formData.append("file", file);
+                  const toastId = toast.loading("Uploading video file...");
+                  try {
+                    const { uploadVideoAction } = await import("@/app/actions/upload");
+                    const fileUrl = await uploadVideoAction(formData);
+                    setTextContent(fileUrl);
+                    toast.success("Video uploaded successfully!", { id: toastId });
+                  } catch (err: any) {
+                    toast.error(err.message || "Failed to upload video", { id: toastId });
+                  }
+                }
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => document.getElementById("video-upload-input")?.click()}
+              className="px-4 py-2 border border-slate-300 rounded-md text-xs font-semibold bg-slate-50 hover:bg-slate-100 flex items-center gap-1.5"
+            >
+              <Upload className="w-3.5 h-3.5" /> Select Video file
+            </button>
+          </div>
+        </div>
       ) : (
         // Generic Text / Fallback Editor
         <textarea 
