@@ -11,7 +11,7 @@ if (!databaseUrl) {
 }
 
 // Candidate database names to test
-const dbNames = ["akolar", "antilms", "innoversity"];
+const dbNames = ["akolar", "antilms", "innoversity", "db", "app", "innoversity_lms"];
 
 async function testDb(dbName: string) {
   let urlStr = databaseUrl;
