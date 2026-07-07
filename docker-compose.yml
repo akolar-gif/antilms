@@ -16,7 +16,7 @@ services:
     expose:
       - "3000"
     extra_hosts:
-      - "pg-54869bf1de1d185d.postgresql.de-fra.ionoscloud.com:192.168.19.12"
+      - "pg-ca61895e1212a85b.postgresql.de-fra.ionoscloud.com:192.168.19.12"
 
   caddy:
     image: caddy:2-alpine
@@ -42,7 +42,7 @@ services:
       - .env
     command: npm run migrate
     extra_hosts:
-      - "pg-54869bf1de1d185d.postgresql.de-fra.ionoscloud.com:192.168.19.12"
+      - "pg-ca61895e1212a85b.postgresql.de-fra.ionoscloud.com:192.168.19.12"
 
 volumes:
   caddy_data:
