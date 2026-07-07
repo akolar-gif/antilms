@@ -1,62 +1,35 @@
 import { Client } from "pg";
-import * as dotenv from "dotenv";
-import * as path from "path";
 
-dotenv.config({ path: path.resolve(process.cwd(), ".env") });
+const host = "pg-ca61895e1212a85b.postgresql.de-fra.ionoscloud.com";
+const user = "akolar";
+const database = "antilms";
+const passwords = ["4LGQtZvAnQgyQS5@", "V1izQ1Wa_123XYZ"];
 
-const databaseUrl = process.env.DATABASE_URL;
-if (!databaseUrl) {
-  console.error("No DATABASE_URL found in .env");
-  process.exit(1);
-}
-
-// Candidate database names to test
-const dbNames = [
-  "akolar", "antilms", "innoversity", "db", "app", "innoversity_lms",
-  "innoversity-lms", "antilms_db", "antilms-db", "innoversity_db", "innoversity-db",
-  "lms", "lms_db", "lms-db", "akolar_db", "akolar-db", "default", "default_db",
-  "main", "main_db", "prod", "prod_db", "production", "public"
-];
-
-async function testDb(dbName: string) {
-  let urlStr = databaseUrl;
-  try {
-    const url = new URL(databaseUrl);
-    url.pathname = "/" + dbName;
-    urlStr = url.toString();
-  } catch (e) {
-    console.error(`Error parsing url for ${dbName}:`, e);
-    return false;
-  }
-
+async function testPassword(password: string) {
   const client = new Client({
-    connectionString: urlStr,
+    host,
+    port: 5432,
+    user,
+    password,
+    database,
+    ssl: { rejectUnauthorized: false }, // Bypass ALTNAME mismatch if any, just to test auth
   });
 
   try {
     await client.connect();
-    console.log(`[SUCCESS] Connected to database: "${dbName}"`);
+    console.log(`[SUCCESS] Connected using password: "${password}"`);
     await client.end();
     return true;
   } catch (err: any) {
-    console.log(`[FAILED] Database "${dbName}": ${err.message}`);
+    console.log(`[FAILED] Password "${password}": ${err.message}`);
     return false;
   }
 }
 
 async function main() {
-  console.log("Testing connection to candidate databases...");
-  let found = false;
-  for (const db of dbNames) {
-    const ok = await testDb(db);
-    if (ok) {
-      found = true;
-    }
-  }
-  
-  if (!found) {
-    console.log("\nNone of the candidate databases worked.");
-    console.log("Please check your IONOS Cloud Panel -> PostgreSQL -> Databases to find the exact database name you created.");
+  console.log("Testing which password works for user 'akolar' on the new database cluster...");
+  for (const pw of passwords) {
+    await testPassword(pw);
   }
 }
 
