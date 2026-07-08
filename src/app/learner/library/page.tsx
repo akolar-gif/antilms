@@ -123,9 +123,11 @@ export default async function LearnerLibraryPage() {
             {t("library.hero_desc")}
           </p>
           <div style={{ display: "flex", gap: 12, marginTop: 24, flexWrap: "wrap" }}>
-            <Link href="/trainer?create=true" className="btn blue">
-              <span className="flex items-center gap-1.5"><Sparkles className="w-4 h-4" /> {t("library.create_btn")}</span>
-            </Link>
+            {(user?.role === "trainer" || user?.role === "admin") && (
+              <Link href="/trainer?create=true" className="btn blue">
+                <span className="flex items-center gap-1.5"><Sparkles className="w-4 h-4" /> {t("library.create_btn")}</span>
+              </Link>
+            )}
             <Link href="/learner/tracks/new" className="btn ghost" style={{ border: "1.5px solid var(--line-soft)", background: "var(--paper-2)", color: "var(--ink-2)" }}>
               <span className="flex items-center gap-1.5"><Zap className="w-4 h-4 text-blue" /> {lang === "de" ? "Eigenen Track bauen" : "Build Custom Track"}</span>
             </Link>
