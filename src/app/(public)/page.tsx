@@ -8,10 +8,10 @@ export const dynamic = 'force-dynamic';
 
 export default async function LandingPage() {
   const allCourses = await store.getCourses();
-  const publishedCourses = allCourses.filter(c => c.status === "published");
+  const visibleCourses = allCourses.filter(c => c.status === "published" || c.status === "coming_soon");
   
   // Group by category
-  const categories = Array.from(new Set(publishedCourses.map(c => c.category || "General"))).sort();
+  const categories = Array.from(new Set(visibleCourses.map(c => c.category || "General"))).sort();
 
   const cookieStore = await cookies();
   const lang = (cookieStore.get("lang")?.value || "de") as "de" | "en";
@@ -117,10 +117,10 @@ export default async function LandingPage() {
       {/* Courses Catalog */}
       <div className="sec-head">
         <h2>{t("public.available_paths")}</h2>
-        <span className="meta">{t("public.courses_count", { count: publishedCourses.length.toString() })}</span>
+        <span className="meta">{t("public.courses_count", { count: visibleCourses.filter(c => c.status === "published").length.toString() })}</span>
       </div>
 
-      {publishedCourses.length === 0 ? (
+      {visibleCourses.length === 0 ? (
         <div className="pad">
           <div className="p-12 text-center bg-paper-2 border border-line-soft rounded-2xl">
             <BookOpen className="w-10 h-10 text-ink-3 mx-auto mb-4" />
@@ -130,10 +130,61 @@ export default async function LandingPage() {
         </div>
       ) : (
         <div className="courses border-t border-b border-line">
-          {publishedCourses.map((course, idx) => {
+          {visibleCourses.map((course, idx) => {
             const cardColor = idx % 3 === 0 ? "blue" : idx % 3 === 1 ? "ink" : "coral";
             const imageUrl = course.imageUrl;
+            const isComingSoon = course.status === "coming_soon";
             const displayIdx = String(idx + 1).padStart(2, "0");
+
+            if (isComingSoon) {
+              if (imageUrl) {
+                return (
+                  <div className="poster photo cursor-not-allowed opacity-80" key={course.id}>
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center z-0 filter grayscale-[40%]" 
+                      style={{ backgroundImage: `url(${imageUrl})` }}
+                    />
+                    <div className="absolute inset-0 bg-black/45 z-10 flex items-center justify-center backdrop-blur-[2px] rounded-2xl">
+                      <span className="text-white font-mono font-bold tracking-widest text-[11px] uppercase bg-black/60 px-4 py-2 border border-white/20 rounded-xl">
+                        COMING SOON
+                      </span>
+                    </div>
+                    <div className="pinner relative z-20">
+                      <div className="top">
+                        <span className="no">№ {displayIdx}</span>
+                        <span className="tag">{course.category || "General"}</span>
+                      </div>
+                      <div className="ptitle text-white/95">{course.title}</div>
+                      <div className="pmeta mt-auto flex flex-wrap gap-2">
+                        <span className="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-white/20 border border-white/40">
+                          {course.type === "sprint" ? "Sprint" : course.type === "track" ? "Track" : "Standard"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <div className={`poster ${cardColor} cursor-not-allowed opacity-85 relative`} key={course.id}>
+                  <div className="absolute inset-0 bg-black/20 z-10 flex items-center justify-center backdrop-blur-[1px] rounded-2xl">
+                    <span className="text-white font-mono font-bold tracking-widest text-[10px] uppercase bg-black/60 px-3 py-1.5 border border-white/10 rounded-xl">
+                      COMING SOON
+                    </span>
+                  </div>
+                  <div className="top relative z-20">
+                    <span className="no">№ {displayIdx}</span>
+                    <span className="tag">{course.category || "General"}</span>
+                  </div>
+                  <div className="ptitle relative z-20">{course.title}</div>
+                  <div className="pmeta mt-auto relative z-20 flex flex-wrap gap-2">
+                    <span className="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-current/10 border border-current/30">
+                      {course.type === "sprint" ? "Sprint" : course.type === "track" ? "Track" : "Standard"}
+                    </span>
+                  </div>
+                </div>
+              );
+            }
 
             if (imageUrl) {
               return (
@@ -148,8 +199,8 @@ export default async function LandingPage() {
                       <span className="tag">{course.category || "General"}</span>
                     </div>
                     <div className="ptitle">{course.title}</div>
-                    <div className="pmeta">
-                      <span>{t("public.start_journey")}</span>
+                    <div className="pmeta flex items-center justify-between">
+                      <span className="text-xs uppercase tracking-wider font-bold">{t("public.start_journey")}</span>
                       <ArrowRight className="w-4 h-4" />
                     </div>
                   </div>
