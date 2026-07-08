@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { cookies } from "next/headers";
 import { translations } from "@/components/layout/translations";
+import { verifySession } from "@/lib/session";
 
 export const dynamic = 'force-dynamic';
 
@@ -14,6 +15,8 @@ export default async function LandingPage() {
   const categories = Array.from(new Set(visibleCourses.map(c => c.category || "General"))).sort();
 
   const cookieStore = await cookies();
+  const token = cookieStore.get("user_session")?.value;
+  const user = token ? await verifySession(token) : null;
   const lang = (cookieStore.get("lang")?.value || "de") as "de" | "en";
   const dict = translations[lang] || translations.de;
   const t = (key: keyof typeof translations.de, params?: Record<string, string>) => {
@@ -38,10 +41,52 @@ export default async function LandingPage() {
             </div>
           </div>
         </div>
-        <div className="tb-right" style={{ gap: 12 }}>
-          <Link href="/login" className="btn ghost" style={{ textTransform: "uppercase", fontFamily: "var(--f-mono)", fontSize: 12, padding: "8px 16px" }}>
-            {t("public.login")}
-          </Link>
+        <div className="tb-right flex items-center gap-2">
+          {user ? (
+            <>
+              <span className="text-xs text-ink-3 mr-2 font-mono hidden md:inline">
+                {lang === "de" ? "Hallo, " : "Hi, "}{user.name}
+              </span>
+              
+              {/* Quick links for Admin */}
+              {user.role === "admin" && (
+                <div className="flex gap-2">
+                  <Link href="/admin" className="btn ghost text-[11px] font-mono uppercase tracking-wider py-1 px-3 border border-line-soft rounded-lg">
+                    Admin
+                  </Link>
+                  <Link href="/trainer" className="btn ghost text-[11px] font-mono uppercase tracking-wider py-1 px-3 border border-line-soft rounded-lg">
+                    Trainer
+                  </Link>
+                  <Link href="/learner" className="btn ghost text-[11px] font-mono uppercase tracking-wider py-1 px-3 border border-line-soft rounded-lg">
+                    Lerner
+                  </Link>
+                </div>
+              )}
+
+              {/* Quick links for Trainer */}
+              {user.role === "trainer" && (
+                <div className="flex gap-2">
+                  <Link href="/trainer" className="btn ghost text-[11px] font-mono uppercase tracking-wider py-1 px-3 border border-line-soft rounded-lg">
+                    Trainer
+                  </Link>
+                  <Link href="/learner" className="btn ghost text-[11px] font-mono uppercase tracking-wider py-1 px-3 border border-line-soft rounded-lg">
+                    Lerner
+                  </Link>
+                </div>
+              )}
+
+              {/* Quick links for Learner */}
+              {user.role === "learner" && (
+                <Link href="/learner" className="btn ghost text-[11px] font-mono uppercase tracking-wider py-1 px-3 border border-line-soft rounded-lg">
+                  {lang === "de" ? "Mein Portal" : "My Dashboard"}
+                </Link>
+              )}
+            </>
+          ) : (
+            <Link href="/login" className="btn ghost" style={{ textTransform: "uppercase", fontFamily: "var(--f-mono)", fontSize: 12, padding: "8px 16px" }}>
+              {t("public.login")}
+            </Link>
+          )}
         </div>
       </header>
 
