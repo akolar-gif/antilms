@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export default async function LearnerDashboard() {
   const courses = await store.getCourses();
   const reflections = await store.getReflections("learner-1");
-  const publishedCourses = courses.filter(c => c.status === "published");
+  const visibleCourses = courses.filter(c => c.status === "published" || c.status === "coming_soon");
 
   const cookieStore = await cookies();
   const lang = (cookieStore.get("lang")?.value || "de") as "de" | "en";
@@ -40,7 +40,16 @@ export default async function LearnerDashboard() {
   let totalPunkGamesCompleted = 0;
   let totalQuizzesCompleted = 0;
 
-  for (const course of publishedCourses) {
+  for (const course of visibleCourses) {
+    if (course.status === "coming_soon") {
+      courseProgresses.push({
+        course,
+        percentage: 0,
+        totalBlocks: 0
+      });
+      continue;
+    }
+
     if (course.type === "track") {
       // Skill Track progress calculation
       const sprintIds = course.sprintCourseIds || [];
@@ -106,9 +115,10 @@ export default async function LearnerDashboard() {
   }
 
   // Active course progress is the first in-progress course, or first published course
-  const activeCourseProgress = courseProgresses.find(p => p.percentage > 0 && p.percentage < 100) 
-    || courseProgresses.find(p => p.percentage === 0) 
-    || courseProgresses[0];
+  const playableProgresses = courseProgresses.filter(p => p.course.status === "published");
+  const activeCourseProgress = playableProgresses.find(p => p.percentage > 0 && p.percentage < 100) 
+    || playableProgresses.find(p => p.percentage === 0) 
+    || playableProgresses[0];
 
   // Find next uncompleted block to resume
   let resumeModuleTitle = t("dashboard.no_active_course");
@@ -254,10 +264,10 @@ export default async function LearnerDashboard() {
       {/* Library Preview */}
       <div className="sec-head">
         <h2>{t("dashboard.paths_title")}</h2>
-        <span className="meta">{t("dashboard.paths_meta", { count: publishedCourses.length.toString() })}</span>
+        <span className="meta">{t("dashboard.paths_meta", { count: visibleCourses.filter(c => c.status === "published").length.toString() })}</span>
       </div>
       
-      {publishedCourses.length === 0 ? (
+      {visibleCourses.length === 0 ? (
         <div className="pad">
           <div className="p-8 text-center bg-paper-2 border border-line-soft rounded-2xl">
             <p className="text-sm text-ink-2">{t("dashboard.paths_no_courses")}</p>
@@ -269,7 +279,59 @@ export default async function LearnerDashboard() {
             const course = p.course;
             const cardColor = idx % 3 === 0 ? "blue" : idx % 3 === 1 ? "ink" : "coral";
             const imageUrl = course.imageUrl;
-            
+            const isComingSoon = course.status === "coming_soon";
+            const displayIdx = String(idx + 1).padStart(2, '0');
+
+            if (isComingSoon) {
+              if (imageUrl) {
+                return (
+                  <div className="poster photo cursor-not-allowed opacity-80" key={course.id}>
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center z-0 filter grayscale-[40%]" 
+                      style={{ backgroundImage: `url(${imageUrl})` }}
+                    />
+                    <div className="absolute inset-0 bg-black/45 z-10 flex items-center justify-center backdrop-blur-[2px] rounded-2xl">
+                      <span className="text-white font-mono font-bold tracking-widest text-[11px] uppercase bg-black/60 px-4 py-2 border border-white/20 rounded-xl">
+                        COMING SOON
+                      </span>
+                    </div>
+                    <div className="pinner relative z-20">
+                      <div className="top">
+                        <span className="no">№ {displayIdx}</span>
+                        <span className="tag">{course.category || "General"}</span>
+                      </div>
+                      <div className="ptitle text-white/95">{course.title}</div>
+                      <div className="pmeta mt-auto flex flex-wrap gap-2">
+                        <span className="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-white/20 border border-white/40">
+                          {course.type === "sprint" ? "Sprint" : course.type === "track" ? "Track" : "Standard"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <div className={`poster ${cardColor} cursor-not-allowed opacity-85 relative`} key={course.id}>
+                  <div className="absolute inset-0 bg-black/20 z-10 flex items-center justify-center backdrop-blur-[1px] rounded-2xl">
+                    <span className="text-white font-mono font-bold tracking-widest text-[10px] uppercase bg-black/60 px-3 py-1.5 border border-white/10 rounded-xl">
+                      COMING SOON
+                    </span>
+                  </div>
+                  <div className="top relative z-20">
+                    <span className="no">№ {displayIdx}</span>
+                    <span className="tag">{course.category || "General"}</span>
+                  </div>
+                  <div className="ptitle relative z-20">{course.title}</div>
+                  <div className="pmeta mt-auto relative z-20 flex flex-wrap gap-2">
+                    <span className="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-current/10 border border-current/30">
+                      {course.type === "sprint" ? "Sprint" : course.type === "track" ? "Track" : "Standard"}
+                    </span>
+                  </div>
+                </div>
+              );
+            }
+
             if (imageUrl) {
               return (
                 <Link href={`/learner/courses/${course.id}`} className="poster photo" key={course.id}>
@@ -279,7 +341,7 @@ export default async function LearnerDashboard() {
                   />
                   <div className="pinner">
                     <div className="top">
-                      <span className="no">№ {String(idx + 1).padStart(2, '0')}</span>
+                      <span className="no">№ {displayIdx}</span>
                       <span className="tag">{course.category || "General"}</span>
                     </div>
                     <div className="ptitle">{course.title}</div>
@@ -298,7 +360,7 @@ export default async function LearnerDashboard() {
             return (
               <Link href={`/learner/courses/${course.id}`} className={`poster ${cardColor}`} key={course.id}>
                 <div className="top">
-                  <span className="no">№ {String(idx + 1).padStart(2, '0')}</span>
+                  <span className="no">№ {displayIdx}</span>
                   <span className="tag">{course.category || "General"}</span>
                 </div>
                 <div className="ptitle">{course.title}</div>
