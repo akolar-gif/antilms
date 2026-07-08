@@ -113,10 +113,10 @@ export class PostgresStore implements LearningStore {
       [
         id,
         input.title,
-        input.description,
+        input.description || "",
         input.targetGroup || "",
         input.category || "Uncategorized",
-        input.imageUrl,
+        input.imageUrl || null,
         type,
         sprintCourseIds,
         isCustom,
