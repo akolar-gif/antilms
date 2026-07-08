@@ -46,24 +46,26 @@ async function main() {
     );
 
     const defaultUsers = [
-      { id: "user-admin", name: "Andreas Kolar", email: "andreas@kolar.biz", passwordHash: "admin123", role: "admin", approved: true },
+      { id: "user-admin", name: "Andreas Kolar", email: "andreas@kolar.biz", passwordHash: "admin123", role: "admin", approved: true, archived: false },
     ];
 
     const usersToSeed = dbData.users && dbData.users.length > 0 ? dbData.users : defaultUsers;
     for (const u of usersToSeed) {
       const passwordHash = u.passwordHash.includes(":") ? u.passwordHash : hashPassword(u.passwordHash || "password123");
       const approved = u.approved !== undefined ? u.approved : false;
+      const archived = u.archived !== undefined ? u.archived : false;
       await client.query(
-        `INSERT INTO users (id, name, email, password_hash, role, approved, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+        `INSERT INTO users (id, name, email, password_hash, role, approved, archived, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())
          ON CONFLICT (id) DO UPDATE SET
            name = EXCLUDED.name,
            email = EXCLUDED.email,
            password_hash = EXCLUDED.password_hash,
            role = EXCLUDED.role,
            approved = EXCLUDED.approved,
+           archived = EXCLUDED.archived,
            updated_at = NOW()`,
-        [u.id, u.name, u.email, passwordHash, u.role, approved]
+        [u.id, u.name, u.email, passwordHash, u.role, approved, archived]
       );
     }
 

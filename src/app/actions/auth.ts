@@ -26,6 +26,14 @@ export async function loginAction(
       return { success: false, error: "Ungültige E-Mail-Adresse oder Passwort." };
     }
 
+    // Check if the user is archived!
+    if (user.archived) {
+      return { 
+        success: false, 
+        error: "Dieses Konto wurde archiviert und kann nicht mehr verwendet werden." 
+      };
+    }
+
     // Check if the user is approved!
     if (!user.approved) {
       return { 

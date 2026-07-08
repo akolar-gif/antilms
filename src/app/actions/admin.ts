@@ -49,3 +49,40 @@ export async function toggleUserApprovalAction(
     return { success: false, error: "Fehler beim Aktualisieren des Benutzerstatus." };
   }
 }
+
+export async function toggleUserArchivedAction(
+  userId: string,
+  archived: boolean
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const user = await store.getUser(userId);
+    if (!user) {
+      return { success: false, error: "Benutzer nicht gefunden." };
+    }
+
+    await store.updateUserArchived(userId, archived);
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Failed to toggle user archived status:", error);
+    return { success: false, error: "Fehler beim Aktualisieren des Archivierungsstatus." };
+  }
+}
+
+export async function deleteUserAction(
+  userId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const user = await store.getUser(userId);
+    if (!user) {
+      return { success: false, error: "Benutzer nicht gefunden." };
+    }
+
+    await store.deleteUser(userId);
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Failed to delete user:", error);
+    return { success: false, error: "Fehler beim Löschen des Benutzers." };
+  }
+}

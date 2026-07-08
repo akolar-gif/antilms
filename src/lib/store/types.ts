@@ -74,6 +74,8 @@ export interface LearningStore {
   getUserByResetToken(token: string): Promise<UserRecord | null>;
   updateUserPassword(userId: string, passwordHash: string): Promise<void>;
   updateUserApproval(userId: string, approved: boolean): Promise<void>;
+  updateUserArchived(userId: string, archived: boolean): Promise<void>;
+  deleteUser(userId: string): Promise<void>;
 
   // System Settings methods
   getSystemSetting(key: string, defaultValue: string): Promise<string>;

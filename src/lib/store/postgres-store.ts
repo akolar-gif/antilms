@@ -440,8 +440,8 @@ export class PostgresStore implements LearningStore {
   async createUser(input: { name: string; email: string; passwordHash: string; role: Role }): Promise<User> {
     const id = "user-" + Date.now();
     const { rows } = await pool.query(
-      `INSERT INTO users (id, name, email, password_hash, role, approved, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, FALSE, NOW(), NOW())
+      `INSERT INTO users (id, name, email, password_hash, role, approved, archived, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, FALSE, FALSE, NOW(), NOW())
        RETURNING *`,
       [id, input.name, input.email, input.passwordHash, input.role]
     );
@@ -486,6 +486,27 @@ export class PostgresStore implements LearningStore {
       "UPDATE users SET approved = $1, updated_at = NOW() WHERE id = $2",
       [approved, userId]
     );
+    if (rowCount === 0) {
+      throw new Error("User not found");
+    }
+  }
+
+  async updateUserArchived(userId: string, archived: boolean): Promise<void> {
+    const { rowCount } = await pool.query(
+      "UPDATE users SET archived = $1, updated_at = NOW() WHERE id = $2",
+      [archived, userId]
+    );
+    if (rowCount === 0) {
+      throw new Error("User not found");
+    }
+  }
+
+  async deleteUser(userId: string): Promise<void> {
+    // 1. Clear related progress & reflections data
+    await this.clearUserData(userId);
+
+    // 2. Remove user record
+    const { rowCount } = await pool.query("DELETE FROM users WHERE id = $1", [userId]);
     if (rowCount === 0) {
       throw new Error("User not found");
     }

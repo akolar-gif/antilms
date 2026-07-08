@@ -3,10 +3,16 @@
 import React, { useState, useTransition } from "react";
 import { 
   Shield, User, Award, Check, Mail, Search, Sparkles, 
-  Settings, Users, CheckCircle, XCircle, Clock, Loader2, ArrowRight
+  Settings, Users, CheckCircle, XCircle, Clock, Loader2, ArrowRight,
+  Trash2, Archive, RotateCcw
 } from "lucide-react";
 import { useTranslation } from "@/components/layout/language-context";
-import { updateAdminEmailSettingAction, toggleUserApprovalAction } from "@/app/actions/admin";
+import { 
+  updateAdminEmailSettingAction, 
+  toggleUserApprovalAction,
+  toggleUserArchivedAction,
+  deleteUserAction
+} from "@/app/actions/admin";
 import { toast } from "sonner";
 import { User as UserType } from "@/types";
 
@@ -41,7 +47,7 @@ export function AdminPanelClient({
 
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "approved">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "approved" | "archived">("all");
 
   const de = language === "de";
 
@@ -81,16 +87,71 @@ export function AdminPanelClient({
     }
   };
 
+  // Handle user archive toggle
+  const handleToggleUserArchived = async (userId: string, currentArchived: boolean) => {
+    setLoadingUserIds(prev => ({ ...prev, [userId]: true }));
+    try {
+      const newStatus = !currentArchived;
+      const res = await toggleUserArchivedAction(userId, newStatus);
+      if (res.success) {
+        setUsers(prev => prev.map(u => u.id === userId ? { ...u, archived: newStatus } : u));
+        toast.success(
+          newStatus 
+            ? (de ? "Benutzer archiviert." : "User archived.")
+            : (de ? "Benutzer wiederhergestellt." : "User restored.")
+        );
+      } else {
+        toast.error(res.error || (de ? "Fehler beim Aktualisieren." : "Error updating user."));
+      }
+    } catch (err) {
+      toast.error(de ? "Unerwarteter Fehler." : "Unexpected error.");
+    } finally {
+      setLoadingUserIds(prev => ({ ...prev, [userId]: false }));
+    }
+  };
+
+  // Handle user deletion
+  const handleDeleteUser = async (userId: string, userName: string) => {
+    const message = de 
+      ? `Möchtest du den Benutzer "${userName}" wirklich unwiderruflich löschen? Alle Lernfortschritte und Kommentare gehen dabei verloren.` 
+      : `Are you sure you want to permanently delete user "${userName}"? All progress and reflections will be deleted.`;
+      
+    if (!confirm(message)) {
+      return;
+    }
+
+    setLoadingUserIds(prev => ({ ...prev, [userId]: true }));
+    try {
+      const res = await deleteUserAction(userId);
+      if (res.success) {
+        setUsers(prev => prev.filter(u => u.id !== userId));
+        toast.success(de ? "Benutzer erfolgreich gelöscht." : "User deleted successfully.");
+      } else {
+        toast.error(res.error || (de ? "Fehler beim Löschen." : "Error deleting user."));
+      }
+    } catch (err) {
+      toast.error(de ? "Unerwarteter Fehler." : "Unexpected error.");
+    } finally {
+      setLoadingUserIds(prev => ({ ...prev, [userId]: false }));
+    }
+  };
+
   // Filter and search users
   const filteredUsers = users.filter(user => {
     const matchesSearch = 
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase());
     
-    const matchesStatus = 
-      statusFilter === "all" ||
-      (statusFilter === "pending" && !user.approved) ||
-      (statusFilter === "approved" && user.approved);
+    let matchesStatus = true;
+    if (statusFilter === "pending") {
+      matchesStatus = !user.approved && !user.archived;
+    } else if (statusFilter === "approved") {
+      matchesStatus = user.approved && !user.archived;
+    } else if (statusFilter === "archived") {
+      matchesStatus = user.archived;
+    } else if (statusFilter === "all") {
+      matchesStatus = !user.archived;
+    }
       
     return matchesSearch && matchesStatus;
   });
@@ -289,7 +350,7 @@ export function AdminPanelClient({
 
               {/* Status Filters */}
               <div className="flex bg-paper-2 p-1 border border-line-soft rounded-xl text-xs font-mono">
-                {(["all", "pending", "approved"] as const).map(f => (
+                {(["all", "pending", "approved", "archived"] as const).map(f => (
                   <button
                     key={f}
                     onClick={() => setStatusFilter(f)}
@@ -299,7 +360,7 @@ export function AdminPanelClient({
                         : "text-ink-2 hover:text-ink hover:bg-paper-3"
                     }`}
                   >
-                    {f === "all" ? (de ? "Alle" : "All") : f === "pending" ? (de ? "Ausstehend" : "Pending") : (de ? "Freigegeben" : "Approved")}
+                    {f === "all" ? (de ? "Alle" : "All") : f === "pending" ? (de ? "Ausstehend" : "Pending") : f === "approved" ? (de ? "Freigegeben" : "Approved") : (de ? "Archiviert" : "Archived")}
                   </button>
                 ))}
               </div>
@@ -367,7 +428,12 @@ export function AdminPanelClient({
                             })}
                           </td>
                           <td className="py-4">
-                            {isPending ? (
+                            {user.archived ? (
+                              <span className="inline-flex items-center gap-1 text-[10px] text-ink-3 font-semibold">
+                                <Archive className="w-3.5 h-3.5" />
+                                {de ? "Archiviert" : "Archived"}
+                              </span>
+                            ) : isPending ? (
                               <span className="inline-flex items-center gap-1 text-[10px] text-coral-d font-semibold">
                                 <Clock className="w-3.5 h-3.5" />
                                 {de ? "Ausstehend" : "Pending"}
@@ -385,29 +451,65 @@ export function AdminPanelClient({
                                 {de ? "Aktiver Admin" : "Active Admin"}
                               </span>
                             ) : (
-                              <button
-                                disabled={isLoading}
-                                onClick={() => handleToggleUserApproval(user.id, user.approved)}
-                                className={`px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all min-w-[94px] cursor-pointer flex items-center justify-center gap-1.5 ${
-                                  isPending 
-                                    ? "bg-emerald text-emerald-d hover:bg-emerald/80 border border-emerald/20" 
-                                    : "bg-paper-2 hover:bg-paper-3 text-ink-2 border border-line-soft"
-                                }`}
-                              >
-                                {isLoading ? (
-                                  <Loader2 className="w-3 h-3 animate-spin text-ink-2" />
-                                ) : isPending ? (
-                                  <>
-                                    <Check className="w-3 h-3" />
-                                    {de ? "Freigeben" : "Approve"}
-                                  </>
-                                ) : (
-                                  <>
-                                    <XCircle className="w-3 h-3" />
-                                    {de ? "Sperren" : "Suspend"}
-                                  </>
+                              <div className="flex justify-end gap-2">
+                                {/* Approve / Suspend Toggle */}
+                                {!user.archived && (
+                                  <button
+                                    disabled={isLoading}
+                                    onClick={() => handleToggleUserApproval(user.id, user.approved)}
+                                    className={`px-2.5 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all min-w-[94px] cursor-pointer flex items-center justify-center gap-1 ${
+                                      isPending 
+                                        ? "bg-emerald text-emerald-d hover:bg-emerald/80 border border-emerald/20" 
+                                        : "bg-paper-2 hover:bg-paper-3 text-ink-2 border border-line-soft"
+                                    }`}
+                                  >
+                                    {isLoading ? (
+                                      <Loader2 className="w-3 h-3 animate-spin text-ink-2" />
+                                    ) : isPending ? (
+                                      <>
+                                        <Check className="w-3 h-3" />
+                                        {de ? "Freigeben" : "Approve"}
+                                      </>
+                                    ) : (
+                                      <>
+                                        <XCircle className="w-3 h-3" />
+                                        {de ? "Sperren" : "Suspend"}
+                                      </>
+                                    )}
+                                  </button>
                                 )}
-                              </button>
+
+                                {/* Archive / Restore Toggle */}
+                                <button
+                                  disabled={isLoading}
+                                  onClick={() => handleToggleUserArchived(user.id, user.archived)}
+                                  className="px-2.5 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all bg-paper-2 hover:bg-paper-3 text-ink-2 border border-line-soft cursor-pointer flex items-center justify-center gap-1"
+                                  title={user.archived ? (de ? "Aktivieren" : "Activate") : (de ? "Archivieren" : "Archive")}
+                                >
+                                  {user.archived ? (
+                                    <>
+                                      <RotateCcw className="w-3.5 h-3.5 text-blue-500" />
+                                      <span>{de ? "Aktivieren" : "Activate"}</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Archive className="w-3.5 h-3.5" />
+                                      <span>{de ? "Archivieren" : "Archive"}</span>
+                                    </>
+                                  )}
+                                </button>
+
+                                {/* Delete Button */}
+                                <button
+                                  disabled={isLoading}
+                                  onClick={() => handleDeleteUser(user.id, user.name)}
+                                  className="px-2.5 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all bg-coral/10 hover:bg-coral/20 text-coral-d border border-coral/20 cursor-pointer flex items-center justify-center gap-1"
+                                  title={de ? "Löschen" : "Delete"}
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                  <span>{de ? "Löschen" : "Delete"}</span>
+                                </button>
+                              </div>
                             )}
                           </td>
                         </tr>
@@ -484,13 +586,19 @@ export function AdminPanelClient({
                 <div className="flex justify-between items-center p-3 rounded-xl border border-line-soft bg-paper-2">
                   <span className="text-xs text-ink-2 font-semibold">{de ? "Ausstehend" : "Pending Approval"}</span>
                   <span className="font-mono font-extrabold text-sm text-coral-d">
-                    {users.filter(u => !u.approved).length}
+                    {users.filter(u => !u.approved && !u.archived).length}
                   </span>
                 </div>
                 <div className="flex justify-between items-center p-3 rounded-xl border border-line-soft bg-paper-2">
                   <span className="text-xs text-ink-2 font-semibold">{de ? "Freigeschaltet" : "Approved"}</span>
                   <span className="font-mono font-extrabold text-sm text-emerald-green-d">
-                    {users.filter(u => u.approved).length}
+                    {users.filter(u => u.approved && !u.archived).length}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-3 rounded-xl border border-line-soft bg-paper-2">
+                  <span className="text-xs text-ink-2 font-semibold">{de ? "Archiviert" : "Archived"}</span>
+                  <span className="font-mono font-extrabold text-sm text-ink-3">
+                    {users.filter(u => u.archived).length}
                   </span>
                 </div>
               </div>

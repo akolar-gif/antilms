@@ -336,6 +336,7 @@ export class JsonStore implements LearningStore {
       passwordHash: input.passwordHash,
       role: input.role,
       approved: false,
+      archived: false,
       createdAt: new Date().toISOString()
     };
     data.users.push(newUser);
@@ -390,6 +391,26 @@ export class JsonStore implements LearningStore {
       throw new Error("User not found");
     }
     data.users[userIndex].approved = approved;
+    await this.writeData(data);
+  }
+
+  async updateUserArchived(userId: string, archived: boolean): Promise<void> {
+    const data = await this.readData();
+    const userIndex = data.users.findIndex(u => u.id === userId);
+    if (userIndex === -1) {
+      throw new Error("User not found");
+    }
+    data.users[userIndex].archived = archived;
+    await this.writeData(data);
+  }
+
+  async deleteUser(userId: string): Promise<void> {
+    // Clear user telemetry data first
+    await this.clearUserData(userId);
+
+    // Remove user record
+    const data = await this.readData();
+    data.users = data.users.filter(u => u.id !== userId);
     await this.writeData(data);
   }
 
