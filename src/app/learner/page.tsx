@@ -11,7 +11,10 @@ export const dynamic = 'force-dynamic';
 export default async function LearnerDashboard() {
   const courses = await store.getCourses();
   const reflections = await store.getReflections("learner-1");
-  const visibleCourses = courses.filter(c => c.status === "published" || c.status === "coming_soon");
+  const visibleCourses = courses.filter(c => 
+    (c.status === "published" || c.status === "coming_soon") &&
+    (!c.isCustom || c.learnerId === "learner-1")
+  );
 
   const cookieStore = await cookies();
   const lang = (cookieStore.get("lang")?.value || "de") as "de" | "en";

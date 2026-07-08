@@ -9,7 +9,10 @@ export const dynamic = 'force-dynamic';
 
 export default async function LandingPage() {
   const allCourses = await store.getCourses();
-  const visibleCourses = allCourses.filter(c => c.status === "published" || c.status === "coming_soon");
+  const visibleCourses = allCourses.filter(c => 
+    (c.status === "published" || c.status === "coming_soon") && 
+    !c.isCustom
+  );
   
   // Group by category
   const categories = Array.from(new Set(visibleCourses.map(c => c.category || "General"))).sort();

@@ -18,6 +18,8 @@ function mapCourseFromDb(row: any): Course {
           ? JSON.parse(row.sprint_course_ids || "[]")
           : (row.sprint_course_ids || [])),
     createdBy: row.created_by,
+    isCustom: !!row.is_custom,
+    learnerId: row.learner_id || undefined,
     createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
     updatedAt: row.updated_at instanceof Date ? row.updated_at.toISOString() : row.updated_at,
   };
@@ -102,9 +104,11 @@ export class PostgresStore implements LearningStore {
     const id = "course-" + Date.now();
     const type = input.type || "comprehensive";
     const sprintCourseIds = JSON.stringify(input.sprintCourseIds || []);
+    const isCustom = input.isCustom ?? false;
+    const learnerId = input.learnerId || null;
     const { rows } = await pool.query(
-      `INSERT INTO courses (id, title, description, target_group, category, image_url, status, type, sprint_course_ids, created_by, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, 'draft', $7, $8, $9, NOW(), NOW())
+      `INSERT INTO courses (id, title, description, target_group, category, image_url, status, type, sprint_course_ids, is_custom, learner_id, created_by, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, 'draft', $7, $8, $9, $10, $11, NOW(), NOW())
        RETURNING *`,
       [
         id,
@@ -115,6 +119,8 @@ export class PostgresStore implements LearningStore {
         input.imageUrl,
         type,
         sprintCourseIds,
+        isCustom,
+        learnerId,
         input.createdBy
       ]
     );
@@ -157,6 +163,14 @@ export class PostgresStore implements LearningStore {
     if (input.sprintCourseIds !== undefined) {
       setClause.push(`sprint_course_ids = $${paramIdx++}`);
       values.push(JSON.stringify(input.sprintCourseIds));
+    }
+    if (input.isCustom !== undefined) {
+      setClause.push(`is_custom = $${paramIdx++}`);
+      values.push(input.isCustom);
+    }
+    if (input.learnerId !== undefined) {
+      setClause.push(`learner_id = $${paramIdx++}`);
+      values.push(input.learnerId);
     }
 
     setClause.push(`updated_at = NOW()`);

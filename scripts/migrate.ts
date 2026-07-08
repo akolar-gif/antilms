@@ -52,6 +52,8 @@ CREATE TABLE IF NOT EXISTS courses (
   status VARCHAR(50) DEFAULT 'draft',
   type VARCHAR(50) DEFAULT 'comprehensive' NOT NULL,
   sprint_course_ids JSONB DEFAULT '[]'::jsonb,
+  is_custom BOOLEAN DEFAULT FALSE NOT NULL,
+  learner_id VARCHAR(255),
   created_by VARCHAR(255),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -60,6 +62,8 @@ CREATE TABLE IF NOT EXISTS courses (
 -- Idempotent schema upgrades for existing installations
 ALTER TABLE courses ADD COLUMN IF NOT EXISTS type VARCHAR(50) DEFAULT 'comprehensive' NOT NULL;
 ALTER TABLE courses ADD COLUMN IF NOT EXISTS sprint_course_ids JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS is_custom BOOLEAN DEFAULT FALSE NOT NULL;
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS learner_id VARCHAR(255);
 
 CREATE TABLE IF NOT EXISTS modules (
   id VARCHAR(255) PRIMARY KEY,

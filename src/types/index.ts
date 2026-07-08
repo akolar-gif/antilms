@@ -30,6 +30,8 @@ export interface Course {
   type: CourseType;
   sprintCourseIds?: string[]; // Only used when type === "track"
   createdBy: string; // User ID
+  isCustom?: boolean;
+  learnerId?: string;
   createdAt: string;
   updatedAt: string;
 }

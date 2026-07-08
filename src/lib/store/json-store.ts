@@ -78,6 +78,8 @@ export class JsonStore implements LearningStore {
       type: input.type || "comprehensive",
       sprintCourseIds: input.sprintCourseIds || [],
       createdBy: input.createdBy,
+      isCustom: input.isCustom ?? false,
+      learnerId: input.learnerId,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

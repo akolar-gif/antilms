@@ -3,6 +3,8 @@
 import { store } from "@/lib/store";
 import { redirect } from "next/navigation";
 import { uploadImageAction } from "./upload";
+import { google } from "@ai-sdk/google";
+import { generateText } from "ai";
 
 export async function createCourseAction(formData: FormData) {
   const title = formData.get("title") as string;
@@ -279,5 +281,88 @@ export async function deleteCourseAction(
   } catch (error: any) {
     console.error("Failed to delete course:", error);
     return { success: false, error: "Fehler beim Löschen des Kurses." };
+  }
+}
+
+export async function optimizeTrackOrderAction(
+  sprintCourseIds: string[]
+): Promise<{ success: boolean; orderedIds?: string[]; error?: string }> {
+  try {
+    const sprints = [];
+    for (const id of sprintCourseIds) {
+      const course = await store.getCourse(id);
+      if (course) {
+        sprints.push({ id: course.id, title: course.title, description: course.description || "" });
+      }
+    }
+
+    if (sprints.length <= 1) {
+      return { success: true, orderedIds: sprintCourseIds };
+    }
+
+    const prompt = `Du bist ein erfahrener Lehrplan-Designer. Ein Lerner möchte folgende Skill Sprints (Kurz-Kurse) zu einer logischen Lernkette (Skill Track) verbinden. 
+Bringe die Sprints in eine didaktisch sinnvolle Reihenfolge (z.B. Grundlagen zuerst, dann fortgeschrittene Techniken/Tools).
+
+Hier sind die Sprints:
+${sprints.map((s, idx) => `${idx + 1}. ID: "${s.id}", Titel: "${s.title}", Beschreibung: "${s.description}"`).join("\n")}
+
+Antworte ausschließlich mit einem JSON-Array, das die IDs in der empfohlenen Reihenfolge enthält, z.B.:
+["course-123", "course-456"]
+
+Gib keinerlei Text drumherum aus, auch keine Markdown-Codeblocks (\`\`\`json).`;
+
+    const { text } = await generateText({
+      model: google("gemini-2.5-flash"),
+      prompt,
+    });
+
+    let cleanedText = text.trim();
+    if (cleanedText.startsWith("```")) {
+      cleanedText = cleanedText.replace(/^```json\s*/, "").replace(/```$/, "").trim();
+    }
+
+    const orderedIds = JSON.parse(cleanedText) as string[];
+    if (Array.isArray(orderedIds) && orderedIds.length === sprintCourseIds.length && orderedIds.every(id => sprintCourseIds.includes(id))) {
+      return { success: true, orderedIds };
+    }
+
+    return { success: true, orderedIds: sprintCourseIds };
+  } catch (error) {
+    console.error("Failed to optimize track order:", error);
+    return { success: false, error: "KI-Optimierung fehlgeschlagen.", orderedIds: sprintCourseIds };
+  }
+}
+
+export async function createCustomTrackAction(
+  title: string,
+  sprintCourseIds: string[]
+): Promise<{ success: boolean; courseId?: string; error?: string }> {
+  try {
+    if (!title || sprintCourseIds.length === 0) {
+      return { success: false, error: "Titel und Sprints sind erforderlich." };
+    }
+
+    const created = await store.createCourse({
+      title,
+      description: "Individuell zusammengestellter Skill Track aus verschiedenen Sprints.",
+      targetGroup: "Eigener Lernpfad",
+      category: "Personalisiert",
+      createdBy: "learner-1",
+      type: "track",
+      sprintCourseIds,
+      isCustom: true,
+      learnerId: "learner-1"
+    });
+
+    await store.updateCourse(created.id, { status: "published" });
+
+    const { revalidatePath } = await import("next/cache");
+    revalidatePath("/learner");
+    revalidatePath("/learner/library");
+
+    return { success: true, courseId: created.id };
+  } catch (error) {
+    console.error("Failed to create custom track:", error);
+    return { success: false, error: "Fehler beim Erstellen des Skill Tracks." };
   }
 }
