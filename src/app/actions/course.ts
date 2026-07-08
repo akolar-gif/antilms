@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { uploadImageAction } from "./upload";
 import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
+import { verifySession } from "@/lib/session";
 
 export async function createCourseAction(formData: FormData) {
   const title = formData.get("title") as string;
