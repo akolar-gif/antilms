@@ -29,30 +29,19 @@ export class JsonStore implements LearningStore {
       }
     }
 
+    if (!parsed.settings) {
+      parsed.settings = {};
+    }
+
     if (!parsed.users || parsed.users.length === 0) {
       parsed.users = [
         {
-          id: "user-admin",
-          name: "Innoversity Admin",
-          email: "admin@innoversity.com",
+          id: "user-1782135645820",
+          name: "Andreas Kolar",
+          email: "andreas@kolar.biz",
           passwordHash: hashPassword("admin123"),
           role: "admin",
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: "user-trainer",
-          name: "Innoversity Trainer",
-          email: "trainer@innoversity.com",
-          passwordHash: hashPassword("trainer123"),
-          role: "trainer",
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: "user-learner",
-          name: "Innoversity Learner",
-          email: "learner@innoversity.com",
-          passwordHash: hashPassword("learner123"),
-          role: "learner",
+          approved: true,
           createdAt: new Date().toISOString()
         }
       ];
@@ -346,6 +335,7 @@ export class JsonStore implements LearningStore {
       email: input.email,
       passwordHash: input.passwordHash,
       role: input.role,
+      approved: false,
       createdAt: new Date().toISOString()
     };
     data.users.push(newUser);
@@ -390,6 +380,31 @@ export class JsonStore implements LearningStore {
     data.users[userIndex].passwordHash = passwordHash;
     data.users[userIndex].resetToken = undefined;
     data.users[userIndex].resetTokenExpiry = undefined;
+    await this.writeData(data);
+  }
+
+  async updateUserApproval(userId: string, approved: boolean): Promise<void> {
+    const data = await this.readData();
+    const userIndex = data.users.findIndex(u => u.id === userId);
+    if (userIndex === -1) {
+      throw new Error("User not found");
+    }
+    data.users[userIndex].approved = approved;
+    await this.writeData(data);
+  }
+
+  async getSystemSetting(key: string, defaultValue: string): Promise<string> {
+    const data = await this.readData();
+    const settings = (data as any).settings || {};
+    return settings[key] !== undefined ? settings[key] : defaultValue;
+  }
+
+  async setSystemSetting(key: string, value: string): Promise<void> {
+    const data = await this.readData();
+    if (!(data as any).settings) {
+      (data as any).settings = {};
+    }
+    (data as any).settings[key] = value;
     await this.writeData(data);
   }
 }

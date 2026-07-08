@@ -39,19 +39,18 @@ async function main() {
     // 0. Seed Users
     console.log("Seeding users...");
     const defaultUsers = [
-      { id: "user-admin", name: "Innoversity Admin", email: "admin@innoversity.com", passwordHash: "admin123", role: "admin" },
-      { id: "user-trainer", name: "Innoversity Trainer", email: "trainer@innoversity.com", passwordHash: "trainer123", role: "trainer" },
-      { id: "user-learner", name: "Innoversity Learner", email: "learner@innoversity.com", passwordHash: "learner123", role: "learner" },
+      { id: "user-admin", name: "Andreas Kolar", email: "andreas@kolar.biz", passwordHash: "admin123", role: "admin", approved: true },
     ];
 
     const usersToSeed = dbData.users && dbData.users.length > 0 ? dbData.users : defaultUsers;
     for (const u of usersToSeed) {
       const passwordHash = u.passwordHash.includes(":") ? u.passwordHash : hashPassword(u.passwordHash || "password123");
+      const approved = u.approved !== undefined ? u.approved : false;
       await client.query(
-        `INSERT INTO users (id, name, email, password_hash, role, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+        `INSERT INTO users (id, name, email, password_hash, role, approved, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
          ON CONFLICT (id) DO NOTHING`,
-        [u.id, u.name, u.email, passwordHash, u.role]
+        [u.id, u.name, u.email, passwordHash, u.role, approved]
       );
     }
 

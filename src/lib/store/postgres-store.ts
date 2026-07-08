@@ -62,6 +62,7 @@ function mapUserFromDb(row: any): User {
     name: row.name,
     email: row.email,
     role: row.role as Role,
+    approved: !!row.approved,
     createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
   };
 }
@@ -72,6 +73,7 @@ function mapUserRecordFromDb(row: any): UserRecord {
     name: row.name,
     email: row.email,
     role: row.role as Role,
+    approved: !!row.approved,
     createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
     passwordHash: row.password_hash,
     resetToken: row.reset_token || undefined,
@@ -438,8 +440,8 @@ export class PostgresStore implements LearningStore {
   async createUser(input: { name: string; email: string; passwordHash: string; role: Role }): Promise<User> {
     const id = "user-" + Date.now();
     const { rows } = await pool.query(
-      `INSERT INTO users (id, name, email, password_hash, role, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+      `INSERT INTO users (id, name, email, password_hash, role, approved, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, FALSE, NOW(), NOW())
        RETURNING *`,
       [id, input.name, input.email, input.passwordHash, input.role]
     );
@@ -477,5 +479,29 @@ export class PostgresStore implements LearningStore {
     if (rowCount === 0) {
       throw new Error("User not found");
     }
+  }
+
+  async updateUserApproval(userId: string, approved: boolean): Promise<void> {
+    const { rowCount } = await pool.query(
+      "UPDATE users SET approved = $1, updated_at = NOW() WHERE id = $2",
+      [approved, userId]
+    );
+    if (rowCount === 0) {
+      throw new Error("User not found");
+    }
+  }
+
+  async getSystemSetting(key: string, defaultValue: string): Promise<string> {
+    const { rows } = await pool.query("SELECT value FROM system_settings WHERE key = $1", [key]);
+    return rows.length > 0 ? rows[0].value : defaultValue;
+  }
+
+  async setSystemSetting(key: string, value: string): Promise<void> {
+    await pool.query(
+      `INSERT INTO system_settings (key, value)
+       VALUES ($1, $2)
+       ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+      [key, value]
+    );
   }
 }

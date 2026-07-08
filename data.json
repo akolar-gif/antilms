@@ -1949,35 +1949,12 @@
   ],
   "users": [
     {
-      "id": "user-admin",
-      "name": "Innoversity Admin",
-      "email": "admin@innoversity.com",
-      "passwordHash": "8a543db2d94a8038c983bad5cffc718c:fc4adcf15d34f80d397042181d08dbc4e988312f131733ebaf7a5b4b17bf61b17b5730e72f733c9c2bfb928adbb5b706394761a6980674a9c736931a89888d17",
-      "role": "admin",
-      "createdAt": "2026-06-22T13:39:58.833Z"
-    },
-    {
-      "id": "user-trainer",
-      "name": "Innoversity Trainer",
-      "email": "trainer@innoversity.com",
-      "passwordHash": "4fad1a9fb16412e3318b199daca5683d:3c1abe54396e0f545558c1b63a7981af6d12347f4ba83b9a8ef626315e3d7cc9d97afa02da34e2ede00fd9bfad96639329a01d06a80da29d605b103f0fb46080",
-      "role": "trainer",
-      "createdAt": "2026-06-22T13:39:58.934Z"
-    },
-    {
-      "id": "user-learner",
-      "name": "Innoversity Learner",
-      "email": "learner@innoversity.com",
-      "passwordHash": "e54d48d74f6f9de651476bc6d45613db:190beefe37a1e97b0e3b15bf4734015c00d5e03da1bbd1bcfb9788758b3d7c5c8788db0e05eec6c3de2db443d8c407cea0d4b425ccdcc46f457bd5677a9f34e3",
-      "role": "learner",
-      "createdAt": "2026-06-22T13:39:59.022Z"
-    },
-    {
       "id": "user-1782135645820",
       "name": "Andreas Kolar",
       "email": "andreas@kolar.biz",
       "passwordHash": "b0b8955c42f35d59686059b5a7598b8b:548354d95ac51bf845feac7c50a4200fdcae9efab0c2c261ea4fac61c9784ef31826216c0645ac725bb3c258738a86ac78b53f571546d062a172c351414a55a9",
-      "role": "trainer",
+      "role": "admin",
+      "approved": true,
       "createdAt": "2026-06-22T13:40:45.820Z"
     }
   ]

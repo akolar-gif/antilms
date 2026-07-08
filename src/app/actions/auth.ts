@@ -5,6 +5,7 @@ import { signSession } from "@/lib/session";
 import { store } from "@/lib/store";
 import { verifyPassword, hashPassword } from "@/lib/crypto";
 import { Role } from "@/types";
+import { sendSignUpNotificationEmail } from "@/lib/email";
 
 export async function loginAction(
   emailInput: string,
@@ -23,6 +24,14 @@ export async function loginAction(
     const isValid = verifyPassword(passwordInput, user.passwordHash);
     if (!isValid) {
       return { success: false, error: "Ungültige E-Mail-Adresse oder Passwort." };
+    }
+
+    // Check if the user is approved!
+    if (!user.approved) {
+      return { 
+        success: false, 
+        error: "Ihr Konto wurde noch nicht freigeschaltet. Bitte warten Sie auf die Freischaltung durch einen Administrator." 
+      };
     }
 
     const token = await signSession({
@@ -53,7 +62,7 @@ export async function registerAction(
   email: string,
   passwordInput: string,
   role: "learner" | "trainer" = "learner"
-): Promise<{ success: boolean; role?: Role; error?: string }> {
+): Promise<{ success: boolean; role?: Role; requiresApproval?: boolean; error?: string }> {
   if (!name || !email || !passwordInput) {
     return { success: false, error: "Bitte füllen Sie alle Felder aus." };
   }
@@ -72,24 +81,20 @@ export async function registerAction(
       role
     });
 
-    // Automatically log in the user after registration
-    const token = await signSession({
-      id: newUser.id,
-      name: newUser.name,
-      email: newUser.email,
-      role: newUser.role
-    });
+    // Notify the admin about the registration
+    try {
+      const adminEmail = await store.getSystemSetting("admin_notification_email", "andreas@kolar.biz");
+      await sendSignUpNotificationEmail(adminEmail, {
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role
+      });
+    } catch (emailErr) {
+      console.error("Failed to send sign up notification email:", emailErr);
+    }
 
-    const cookieStore = await cookies();
-    cookieStore.set("user_session", token, {
-      httpOnly: true,
-      secure: false, // Set to false to support plain HTTP deployments (e.g. raw IP)
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
-
-    return { success: true, role: newUser.role };
+    // Do NOT automatically log in. Return requiresApproval = true.
+    return { success: true, role: newUser.role, requiresApproval: true };
   } catch (error: any) {
     console.error("Registration action error:", error);
     return { success: false, error: error.message || "Ein unerwarteter Fehler ist aufgetreten." };

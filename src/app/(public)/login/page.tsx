@@ -67,12 +67,19 @@ function LoginContent() {
         try {
           const res = await registerAction(name, email, password, registerRole);
           if (res.success) {
-            toast.success("Registrierung erfolgreich! Willkommen bei Innoversity.");
-            const dest = callbackUrl === "/" 
-              ? (res.role === "admin" ? "/admin" : res.role === "trainer" ? "/trainer" : "/learner")
-              : callbackUrl;
-            router.push(dest);
-            router.refresh();
+            if (res.requiresApproval) {
+              toast.success("Registrierung abgeschlossen! Ihr Konto wird nun von einem Administrator geprüft. Sie werden per E-Mail informiert, sobald Ihr Konto freigeschaltet wurde.");
+              setMode("login");
+              setName("");
+              setPassword("");
+            } else {
+              toast.success("Registrierung erfolgreich! Willkommen bei Innoversity.");
+              const dest = callbackUrl === "/" 
+                ? (res.role === "admin" ? "/admin" : res.role === "trainer" ? "/trainer" : "/learner")
+                : callbackUrl;
+              router.push(dest);
+              router.refresh();
+            }
           } else {
             toast.error(res.error || "Registrierung fehlgeschlagen.");
           }
@@ -259,31 +266,6 @@ function LoginContent() {
           </button>
         </form>
 
-        {/* Info panel showing standard seeded credentials */}
-        {mode === "login" && (
-          <div className="mt-8 border-t border-line-soft pt-6">
-            <span className="eyebrow block mb-3 text-ink-2 text-left">
-              Standard-Testbenutzer:
-            </span>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[10px] text-ink-2">
-              <div className="bg-paper-2 border border-line-soft p-2.5 rounded-xl hover:border-blue/50 transition-colors text-left">
-                <span className="font-bold text-blue uppercase font-mono block">Learner</span>
-                <span className="block truncate font-mono text-[9px] mt-0.5">learner@innoversity.com</span>
-                <span className="text-ink-3 font-mono text-[9px] block">PW: learner123</span>
-              </div>
-              <div className="bg-paper-2 border border-line-soft p-2.5 rounded-xl hover:border-emerald-green/50 transition-colors text-left">
-                <span className="font-bold text-emerald-green-d uppercase font-mono block">Trainer</span>
-                <span className="block truncate font-mono text-[9px] mt-0.5">trainer@innoversity.com</span>
-                <span className="text-ink-3 font-mono text-[9px] block">PW: trainer123</span>
-              </div>
-              <div className="bg-paper-2 border border-line-soft p-2.5 rounded-xl hover:border-ink/50 transition-colors text-left">
-                <span className="font-bold text-ink uppercase font-mono block">Admin</span>
-                <span className="block truncate font-mono text-[9px] mt-0.5">admin@innoversity.com</span>
-                <span className="text-ink-3 font-mono text-[9px] block">PW: admin123</span>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
       
       {/* Footer info/back link */}

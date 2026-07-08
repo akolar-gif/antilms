@@ -80,24 +80,18 @@ export function AppShell({
   const handleRoleSwitch = (newRole: "learner" | "trainer" | "admin") => {
     if (newRole === currentRole) return;
     
-    startTransition(async () => {
-      try {
-        const email = `${newRole}@innoversity.com`;
-        const password = `${newRole}123`;
-        const res = await loginAction(email, password);
-        if (res.success) {
-          toast.success(`Rolle gewechselt zu: ${newRole}`);
-          setMenuOpen(false);
-          const targetUrl = newRole === "admin" ? "/admin" : newRole === "trainer" ? "/trainer" : "/learner";
-          router.push(targetUrl);
-          router.refresh();
-        } else {
-          toast.error("Rollenwechsel fehlgeschlagen.");
-        }
-      } catch (err) {
-        toast.error("Fehler beim Rollenwechsel.");
-      }
-    });
+    if (currentUser?.role === "admin") {
+      setMenuOpen(false);
+      const targetUrl = newRole === "admin" ? "/admin" : newRole === "trainer" ? "/trainer" : "/learner";
+      router.push(targetUrl);
+      router.refresh();
+      toast.success(
+        language === "de" 
+          ? `Ansicht gewechselt zu: ${newRole === "admin" ? "Admin" : newRole === "trainer" ? "Trainer" : "Lerner"}` 
+          : `Switched view to: ${newRole}`
+      );
+      return;
+    }
   };
 
   const activeAvatarChar = currentRole.charAt(0).toUpperCase();
@@ -175,44 +169,48 @@ export function AppShell({
                     </div>
                   )}
                   
-                  <div className="px-3 py-1.5 border-b border-line-soft mb-1 text-[10px] font-mono uppercase tracking-wider text-ink-3">
-                    {t("nav.profile_role")}
-                  </div>
+                  {currentUser?.role === "admin" && (
+                    <>
+                      <div className="px-3 py-1.5 border-b border-line-soft mb-1 text-[10px] font-mono uppercase tracking-wider text-ink-3">
+                        {t("nav.profile_role")}
+                      </div>
 
-                  {/* Switch to Learner */}
-                  <button
-                    onClick={() => handleRoleSwitch("learner")}
-                    className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold rounded-xl text-left hover:bg-paper-2 text-ink"
-                  >
-                    <span className="flex items-center gap-2">
-                      <User className="w-3.5 h-3.5 text-blue-500" /> {t("nav.role_learner")}
-                    </span>
-                    {currentRole === "learner" && <Check className="w-3.5 h-3.5 text-ink-2" />}
-                  </button>
+                      {/* Switch to Learner */}
+                      <button
+                        onClick={() => handleRoleSwitch("learner")}
+                        className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold rounded-xl text-left hover:bg-paper-2 text-ink"
+                      >
+                        <span className="flex items-center gap-2">
+                          <User className="w-3.5 h-3.5 text-blue-500" /> {t("nav.role_learner")}
+                        </span>
+                        {currentRole === "learner" && <Check className="w-3.5 h-3.5 text-ink-2" />}
+                      </button>
 
-                  {/* Switch to Trainer */}
-                  <button
-                    onClick={() => handleRoleSwitch("trainer")}
-                    className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold rounded-xl text-left hover:bg-paper-2 text-ink"
-                  >
-                    <span className="flex items-center gap-2">
-                      <Award className="w-3.5 h-3.5 text-emerald-500" /> {t("nav.role_trainer")}
-                    </span>
-                    {currentRole === "trainer" && <Check className="w-3.5 h-3.5 text-ink-2" />}
-                  </button>
+                      {/* Switch to Trainer */}
+                      <button
+                        onClick={() => handleRoleSwitch("trainer")}
+                        className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold rounded-xl text-left hover:bg-paper-2 text-ink"
+                      >
+                        <span className="flex items-center gap-2">
+                          <Award className="w-3.5 h-3.5 text-emerald-500" /> {t("nav.role_trainer")}
+                        </span>
+                        {currentRole === "trainer" && <Check className="w-3.5 h-3.5 text-ink-2" />}
+                      </button>
 
-                  {/* Switch to Admin */}
-                  <button
-                    onClick={() => handleRoleSwitch("admin")}
-                    className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold rounded-xl text-left hover:bg-paper-2 text-ink"
-                  >
-                    <span className="flex items-center gap-2">
-                      <Shield className="w-3.5 h-3.5 text-amber-500" /> {t("nav.role_admin")}
-                    </span>
-                    {currentRole === "admin" && <Check className="w-3.5 h-3.5 text-ink-2" />}
-                  </button>
+                      {/* Switch to Admin */}
+                      <button
+                        onClick={() => handleRoleSwitch("admin")}
+                        className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold rounded-xl text-left hover:bg-paper-2 text-ink"
+                      >
+                        <span className="flex items-center gap-2">
+                          <Shield className="w-3.5 h-3.5 text-amber-500" /> {t("nav.role_admin")}
+                        </span>
+                        {currentRole === "admin" && <Check className="w-3.5 h-3.5 text-ink-2" />}
+                      </button>
 
-                  <div className="h-px bg-line-soft my-1" />
+                      <div className="h-px bg-line-soft my-1" />
+                    </>
+                  )}
 
                   {/* Logout */}
                   <form action={logoutAction} className="w-full">
@@ -280,38 +278,42 @@ export function AppShell({
                   </div>
                 )}
                 
-                <div className="text-center font-mono text-[10px] uppercase tracking-wider text-ink-3 pb-2 border-b border-line-soft">
-                  {language === "de" ? "Rolle auswählen" : "Select Role"}
-                </div>
-                <div className="grid grid-cols-3 gap-2 mb-2">
-                  <button
-                    onClick={() => handleRoleSwitch("learner")}
-                    className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border border-line text-xs font-semibold ${
-                      currentRole === "learner" ? "bg-ink text-paper" : "bg-paper text-ink"
-                    }`}
-                  >
-                    <User className="w-4 h-4" />
-                    <span>{language === "de" ? "Lerner" : "Learner"}</span>
-                  </button>
-                  <button
-                    onClick={() => handleRoleSwitch("trainer")}
-                    className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border border-line text-xs font-semibold ${
-                      currentRole === "trainer" ? "bg-ink text-paper" : "bg-paper text-ink"
-                    }`}
-                  >
-                    <Award className="w-4 h-4" />
-                    <span>{language === "de" ? "Trainer" : "Trainer"}</span>
-                  </button>
-                  <button
-                    onClick={() => handleRoleSwitch("admin")}
-                    className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border border-line text-xs font-semibold ${
-                      currentRole === "admin" ? "bg-ink text-paper" : "bg-paper text-ink"
-                    }`}
-                  >
-                    <Shield className="w-4 h-4" />
-                    <span>Admin</span>
-                  </button>
-                </div>
+                 {currentUser?.role === "admin" && (
+                  <>
+                    <div className="text-center font-mono text-[10px] uppercase tracking-wider text-ink-3 pb-2 border-b border-line-soft">
+                      {language === "de" ? "Rolle auswählen" : "Select Role"}
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 mb-2">
+                      <button
+                        onClick={() => handleRoleSwitch("learner")}
+                        className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border border-line text-xs font-semibold ${
+                          currentRole === "learner" ? "bg-ink text-paper" : "bg-paper text-ink"
+                        }`}
+                      >
+                        <User className="w-4 h-4" />
+                        <span>{language === "de" ? "Lerner" : "Learner"}</span>
+                      </button>
+                      <button
+                        onClick={() => handleRoleSwitch("trainer")}
+                        className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border border-line text-xs font-semibold ${
+                          currentRole === "trainer" ? "bg-ink text-paper" : "bg-paper text-ink"
+                        }`}
+                      >
+                        <Award className="w-4 h-4" />
+                        <span>{language === "de" ? "Trainer" : "Trainer"}</span>
+                      </button>
+                      <button
+                        onClick={() => handleRoleSwitch("admin")}
+                        className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border border-line text-xs font-semibold ${
+                          currentRole === "admin" ? "bg-ink text-paper" : "bg-paper text-ink"
+                        }`}
+                      >
+                        <Shield className="w-4 h-4" />
+                        <span>Admin</span>
+                      </button>
+                    </div>
+                  </>
+                )}
                 
                 <div className="text-center font-mono text-[10px] uppercase tracking-wider text-ink-3 pb-2 border-b border-line-soft mt-1">
                   {language === "de" ? "Sprache wählen" : "Select Language"}

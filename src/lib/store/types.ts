@@ -73,6 +73,11 @@ export interface LearningStore {
   setResetToken(email: string, token: string, expiry: Date): Promise<void>;
   getUserByResetToken(token: string): Promise<UserRecord | null>;
   updateUserPassword(userId: string, passwordHash: string): Promise<void>;
+  updateUserApproval(userId: string, approved: boolean): Promise<void>;
+
+  // System Settings methods
+  getSystemSetting(key: string, defaultValue: string): Promise<string>;
+  setSystemSetting(key: string, value: string): Promise<void>;
 
   // Data administration (GDPR)
   clearUserData(userId: string): Promise<void>;
