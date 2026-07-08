@@ -1952,7 +1952,7 @@
       "id": "user-1782135645820",
       "name": "Andreas Kolar",
       "email": "andreas@kolar.biz",
-      "passwordHash": "b0b8955c42f35d59686059b5a7598b8b:548354d95ac51bf845feac7c50a4200fdcae9efab0c2c261ea4fac61c9784ef31826216c0645ac725bb3c258738a86ac78b53f571546d062a172c351414a55a9",
+      "passwordHash": "8a543db2d94a8038c983bad5cffc718c:fc4adcf15d34f80d397042181d08dbc4e988312f131733ebaf7a5b4b17bf61b17b5730e72f733c9c2bfb928adbb5b706394761a6980674a9c736931a89888d17",
       "role": "admin",
       "approved": true,
       "createdAt": "2026-06-22T13:40:45.820Z"

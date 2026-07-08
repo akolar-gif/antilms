@@ -38,6 +38,13 @@ async function main() {
 
     // 0. Seed Users
     console.log("Seeding users...");
+    
+    // Clean up old placeholder accounts from the database
+    await client.query(
+      `DELETE FROM users 
+       WHERE email IN ('admin@innoversity.com', 'trainer@innoversity.com', 'learner@innoversity.com')`
+    );
+
     const defaultUsers = [
       { id: "user-admin", name: "Andreas Kolar", email: "andreas@kolar.biz", passwordHash: "admin123", role: "admin", approved: true },
     ];
@@ -49,7 +56,13 @@ async function main() {
       await client.query(
         `INSERT INTO users (id, name, email, password_hash, role, approved, created_at, updated_at)
          VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
-         ON CONFLICT (id) DO NOTHING`,
+         ON CONFLICT (id) DO UPDATE SET
+           name = EXCLUDED.name,
+           email = EXCLUDED.email,
+           password_hash = EXCLUDED.password_hash,
+           role = EXCLUDED.role,
+           approved = EXCLUDED.approved,
+           updated_at = NOW()`,
         [u.id, u.name, u.email, passwordHash, u.role, approved]
       );
     }
