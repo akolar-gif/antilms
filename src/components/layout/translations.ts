@@ -2,7 +2,7 @@ export const translations = {
   de: {
     // Navigation
     "nav.home": "Home",
-    "nav.library": "Mediathek",
+    "nav.library": "Bibliothek",
     "nav.train": "Trainieren",
     "nav.studio": "Studio",
     "nav.create": "Erstellen",
@@ -18,10 +18,10 @@ export const translations = {
     "dashboard.continue": "Lernpfad fortsetzen",
     "dashboard.completed": "abgeschlossen",
     "dashboard.future_skills": "Zukunftskompetenzen",
-    "dashboard.library_title": "Deine aktive Mediathek",
-    "dashboard.no_courses": "Keine aktiven Kurse. Besuche die Mediathek, um zu stöbern!",
+    "dashboard.library_title": "Deine aktive Bibliothek",
+    "dashboard.no_courses": "Keine aktiven Kurse. Besuche die Bibliothek, um zu stöbern!",
     "dashboard.no_courses_sub": "Wähle einen Kurs aus, um deine Lernreise zu beginnen.",
-    "dashboard.library_btn": "Mediathek durchsuchen",
+    "dashboard.library_btn": "Bibliothek durchsuchen",
     "dashboard.practice_title": "Tägliches Training",
     "dashboard.practice_desc": "Halte deine Streak aktiv und stärke dein Wissen mit einer schnellen Fragerunde.",
     "dashboard.practice_btn": "Training starten",
@@ -50,7 +50,7 @@ export const translations = {
     "dashboard.privacy_meta": "GDPR MANAGEMENT",
 
     // Library
-    "library.title": "Mediathek",
+    "library.title": "Bibliothek",
     "library.subtitle": "DURCHSUCHEN UND ENTDECKEN",
     "library.enrolled": "Eingeschrieben",
     "library.not_enrolled": "Verfügbar",
@@ -355,7 +355,7 @@ export const translations = {
     "dashboard.continue": "Resume Learning Path",
     "dashboard.completed": "completed",
     "dashboard.future_skills": "Future Skills",
-    "dashboard.library_title": "Your Active Mediathek",
+    "dashboard.library_title": "Your Active Library",
     "dashboard.no_courses": "No active courses. Visit the library to start browsing!",
     "dashboard.no_courses_sub": "Select a course to start your learning journey.",
     "dashboard.library_btn": "Browse Library",
