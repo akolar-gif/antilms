@@ -7,6 +7,8 @@ export interface CreateCourseInput {
   category?: string;
   imageUrl?: string;
   createdBy: string;
+  type?: Course["type"];
+  sprintCourseIds?: string[];
 }
 
 export type UpdateCourseInput = Partial<CreateCourseInput> & {

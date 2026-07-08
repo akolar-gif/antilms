@@ -53,7 +53,10 @@ export default async function TrainerDashboard({ searchParams }: PageProps) {
             {t("trainer.hero_desc")}
           </p>
           <div style={{ display: "flex", gap: 10, marginTop: 24, flexWrap: "wrap", alignItems: "center" }}>
-            <CreateCourseForm initialOpen={autoCreate} />
+            <CreateCourseForm 
+              initialOpen={autoCreate} 
+              sprints={courses.filter(c => c.type === "sprint")} 
+            />
           </div>
         </div>
       </div>

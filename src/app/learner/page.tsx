@@ -41,32 +41,68 @@ export default async function LearnerDashboard() {
   let totalQuizzesCompleted = 0;
 
   for (const course of publishedCourses) {
-    const userProgress = await store.getUserProgress("learner-1", course.id);
-    const modules = await store.getModules(course.id);
-    
-    let totalBlocks = 0;
-    let completedInCourse = 0;
-
-    for (const mod of modules) {
-      const blocks = await store.getBlocks(mod.id);
-      totalBlocks += blocks.length;
+    if (course.type === "track") {
+      // Skill Track progress calculation
+      const sprintIds = course.sprintCourseIds || [];
+      let totalBlocks = 0;
+      let completedInCourse = 0;
       
-      for (const block of blocks) {
-        if (userProgress.completedBlocks.includes(block.id)) {
-          completedInCourse++;
-          completedBlocksTotal++;
-          if (block.type === 'punk_game') totalPunkGamesCompleted++;
-          if (block.type === 'quiz') totalQuizzesCompleted++;
+      for (const sprintId of sprintIds) {
+        const sprint = courses.find(c => c.id === sprintId);
+        if (!sprint || sprint.status !== "published") continue;
+        
+        const userProgress = await store.getUserProgress("learner-1", sprint.id);
+        const modules = await store.getModules(sprint.id);
+        
+        for (const mod of modules) {
+          const blocks = await store.getBlocks(mod.id);
+          totalBlocks += blocks.length;
+          
+          for (const block of blocks) {
+            if (userProgress.completedBlocks.includes(block.id)) {
+              completedInCourse++;
+              completedBlocksTotal++;
+              if (block.type === 'punk_game') totalPunkGamesCompleted++;
+              if (block.type === 'quiz') totalQuizzesCompleted++;
+            }
+          }
         }
       }
-    }
+      
+      const percentage = totalBlocks > 0 ? Math.round((completedInCourse / totalBlocks) * 100) : 0;
+      courseProgresses.push({
+        course,
+        percentage,
+        totalBlocks
+      });
+    } else {
+      const userProgress = await store.getUserProgress("learner-1", course.id);
+      const modules = await store.getModules(course.id);
+      
+      let totalBlocks = 0;
+      let completedInCourse = 0;
 
-    const percentage = totalBlocks > 0 ? Math.round((completedInCourse / totalBlocks) * 100) : 0;
-    courseProgresses.push({
-      course,
-      percentage,
-      totalBlocks
-    });
+      for (const mod of modules) {
+        const blocks = await store.getBlocks(mod.id);
+        totalBlocks += blocks.length;
+        
+        for (const block of blocks) {
+          if (userProgress.completedBlocks.includes(block.id)) {
+            completedInCourse++;
+            completedBlocksTotal++;
+            if (block.type === 'punk_game') totalPunkGamesCompleted++;
+            if (block.type === 'quiz') totalQuizzesCompleted++;
+          }
+        }
+      }
+
+      const percentage = totalBlocks > 0 ? Math.round((completedInCourse / totalBlocks) * 100) : 0;
+      courseProgresses.push({
+        course,
+        percentage,
+        totalBlocks
+      });
+    }
   }
 
   // Active course progress is the first in-progress course, or first published course

@@ -11,6 +11,12 @@ function mapCourseFromDb(row: any): Course {
     category: row.category,
     imageUrl: row.image_url,
     status: row.status,
+    type: row.type || "comprehensive",
+    sprintCourseIds: Array.isArray(row.sprint_course_ids)
+      ? row.sprint_course_ids
+      : (typeof row.sprint_course_ids === "string"
+          ? JSON.parse(row.sprint_course_ids || "[]")
+          : (row.sprint_course_ids || [])),
     createdBy: row.created_by,
     createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
     updatedAt: row.updated_at instanceof Date ? row.updated_at.toISOString() : row.updated_at,
@@ -94,11 +100,23 @@ export class PostgresStore implements LearningStore {
 
   async createCourse(input: CreateCourseInput): Promise<Course> {
     const id = "course-" + Date.now();
+    const type = input.type || "comprehensive";
+    const sprintCourseIds = JSON.stringify(input.sprintCourseIds || []);
     const { rows } = await pool.query(
-      `INSERT INTO courses (id, title, description, target_group, category, image_url, status, created_by, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, 'draft', $7, NOW(), NOW())
+      `INSERT INTO courses (id, title, description, target_group, category, image_url, status, type, sprint_course_ids, created_by, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, 'draft', $7, $8, $9, NOW(), NOW())
        RETURNING *`,
-      [id, input.title, input.description, input.targetGroup, input.category || "Uncategorized", input.imageUrl, input.createdBy]
+      [
+        id,
+        input.title,
+        input.description,
+        input.targetGroup || "",
+        input.category || "Uncategorized",
+        input.imageUrl,
+        type,
+        sprintCourseIds,
+        input.createdBy
+      ]
     );
     return mapCourseFromDb(rows[0]);
   }
@@ -131,6 +149,14 @@ export class PostgresStore implements LearningStore {
     if (input.status !== undefined) {
       setClause.push(`status = $${paramIdx++}`);
       values.push(input.status);
+    }
+    if (input.type !== undefined) {
+      setClause.push(`type = $${paramIdx++}`);
+      values.push(input.type);
+    }
+    if (input.sprintCourseIds !== undefined) {
+      setClause.push(`sprint_course_ids = $${paramIdx++}`);
+      values.push(JSON.stringify(input.sprintCourseIds));
     }
 
     setClause.push(`updated_at = NOW()`);

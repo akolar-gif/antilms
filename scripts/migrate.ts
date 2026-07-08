@@ -50,10 +50,16 @@ CREATE TABLE IF NOT EXISTS courses (
   category VARCHAR(255),
   image_url TEXT,
   status VARCHAR(50) DEFAULT 'draft',
+  type VARCHAR(50) DEFAULT 'comprehensive' NOT NULL,
+  sprint_course_ids JSONB DEFAULT '[]'::jsonb,
   created_by VARCHAR(255),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Idempotent schema upgrades for existing installations
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS type VARCHAR(50) DEFAULT 'comprehensive' NOT NULL;
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS sprint_course_ids JSONB DEFAULT '[]'::jsonb;
 
 CREATE TABLE IF NOT EXISTS modules (
   id VARCHAR(255) PRIMARY KEY,

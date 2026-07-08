@@ -38,9 +38,18 @@ export default async function CourseEditorLayout({
     return text;
   };
 
-  const statusLabel = course.status === 'published' 
-    ? (lang === 'en' ? 'PUBLISHED' : 'VERÖFFENTLICHT') 
-    : (lang === 'en' ? 'DRAFT' : 'ENTWURF');
+  const statusLabel = 
+    course.status === 'published' ? (lang === 'en' ? 'PUBLISHED' : 'VERÖFFENTLICHT') :
+    course.status === 'pending_review' ? (lang === 'en' ? 'PENDING REVIEW' : 'WARTET AUF FREIGABE') :
+    course.status === 'coming_soon' ? (lang === 'en' ? 'COMING SOON' : 'ANKÜNDIGUNG') :
+    course.status === 'archived' ? (lang === 'en' ? 'ARCHIVED' : 'ARCHIVIERT') :
+    (lang === 'en' ? 'DRAFT' : 'ENTWURF');
+
+  const statusColor = 
+    course.status === 'published' ? 'var(--blue)' :
+    course.status === 'coming_soon' ? 'var(--blue)' :
+    course.status === 'pending_review' ? 'var(--coral)' :
+    'var(--ink-2)';
 
   return (
     <div className="flex h-[calc(100vh-4rem)]" style={{ background: "var(--paper)" }}>
@@ -55,16 +64,24 @@ export default async function CourseEditorLayout({
               {course.title}
             </h2>
           </div>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-line-soft uppercase" style={{ color: course.status === 'published' ? 'var(--blue)' : 'var(--ink-2)', background: course.status === 'published' ? 'color-mix(in oklab, var(--blue) 12%, transparent)' : 'var(--paper-3)' }}>
-              {statusLabel}
-            </span>
-            {course.status !== "published" && (
-              <form action={publishCourseAction.bind(null, course.id)}>
-                <button type="submit" className="text-xs font-mono font-bold text-blue hover:underline bg-transparent border-none cursor-pointer">
-                  {t("trainer.publish")}
-                </button>
-              </form>
+          <div className="flex flex-col gap-2 mt-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border border-line-soft uppercase" style={{ color: statusColor, background: `color-mix(in oklab, ${statusColor} 12%, transparent)` }}>
+                {statusLabel}
+              </span>
+              
+              {course.status === "draft" && (
+                <form action={publishCourseAction.bind(null, course.id)}>
+                  <button type="submit" className="text-xs font-mono font-bold text-blue hover:underline bg-transparent border-none cursor-pointer">
+                    {lang === 'en' ? 'Submit' : 'Freigeben'}
+                  </button>
+                </form>
+              )}
+            </div>
+            {course.status === "pending_review" && (
+              <span className="text-[10px] italic text-ink-3">
+                {lang === 'en' ? 'Awaiting admin review' : 'Wartet auf Freigabe durch Admin'}
+              </span>
             )}
           </div>
         </div>

@@ -16,7 +16,8 @@ export interface UserRecord extends User {
   resetTokenExpiry?: string;
 }
 
-export type CourseStatus = "draft" | "published" | "archived";
+export type CourseStatus = "draft" | "pending_review" | "published" | "coming_soon" | "archived";
+export type CourseType = "comprehensive" | "sprint" | "track";
 
 export interface Course {
   id: string;
@@ -26,6 +27,8 @@ export interface Course {
   category?: string;
   imageUrl?: string;
   status: CourseStatus;
+  type: CourseType;
+  sprintCourseIds?: string[]; // Only used when type === "track"
   createdBy: string; // User ID
   createdAt: string;
   updatedAt: string;

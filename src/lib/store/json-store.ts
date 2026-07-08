@@ -69,8 +69,15 @@ export class JsonStore implements LearningStore {
     const data = await this.readData();
     const newCourse: Course = {
       id: "course-" + Date.now(),
-      ...input,
+      title: input.title,
+      description: input.description,
+      targetGroup: input.targetGroup,
+      category: input.category,
+      imageUrl: input.imageUrl,
       status: "draft",
+      type: input.type || "comprehensive",
+      sprintCourseIds: input.sprintCourseIds || [],
+      createdBy: input.createdBy,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

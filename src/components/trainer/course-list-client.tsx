@@ -78,32 +78,39 @@ export function CourseListClient({ courses, role }: { courses: Course[], role: "
                     </div>
                     <div className="ptitle">{course.title}</div>
                     
-                    <div className="pmeta mt-auto flex items-center justify-between">
-                      <span className="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded border border-white/40 uppercase">
-                        {course.status}
-                      </span>
-                      
-                      {role === "trainer" && (
-                        <button 
-                          type="button"
-                          onClick={async (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            if (confirm("Möchtest du diesen Kurs und alle zugehörigen Module wirklich löschen? Dies kann nicht rückgängig gemacht werden.")) {
-                              const toastId = toast.loading("Lösche Kurs...");
-                              try {
-                                await deleteCourseAction(course.id);
-                                toast.success("Kurs erfolgreich gelöscht!", { id: toastId });
-                              } catch (err) {
-                                toast.error("Fehler beim Löschen des Kurses", { id: toastId });
+                    <div className="pmeta mt-auto flex flex-col gap-2 items-start w-full">
+                      <div className="flex items-center justify-between w-full">
+                        <div className="flex flex-wrap gap-1">
+                          <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-white/20 border border-white/40 uppercase">
+                            {course.status === "published" ? "VERÖFFENTLICHT" : course.status === "coming_soon" ? "COMING SOON" : course.status === "pending_review" ? "IM REVIEW" : "ENTWURF"}
+                          </span>
+                          <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-blue-500/30 border border-blue-400/50 uppercase">
+                            {course.type === "sprint" ? "Sprint" : course.type === "track" ? "Track" : "Standard"}
+                          </span>
+                        </div>
+                        
+                        {role === "trainer" && (
+                          <button 
+                            type="button"
+                            onClick={async (e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              if (confirm("Möchtest du diesen Kurs und alle zugehörigen Module wirklich löschen? Dies kann nicht rückgängig gemacht werden.")) {
+                                const toastId = toast.loading("Lösche Kurs...");
+                                try {
+                                  await deleteCourseAction(course.id);
+                                  toast.success("Kurs erfolgreich gelöscht!", { id: toastId });
+                                } catch (err) {
+                                  toast.error("Fehler beim Löschen des Kurses", { id: toastId });
+                                }
                               }
-                            }
-                          }}
-                          className="text-red-300 hover:text-white transition-all bg-black/40 hover:bg-red-600/80 p-1.5 rounded-md border border-white/10"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      )}
+                            }}
+                            className="text-red-300 hover:text-white transition-all bg-black/40 hover:bg-red-600/80 p-1.5 rounded-md border border-white/10"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </Link>
@@ -118,32 +125,39 @@ export function CourseListClient({ courses, role }: { courses: Course[], role: "
                 </div>
                 <div className="ptitle">{course.title}</div>
                 
-                <div className="pmeta mt-auto flex items-center justify-between">
-                  <span className="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded border border-current/30 uppercase">
-                    {course.status}
-                  </span>
-                  
-                  {role === "trainer" && (
-                    <button 
-                      type="button"
-                      onClick={async (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (confirm("Möchtest du diesen Kurs und alle zugehörigen Module wirklich löschen? Dies kann nicht rückgängig gemacht werden.")) {
-                          const toastId = toast.loading("Lösche Kurs...");
-                          try {
-                            await deleteCourseAction(course.id);
-                            toast.success("Kurs erfolgreich gelöscht!", { id: toastId });
-                          } catch (err) {
-                            toast.error("Fehler beim Löschen des Kurses", { id: toastId });
+                <div className="pmeta mt-auto flex flex-col gap-2 items-start w-full">
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex flex-wrap gap-1">
+                      <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-current/10 border border-current/30 uppercase">
+                        {course.status === "published" ? "VERÖFFENTLICHT" : course.status === "coming_soon" ? "COMING SOON" : course.status === "pending_review" ? "IM REVIEW" : "ENTWURF"}
+                      </span>
+                      <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-current/20 border border-current/40 uppercase">
+                        {course.type === "sprint" ? "Sprint" : course.type === "track" ? "Track" : "Standard"}
+                      </span>
+                    </div>
+                    
+                    {role === "trainer" && (
+                      <button 
+                        type="button"
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          if (confirm("Möchtest du diesen Kurs und alle zugehörigen Module wirklich löschen? Dies kann nicht rückgängig gemacht werden.")) {
+                            const toastId = toast.loading("Lösche Kurs...");
+                            try {
+                              await deleteCourseAction(course.id);
+                              toast.success("Kurs erfolgreich gelöscht!", { id: toastId });
+                            } catch (err) {
+                              toast.error("Fehler beim Löschen des Kurses", { id: toastId });
+                            }
                           }
-                        }
-                      }}
-                      className="text-ink-3 hover:text-red-500 transition-all bg-paper-2 hover:bg-red-50 p-1.5 rounded-md border border-line"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  )}
+                        }}
+                        className="text-ink-3 hover:text-red-500 transition-all bg-paper-2 hover:bg-red-50 p-1.5 rounded-md border border-line"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </Link>
             );

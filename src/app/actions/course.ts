@@ -10,6 +10,9 @@ export async function createCourseAction(formData: FormData) {
   const categoryInput = formData.get("category") as string;
   const courseImage = formData.get("courseImage") as File | null;
   const stockImageUrl = formData.get("stockImageUrl") as string;
+  const type = (formData.get("type") as any) || "comprehensive";
+  const sprintCourseIdsRaw = formData.get("sprintCourseIds") as string;
+  const sprintCourseIds = sprintCourseIdsRaw ? JSON.parse(sprintCourseIdsRaw) : [];
   
   const category = categoryInput?.trim() || "Uncategorized";
 
@@ -29,7 +32,6 @@ export async function createCourseAction(formData: FormData) {
     finalImageUrl = stockImageUrl;
   }
 
-
   // Create course
   const course = await store.createCourse({
     title,
@@ -37,16 +39,20 @@ export async function createCourseAction(formData: FormData) {
     targetGroup: "General",
     category,
     imageUrl: finalImageUrl,
+    type,
+    sprintCourseIds,
     createdBy: "Trainer",
   });
 
-  // Create a default first module
-  await store.createModule({
-    courseId: course.id,
-    title: "Introduction",
-    description: "Welcome to the course. This is your first module.",
-    learningObjectives: ["Understand the basics of the course"],
-  });
+  // Create a default first module (only for non-tracks)
+  if (type !== "track") {
+    await store.createModule({
+      courseId: course.id,
+      title: "Introduction",
+      description: "Welcome to the course. This is your first module.",
+      learningObjectives: ["Understand the basics of the course"],
+    });
+  }
 
   // Redirect to the course studio
   const { revalidatePath } = await import("next/cache");
@@ -56,7 +62,11 @@ export async function createCourseAction(formData: FormData) {
 }
 
 export async function publishCourseAction(courseId: string) {
-  await store.updateCourse(courseId, { status: "published" });
+  await store.updateCourse(courseId, { status: "pending_review" });
+  
+  const { revalidatePath } = await import("next/cache");
+  revalidatePath("/trainer");
+  revalidatePath(`/trainer/courses/${courseId}`);
   redirect(`/trainer/courses/${courseId}`);
 }
 
@@ -175,15 +185,6 @@ export async function saveCurriculumAction(
   return { courseId: course.id };
 }
 
-export async function deleteCourseAction(courseId: string) {
-  await store.deleteCourse(courseId);
-  
-  const { revalidatePath } = await import("next/cache");
-  revalidatePath("/trainer");
-  revalidatePath("/learner");
-  redirect("/trainer");
-}
-
 export async function deleteModuleAction(courseId: string, moduleId: string) {
   await store.deleteModule(moduleId);
   
@@ -245,4 +246,38 @@ export async function generateModuleAction(courseId: string, topic: string, desc
   revalidatePath(`/trainer/courses/${courseId}`);
   
   return { moduleId: newModule.id };
+}
+
+export async function moderateCourseAction(
+  courseId: string,
+  status: any
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await store.updateCourse(courseId, { status });
+    const { revalidatePath } = await import("next/cache");
+    revalidatePath("/admin");
+    revalidatePath("/trainer");
+    revalidatePath("/learner/library");
+    revalidatePath(`/trainer/courses/${courseId}`);
+    return { success: true };
+  } catch (error: any) {
+    console.error("Failed to moderate course:", error);
+    return { success: false, error: "Fehler beim Aktualisieren des Kursstatus." };
+  }
+}
+
+export async function deleteCourseAction(
+  courseId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await store.deleteCourse(courseId);
+    const { revalidatePath } = await import("next/cache");
+    revalidatePath("/admin");
+    revalidatePath("/trainer");
+    revalidatePath("/learner/library");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Failed to delete course:", error);
+    return { success: false, error: "Fehler beim Löschen des Kurses." };
+  }
 }

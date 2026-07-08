@@ -4,7 +4,7 @@ import React, { useState, useTransition } from "react";
 import { 
   Shield, User, Award, Check, Mail, Search, Sparkles, 
   Settings, Users, CheckCircle, XCircle, Clock, Loader2, ArrowRight,
-  Trash2, Archive, RotateCcw
+  Trash2, Archive, RotateCcw, BookOpen, FastForward, Link as LinkIcon
 } from "lucide-react";
 import { useTranslation } from "@/components/layout/language-context";
 import { 
@@ -13,11 +13,13 @@ import {
   toggleUserArchivedAction,
   deleteUserAction
 } from "@/app/actions/admin";
+import { moderateCourseAction, deleteCourseAction } from "@/app/actions/course";
 import { toast } from "sonner";
-import { User as UserType } from "@/types";
+import { User as UserType, Course } from "@/types";
 
 interface AdminPanelClientProps {
   initialUsers: UserType[];
+  initialCourses: Course[];
   adminEmail: string;
   aiStatus: {
     configured: boolean;
@@ -30,13 +32,15 @@ interface AdminPanelClientProps {
 
 export function AdminPanelClient({
   initialUsers,
+  initialCourses,
   adminEmail,
   aiStatus,
   lang
 }: AdminPanelClientProps) {
   const { t, language } = useTranslation();
-  const [activeTab, setActiveTab] = useState<"telemetry" | "users">("telemetry");
+  const [activeTab, setActiveTab] = useState<"telemetry" | "users" | "courses">("telemetry");
   const [users, setUsers] = useState<UserType[]>(initialUsers);
+  const [courses, setCourses] = useState<Course[]>(initialCourses);
   
   // Settings Form State
   const [emailInput, setEmailInput] = useState(adminEmail);
@@ -164,6 +168,84 @@ export function AdminPanelClient({
     }
   };
 
+  // Course States
+  const [loadingCourseIds, setLoadingCourseIds] = useState<Record<string, boolean>>({});
+  const [courseSearchQuery, setCourseSearchQuery] = useState("");
+  const [courseStatusFilter, setCourseStatusFilter] = useState<"all" | "pending" | "published" | "coming_soon" | "draft">("all");
+
+  // Handle course status update (moderation)
+  const handleModerateCourse = async (courseId: string, newStatus: any) => {
+    setLoadingCourseIds(prev => ({ ...prev, [courseId]: true }));
+    try {
+      const res = await moderateCourseAction(courseId, newStatus);
+      if (res.success) {
+        setCourses(prev => prev.map(c => c.id === courseId ? { ...c, status: newStatus } : c));
+        toast.success(de ? "Kursstatus erfolgreich aktualisiert." : "Course status updated successfully.");
+      } else {
+        toast.error(res.error || (de ? "Fehler beim Aktualisieren." : "Error updating course."));
+      }
+    } catch (err) {
+      toast.error(de ? "Unerwarteter Fehler." : "Unexpected error.");
+    } finally {
+      setLoadingCourseIds(prev => ({ ...prev, [courseId]: false }));
+    }
+  };
+
+  // Handle course deletion
+  const handleDeleteCourse = async (courseId: string, courseTitle: string) => {
+    const message = de 
+      ? `Möchtest du den Kurs "${courseTitle}" wirklich unwiderruflich löschen? Alle Module und Lernblöcke gehen dabei verloren.` 
+      : `Are you sure you want to permanently delete course "${courseTitle}"? All modules and blocks will be deleted.`;
+      
+    if (!confirm(message)) {
+      return;
+    }
+
+    setLoadingCourseIds(prev => ({ ...prev, [courseId]: true }));
+    try {
+      const res = await deleteCourseAction(courseId);
+      if (res.success) {
+        setCourses(prev => prev.filter(c => c.id !== courseId));
+        toast.success(de ? "Kurs erfolgreich gelöscht." : "Course deleted successfully.");
+      } else {
+        toast.error(res.error || (de ? "Fehler beim Löschen." : "Error deleting course."));
+      }
+    } catch (err) {
+      toast.error(de ? "Unerwarteter Fehler." : "Unexpected error.");
+    } finally {
+      setLoadingCourseIds(prev => ({ ...prev, [courseId]: false }));
+    }
+  };
+
+  // Filter and search courses
+  const filteredCourses = courses.filter(course => {
+    const matchesSearch = 
+      course.title.toLowerCase().includes(courseSearchQuery.toLowerCase()) ||
+      (course.category && course.category.toLowerCase().includes(courseSearchQuery.toLowerCase()));
+    
+    let matchesStatus = true;
+    if (courseStatusFilter === "pending") {
+      matchesStatus = course.status === "pending_review";
+    } else if (courseStatusFilter === "published") {
+      matchesStatus = course.status === "published";
+    } else if (courseStatusFilter === "coming_soon") {
+      matchesStatus = course.status === "coming_soon";
+    } else if (courseStatusFilter === "draft") {
+      matchesStatus = course.status === "draft";
+    }
+      
+    return matchesSearch && matchesStatus;
+  });
+
+  const getCourseStatusColor = (status: string) => {
+    switch (status) {
+      case "published": return "bg-blue-500/10 text-blue border-blue/20";
+      case "pending_review": return "bg-coral/10 text-coral-d border-coral/20";
+      case "coming_soon": return "bg-amber-500/10 text-amber border-amber-500/20";
+      default: return "bg-ink/10 text-ink border-ink/20";
+    }
+  };
+
   return (
     <div className="screen flex-1 flex flex-col">
       {/* TopBar Header */}
@@ -200,7 +282,19 @@ export function AdminPanelClient({
             }`}
           >
             <Users className="w-3.5 h-3.5" />
-            {de ? "Benutzer & System" : "Users & System"}
+            {de ? "Benutzer" : "Users"}
+          </button>
+
+          <button
+            onClick={() => setActiveTab("courses")}
+            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
+              activeTab === "courses" 
+                ? "bg-ink text-paper border border-ink" 
+                : "bg-paper-2 hover:bg-paper-3 text-ink-2 border border-line-soft"
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            {de ? "Kurse" : "Courses"}
           </button>
         </div>
       </header>
@@ -335,190 +429,354 @@ export function AdminPanelClient({
         </div>
       ) : (
         <div className="flex-1 flex flex-col lg:flex-row gap-6 p-6">
-          {/* Left panel - User Table */}
+          {/* Left panel */}
           <div className="flex-1 bg-paper border border-line rounded-2xl p-6 flex flex-col min-w-0">
-            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
-              <div>
-                <h2 className="text-xl font-display font-extrabold uppercase flex items-center gap-2 text-ink">
-                  <Users className="w-5 h-5 text-blue" />
-                  {de ? "Benutzerverwaltung" : "User Approvals"}
-                </h2>
-                <p className="text-xs text-ink-3 mt-1">
-                  {de ? "Verwalte registrierte Nutzer und schalte ihre Konten frei." : "Manage registered users and activate their accounts."}
-                </p>
-              </div>
+            {activeTab === "users" ? (
+              <>
+                {/* Users Header */}
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
+                  <div>
+                    <h2 className="text-xl font-display font-extrabold uppercase flex items-center gap-2 text-ink">
+                      <Users className="w-5 h-5 text-blue" />
+                      {de ? "Benutzerverwaltung" : "User Approvals"}
+                    </h2>
+                    <p className="text-xs text-ink-3 mt-1">
+                      {de ? "Verwalte registrierte Nutzer und schalte ihre Konten frei." : "Manage registered users and activate their accounts."}
+                    </p>
+                  </div>
 
-              {/* Status Filters */}
-              <div className="flex bg-paper-2 p-1 border border-line-soft rounded-xl text-xs font-mono">
-                {(["all", "pending", "approved", "archived"] as const).map(f => (
-                  <button
-                    key={f}
-                    onClick={() => setStatusFilter(f)}
-                    className={`px-3 py-1.5 rounded-lg font-bold uppercase transition-all cursor-pointer ${
-                      statusFilter === f 
-                        ? "bg-ink text-paper" 
-                        : "text-ink-2 hover:text-ink hover:bg-paper-3"
-                    }`}
-                  >
-                    {f === "all" ? (de ? "Alle" : "All") : f === "pending" ? (de ? "Ausstehend" : "Pending") : f === "approved" ? (de ? "Freigegeben" : "Approved") : (de ? "Archiviert" : "Archived")}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Search Input */}
-            <div className="relative mb-6">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-3" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                placeholder={de ? "Nutzer suchen nach Name oder E-Mail..." : "Search users by name or email..."}
-                className="w-full bg-paper-2 border border-line rounded-xl pl-10 pr-4 py-2.5 text-xs text-ink focus:outline-none focus:border-blue transition-colors"
-              />
-            </div>
-
-            {/* Users list */}
-            <div className="flex-1 overflow-x-auto">
-              {filteredUsers.length === 0 ? (
-                <div className="h-48 border border-line border-dashed rounded-xl flex flex-col items-center justify-center gap-2 text-ink-3">
-                  <Users className="w-8 h-8 opacity-40" />
-                  <p className="text-xs">{de ? "Keine Benutzer gefunden." : "No users found."}</p>
+                  {/* Status Filters */}
+                  <div className="flex bg-paper-2 p-1 border border-line-soft rounded-xl text-xs font-mono">
+                    {(["all", "pending", "approved", "archived"] as const).map(f => (
+                      <button
+                        key={f}
+                        onClick={() => setStatusFilter(f)}
+                        className={`px-3 py-1.5 rounded-lg font-bold uppercase transition-all cursor-pointer ${
+                          statusFilter === f 
+                            ? "bg-ink text-paper" 
+                            : "text-ink-2 hover:text-ink hover:bg-paper-3"
+                        }`}
+                      >
+                        {f === "all" ? (de ? "Alle" : "All") : f === "pending" ? (de ? "Ausstehend" : "Pending") : f === "approved" ? (de ? "Freigegeben" : "Approved") : (de ? "Archiviert" : "Archived")}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              ) : (
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="border-b border-line text-[10px] font-mono uppercase tracking-wider text-ink-3">
-                      <th className="pb-3 font-bold">{de ? "Benutzer" : "User"}</th>
-                      <th className="pb-3 font-bold">{de ? "Rolle" : "Role"}</th>
-                      <th className="pb-3 font-bold">{de ? "Registriert am" : "Signed Up"}</th>
-                      <th className="pb-3 font-bold">{de ? "Status" : "Status"}</th>
-                      <th className="pb-3 pb-3 pr-2 text-right font-bold">{de ? "Aktion" : "Action"}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredUsers.map(user => {
-                      const isPending = !user.approved;
-                      const isMe = user.email === adminEmail;
-                      const isLoading = !!loadingUserIds[user.id];
 
-                      return (
-                        <tr key={user.id} className="border-b border-line-soft hover:bg-paper-2/40 transition-colors">
-                          <td className="py-4 pr-3">
-                            <div className="flex items-center gap-3">
-                              <div className={`w-8 h-8 rounded-full border flex items-center justify-center font-bold text-xs ${getRoleBadgeColor(user.role)}`}>
-                                {user.name.charAt(0).toUpperCase()}
-                              </div>
-                              <div className="min-w-0">
-                                <div className="font-bold text-ink truncate max-w-[160px] sm:max-w-xs">{user.name}</div>
-                                <div className="text-[10px] text-ink-3 truncate max-w-[160px] sm:max-w-xs">{user.email}</div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="py-4">
-                            <span className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase tracking-wider border ${getRoleBadgeColor(user.role)}`}>
-                              {user.role}
-                            </span>
-                          </td>
-                          <td className="py-4 text-ink-2 font-mono text-[10px]">
-                            {new Date(user.createdAt).toLocaleDateString(de ? "de-DE" : "en-US", {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric"
-                            })}
-                          </td>
-                          <td className="py-4">
-                            {user.archived ? (
-                              <span className="inline-flex items-center gap-1 text-[10px] text-ink-3 font-semibold">
-                                <Archive className="w-3.5 h-3.5" />
-                                {de ? "Archiviert" : "Archived"}
-                              </span>
-                            ) : isPending ? (
-                              <span className="inline-flex items-center gap-1 text-[10px] text-coral-d font-semibold">
-                                <Clock className="w-3.5 h-3.5" />
-                                {de ? "Ausstehend" : "Pending"}
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 text-[10px] text-emerald-green-d font-semibold">
-                                <CheckCircle className="w-3.5 h-3.5" />
-                                {de ? "Freigeschaltet" : "Approved"}
-                              </span>
-                            )}
-                          </td>
-                          <td className="py-4 text-right pr-2">
-                            {isMe ? (
-                              <span className="text-[10px] text-ink-3 font-mono italic">
-                                {de ? "Aktiver Admin" : "Active Admin"}
-                              </span>
-                            ) : (
-                              <div className="flex justify-end gap-2">
-                                {/* Approve / Suspend Toggle */}
-                                {!user.archived && (
-                                  <button
-                                    disabled={isLoading}
-                                    onClick={() => handleToggleUserApproval(user.id, user.approved)}
-                                    className={`px-2.5 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all min-w-[94px] cursor-pointer flex items-center justify-center gap-1 ${
-                                      isPending 
-                                        ? "bg-emerald text-emerald-d hover:bg-emerald/80 border border-emerald/20" 
-                                        : "bg-paper-2 hover:bg-paper-3 text-ink-2 border border-line-soft"
-                                    }`}
-                                  >
-                                    {isLoading ? (
-                                      <Loader2 className="w-3 h-3 animate-spin text-ink-2" />
-                                    ) : isPending ? (
-                                      <>
-                                        <Check className="w-3 h-3" />
-                                        {de ? "Freigeben" : "Approve"}
-                                      </>
-                                    ) : (
-                                      <>
-                                        <XCircle className="w-3 h-3" />
-                                        {de ? "Sperren" : "Suspend"}
-                                      </>
-                                    )}
-                                  </button>
-                                )}
+                {/* Search Input */}
+                <div className="relative mb-6">
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-3" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    placeholder={de ? "Nutzer suchen nach Name oder E-Mail..." : "Search users by name or email..."}
+                    className="w-full bg-paper-2 border border-line rounded-xl pl-10 pr-4 py-2.5 text-xs text-ink focus:outline-none focus:border-blue transition-colors"
+                  />
+                </div>
 
-                                {/* Archive / Restore Toggle */}
-                                <button
-                                  disabled={isLoading}
-                                  onClick={() => handleToggleUserArchived(user.id, user.archived)}
-                                  className="px-2.5 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all bg-paper-2 hover:bg-paper-3 text-ink-2 border border-line-soft cursor-pointer flex items-center justify-center gap-1"
-                                  title={user.archived ? (de ? "Aktivieren" : "Activate") : (de ? "Archivieren" : "Archive")}
-                                >
-                                  {user.archived ? (
-                                    <>
-                                      <RotateCcw className="w-3.5 h-3.5 text-blue-500" />
-                                      <span>{de ? "Aktivieren" : "Activate"}</span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Archive className="w-3.5 h-3.5" />
-                                      <span>{de ? "Archivieren" : "Archive"}</span>
-                                    </>
-                                  )}
-                                </button>
-
-                                {/* Delete Button */}
-                                <button
-                                  disabled={isLoading}
-                                  onClick={() => handleDeleteUser(user.id, user.name)}
-                                  className="px-2.5 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all bg-coral/10 hover:bg-coral/20 text-coral-d border border-coral/20 cursor-pointer flex items-center justify-center gap-1"
-                                  title={de ? "Löschen" : "Delete"}
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                  <span>{de ? "Löschen" : "Delete"}</span>
-                                </button>
-                              </div>
-                            )}
-                          </td>
+                {/* Users list */}
+                <div className="flex-1 overflow-x-auto">
+                  {filteredUsers.length === 0 ? (
+                    <div className="h-48 border border-line border-dashed rounded-xl flex flex-col items-center justify-center gap-2 text-ink-3">
+                      <Users className="w-8 h-8 opacity-40" />
+                      <p className="text-xs">{de ? "Keine Benutzer gefunden." : "No users found."}</p>
+                    </div>
+                  ) : (
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="border-b border-line text-[10px] font-mono uppercase tracking-wider text-ink-3">
+                          <th className="pb-3 font-bold">{de ? "Benutzer" : "User"}</th>
+                          <th className="pb-3 font-bold">{de ? "Rolle" : "Role"}</th>
+                          <th className="pb-3 font-bold">{de ? "Registriert am" : "Signed Up"}</th>
+                          <th className="pb-3 font-bold">{de ? "Status" : "Status"}</th>
+                          <th className="pb-3 pb-3 pr-2 text-right font-bold">{de ? "Aktion" : "Action"}</th>
                         </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              )}
-            </div>
+                      </thead>
+                      <tbody>
+                        {filteredUsers.map(user => {
+                          const isPending = !user.approved;
+                          const isMe = user.email === adminEmail;
+                          const isLoading = !!loadingUserIds[user.id];
+
+                          return (
+                            <tr key={user.id} className="border-b border-line-soft hover:bg-paper-2/40 transition-colors">
+                              <td className="py-4 pr-3">
+                                <div className="flex items-center gap-3">
+                                  <div className={`w-8 h-8 rounded-full border flex items-center justify-center font-bold text-xs ${getRoleBadgeColor(user.role)}`}>
+                                    {user.name.charAt(0).toUpperCase()}
+                                  </div>
+                                  <div className="min-w-0">
+                                    <div className="font-bold text-ink truncate max-w-[160px] sm:max-w-xs">{user.name}</div>
+                                    <div className="text-[10px] text-ink-3 truncate max-w-[160px] sm:max-w-xs">{user.email}</div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="py-4">
+                                <span className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase tracking-wider border ${getRoleBadgeColor(user.role)}`}>
+                                  {user.role}
+                                </span>
+                              </td>
+                              <td className="py-4 text-ink-2 font-mono text-[10px]">
+                                {new Date(user.createdAt).toLocaleDateString(de ? "de-DE" : "en-US", {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric"
+                                })}
+                              </td>
+                              <td className="py-4">
+                                {user.archived ? (
+                                  <span className="inline-flex items-center gap-1 text-[10px] text-ink-3 font-semibold">
+                                    <Archive className="w-3.5 h-3.5" />
+                                    {de ? "Archiviert" : "Archived"}
+                                  </span>
+                                ) : isPending ? (
+                                  <span className="inline-flex items-center gap-1 text-[10px] text-coral-d font-semibold">
+                                    <Clock className="w-3.5 h-3.5" />
+                                    {de ? "Ausstehend" : "Pending"}
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center gap-1 text-[10px] text-emerald-green-d font-semibold">
+                                    <CheckCircle className="w-3.5 h-3.5" />
+                                    {de ? "Freigeschaltet" : "Approved"}
+                                  </span>
+                                )}
+                              </td>
+                              <td className="py-4 text-right pr-2">
+                                {isMe ? (
+                                  <span className="text-[10px] text-ink-3 font-mono italic">
+                                    {de ? "Aktiver Admin" : "Active Admin"}
+                                  </span>
+                                ) : (
+                                  <div className="flex justify-end gap-2">
+                                    {/* Approve / Suspend Toggle */}
+                                    {!user.archived && (
+                                      <button
+                                        disabled={isLoading}
+                                        onClick={() => handleToggleUserApproval(user.id, user.approved)}
+                                        className={`px-2.5 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all min-w-[94px] cursor-pointer flex items-center justify-center gap-1 ${
+                                          isPending 
+                                            ? "bg-emerald text-emerald-d hover:bg-emerald/80 border border-emerald/20" 
+                                            : "bg-paper-2 hover:bg-paper-3 text-ink-2 border border-line-soft"
+                                        }`}
+                                      >
+                                        {isLoading ? (
+                                          <Loader2 className="w-3 h-3 animate-spin text-ink-2" />
+                                        ) : isPending ? (
+                                          <>
+                                            <Check className="w-3 h-3" />
+                                            {de ? "Freigeben" : "Approve"}
+                                          </>
+                                        ) : (
+                                          <>
+                                            <XCircle className="w-3 h-3" />
+                                            {de ? "Sperren" : "Suspend"}
+                                          </>
+                                        )}
+                                      </button>
+                                    )}
+
+                                    {/* Archive / Restore Toggle */}
+                                    <button
+                                      disabled={isLoading}
+                                      onClick={() => handleToggleUserArchived(user.id, user.archived)}
+                                      className="px-2.5 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all bg-paper-2 hover:bg-paper-3 text-ink-2 border border-line-soft cursor-pointer flex items-center justify-center gap-1"
+                                      title={user.archived ? (de ? "Aktivieren" : "Activate") : (de ? "Archivieren" : "Archive")}
+                                    >
+                                      {user.archived ? (
+                                        <>
+                                          <RotateCcw className="w-3.5 h-3.5 text-blue-500" />
+                                          <span>{de ? "Aktivieren" : "Activate"}</span>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Archive className="w-3.5 h-3.5" />
+                                          <span>{de ? "Archivieren" : "Archive"}</span>
+                                        </>
+                                      )}
+                                    </button>
+
+                                    {/* Delete Button */}
+                                    <button
+                                      disabled={isLoading}
+                                      onClick={() => handleDeleteUser(user.id, user.name)}
+                                      className="px-2.5 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all bg-coral/10 hover:bg-coral/20 text-coral-d border border-coral/20 cursor-pointer flex items-center justify-center gap-1"
+                                      title={de ? "Löschen" : "Delete"}
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                      <span>{de ? "Löschen" : "Delete"}</span>
+                                    </button>
+                                  </div>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Courses Header */}
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
+                  <div>
+                    <h2 className="text-xl font-display font-extrabold uppercase flex items-center gap-2 text-ink">
+                      <BookOpen className="w-5 h-5 text-blue" />
+                      {de ? "Kurs-Moderation" : "Course Moderation"}
+                    </h2>
+                    <p className="text-xs text-ink-3 mt-1">
+                      {de ? "Prüfe, veröffentliche oder lösche Kurse." : "Review, publish, or delete courses."}
+                    </p>
+                  </div>
+
+                  {/* Course Status Filters */}
+                  <div className="flex bg-paper-2 p-1 border border-line-soft rounded-xl text-xs font-mono animate-reveal">
+                    {(["all", "pending", "published", "coming_soon", "draft"] as const).map(f => (
+                      <button
+                        key={f}
+                        onClick={() => setCourseStatusFilter(f)}
+                        className={`px-3 py-1.5 rounded-lg font-bold uppercase transition-all cursor-pointer ${
+                          courseStatusFilter === f 
+                            ? "bg-ink text-paper" 
+                            : "text-ink-2 hover:text-ink hover:bg-paper-3"
+                        }`}
+                      >
+                        {f === "all" ? (de ? "Alle" : "All") : f === "pending" ? (de ? "Review" : "Review") : f === "published" ? (de ? "Aktiv" : "Published") : f === "coming_soon" ? (de ? "Bald" : "Soon") : (de ? "Entwurf" : "Draft")}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Course Search Input */}
+                <div className="relative mb-6">
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-3" />
+                  <input
+                    type="text"
+                    value={courseSearchQuery}
+                    onChange={e => setCourseSearchQuery(e.target.value)}
+                    placeholder={de ? "Kurs suchen nach Titel oder Kategorie..." : "Search courses by title or category..."}
+                    className="w-full bg-paper-2 border border-line rounded-xl pl-10 pr-4 py-2.5 text-xs text-ink focus:outline-none focus:border-blue transition-colors"
+                  />
+                </div>
+
+                {/* Courses List */}
+                <div className="flex-1 overflow-x-auto">
+                  {filteredCourses.length === 0 ? (
+                    <div className="h-48 border border-line border-dashed rounded-xl flex flex-col items-center justify-center gap-2 text-ink-3">
+                      <BookOpen className="w-8 h-8 opacity-40" />
+                      <p className="text-xs">{de ? "Keine Kurse gefunden." : "No courses found."}</p>
+                    </div>
+                  ) : (
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="border-b border-line text-[10px] font-mono uppercase tracking-wider text-ink-3">
+                          <th className="pb-3 font-bold">{de ? "Kurs" : "Course"}</th>
+                          <th className="pb-3 font-bold">{de ? "Erstellt am" : "Created At"}</th>
+                          <th className="pb-3 font-bold">{de ? "Status" : "Status"}</th>
+                          <th className="pb-3 pb-3 pr-2 text-right font-bold">{de ? "Aktion" : "Action"}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredCourses.map(course => {
+                          const isCourseLoading = !!loadingCourseIds[course.id];
+
+                          return (
+                            <tr key={course.id} className="border-b border-line-soft hover:bg-paper-2/40 transition-colors">
+                              <td className="py-4 pr-3">
+                                <div className="flex items-center gap-3">
+                                  <div className="min-w-0">
+                                    <div className="font-bold text-ink truncate max-w-[160px] sm:max-w-xs">{course.title}</div>
+                                    <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                                      <span className="text-[9px] font-mono text-ink-3 border border-line-soft px-1 rounded uppercase tracking-wider">{course.category || "General"}</span>
+                                      <span className="text-[9px] font-mono text-blue border border-blue/20 px-1 rounded uppercase tracking-wider bg-blue/5">
+                                        {course.type === "sprint" ? "Sprint" : course.type === "track" ? "Track" : "Standard"}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="py-4 text-ink-2 font-mono text-[10px]">
+                                {new Date(course.createdAt).toLocaleDateString(de ? "de-DE" : "en-US", {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric"
+                                })}
+                              </td>
+                              <td className="py-4">
+                                <span className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase tracking-wider border ${getCourseStatusColor(course.status)}`}>
+                                  {course.status === "published" ? (de ? "Aktiv" : "Published") : course.status === "pending_review" ? (de ? "Im Review" : "Review") : course.status === "coming_soon" ? (de ? "Bald" : "Soon") : (de ? "Entwurf" : "Draft")}
+                                </span>
+                              </td>
+                              <td className="py-4 text-right pr-2">
+                                <div className="flex justify-end gap-2 flex-wrap">
+                                  {/* Approve Button */}
+                                  {course.status !== "published" && (
+                                    <button
+                                      disabled={isCourseLoading}
+                                      onClick={() => handleModerateCourse(course.id, "published")}
+                                      className="px-2.5 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all bg-emerald text-emerald-d hover:bg-emerald/80 border border-emerald/20 cursor-pointer flex items-center justify-center gap-1"
+                                      title={de ? "Freigeben" : "Approve"}
+                                    >
+                                      {isCourseLoading ? (
+                                        <Loader2 className="w-3 h-3 animate-spin text-emerald-d" />
+                                      ) : (
+                                        <>
+                                          <Check className="w-3 h-3" />
+                                          <span>{de ? "Aktiv" : "Approve"}</span>
+                                        </>
+                                      )}
+                                    </button>
+                                  )}
+
+                                  {/* Reject / Suspended to Draft */}
+                                  {course.status !== "draft" && (
+                                    <button
+                                      disabled={isCourseLoading}
+                                      onClick={() => handleModerateCourse(course.id, "draft")}
+                                      className="px-2.5 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all bg-paper-2 hover:bg-paper-3 text-ink-2 border border-line-soft cursor-pointer flex items-center justify-center gap-1"
+                                      title={de ? "Zurückweisen" : "Reject"}
+                                    >
+                                      <XCircle className="w-3 h-3" />
+                                      <span>{de ? "Entwurf" : "Draft"}</span>
+                                    </button>
+                                  )}
+
+                                  {/* Coming Soon Button */}
+                                  {course.status !== "coming_soon" && (
+                                    <button
+                                      disabled={isCourseLoading}
+                                      onClick={() => handleModerateCourse(course.id, "coming_soon")}
+                                      className="px-2.5 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all bg-paper-2 hover:bg-paper-3 text-ink-2 border border-line-soft cursor-pointer flex items-center justify-center gap-1"
+                                      title={de ? "Coming Soon" : "Coming Soon"}
+                                    >
+                                      <Clock className="w-3 h-3" />
+                                      <span>{de ? "Soon" : "Soon"}</span>
+                                    </button>
+                                  )}
+
+                                  {/* Delete Button */}
+                                  <button
+                                    disabled={isCourseLoading}
+                                    onClick={() => handleDeleteCourse(course.id, course.title)}
+                                    className="px-2.5 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all bg-coral/10 hover:bg-coral/20 text-coral-d border border-coral/20 cursor-pointer flex items-center justify-center gap-1"
+                                    title={de ? "Löschen" : "Delete"}
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                    <span>{de ? "Löschen" : "Delete"}</span>
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </>
+            )}
           </div>
 
           {/* Right panel - Global System Settings */}

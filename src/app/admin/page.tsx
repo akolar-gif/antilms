@@ -11,11 +11,13 @@ export default async function AdminPage() {
 
   const aiStatus = await testAiConnectionAction();
   const users = await store.getUsers();
+  const courses = await store.getCourses();
   const adminEmail = await store.getSystemSetting("admin_notification_email", "andreas@kolar.biz");
 
   return (
     <AdminPanelClient 
       initialUsers={users} 
+      initialCourses={courses}
       adminEmail={adminEmail} 
       aiStatus={aiStatus} 
       lang={lang} 
