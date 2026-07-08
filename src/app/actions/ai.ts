@@ -9,12 +9,16 @@ import { google } from "@ai-sdk/google";
 
 import { store } from "@/lib/store";
 import { cookies } from "next/headers";
+import { verifySession } from "@/lib/session";
 
 const aiProvider = new RealAIProvider();
 
 export async function askMentorAction(input: MentorReplyInput): Promise<MentorReplyResult> {
   const cookieStore = await cookies();
   const language = input.language || cookieStore.get("lang")?.value || "de";
+  const token = cookieStore.get("user_session")?.value;
+  const user = token ? await verifySession(token) : null;
+  const userId = user?.id || "learner-1";
 
   const courseId = input.courseContext;
   const moduleId = input.moduleContext.split('\n')[0];
@@ -33,7 +37,7 @@ export async function askMentorAction(input: MentorReplyInput): Promise<MentorRe
     
     if (currentModule) {
       const blocks = await store.getBlocks(moduleId);
-      const progress = await store.getUserProgress("learner-1", courseId);
+      const progress = await store.getUserProgress(userId, courseId);
       
       let moduleSummary = `Module Title: "${currentModule.title}"\nModule Description: "${currentModule.description}"\n\n`;
       

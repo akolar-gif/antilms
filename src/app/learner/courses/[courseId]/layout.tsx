@@ -2,6 +2,8 @@ import { store } from "@/lib/store";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SidebarLinks } from "@/components/learner/sidebar-links";
+import { cookies } from "next/headers";
+import { verifySession } from "@/lib/session";
 
 export default async function LearnerCourseLayout({
   children,
@@ -17,8 +19,13 @@ export default async function LearnerCourseLayout({
     notFound();
   }
 
+  const cookieStore = await cookies();
+  const token = cookieStore.get("user_session")?.value;
+  const user = token ? await verifySession(token) : null;
+  const userId = user?.id || "learner-1";
+
   const modules = await store.getModules(courseId);
-  const progress = await store.getUserProgress("learner-1", courseId);
+  const progress = await store.getUserProgress(userId, courseId);
 
   let totalBlocks = 0;
   let completedBlocks = 0;

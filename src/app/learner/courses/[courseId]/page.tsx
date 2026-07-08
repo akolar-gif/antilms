@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { translations } from "@/components/layout/translations";
 import Link from "next/link";
+import { verifySession } from "@/lib/session";
 import { Lock, CheckCircle, PlayCircle, ArrowRight } from "lucide-react";
 
 export default async function LearnerCoursePage({ params }: { params: Promise<{ courseId: string }> }) {
@@ -14,6 +15,9 @@ export default async function LearnerCoursePage({ params }: { params: Promise<{ 
   }
 
   const cookieStore = await cookies();
+  const token = cookieStore.get("user_session")?.value;
+  const user = token ? await verifySession(token) : null;
+  const userId = user?.id || "learner-1";
   const lang = (cookieStore.get("lang")?.value || "de") as "de" | "en";
   const dict = translations[lang] || translations.de;
   const t = (key: keyof typeof translations.de, params?: Record<string, string>) => {
@@ -39,7 +43,7 @@ export default async function LearnerCoursePage({ params }: { params: Promise<{ 
       if (!sprint) continue;
 
       // Calculate progress for this sprint
-      const userProgress = await store.getUserProgress("learner-1", sprint.id);
+      const userProgress = await store.getUserProgress(userId, sprint.id);
       const modules = await store.getModules(sprint.id);
       
       let totalBlocks = 0;

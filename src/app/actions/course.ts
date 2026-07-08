@@ -342,16 +342,23 @@ export async function createCustomTrackAction(
       return { success: false, error: "Titel und Sprints sind erforderlich." };
     }
 
+    const cookieStore = await cookies();
+    const token = cookieStore.get("user_session")?.value;
+    const user = token ? await verifySession(token) : null;
+    if (!user) {
+      return { success: false, error: "Nicht angemeldet." };
+    }
+
     const created = await store.createCourse({
       title,
       description: "Individuell zusammengestellter Skill Track aus verschiedenen Sprints.",
       targetGroup: "Eigener Lernpfad",
       category: "Personalisiert",
-      createdBy: "learner-1",
+      createdBy: user.id,
       type: "track",
       sprintCourseIds,
       isCustom: true,
-      learnerId: "learner-1"
+      learnerId: user.id
     });
 
     await store.updateCourse(created.id, { status: "published" });

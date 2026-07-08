@@ -4,17 +4,22 @@ import { Sparkles, Zap } from "lucide-react";
 import { I, AIChip } from "@/components/layout/static-icons";
 import { cookies } from "next/headers";
 import { translations } from "@/components/layout/translations";
+import { verifySession } from "@/lib/session";
 
 export const dynamic = 'force-dynamic';
 
 export default async function LearnerLibraryPage() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("user_session")?.value;
+  const user = token ? await verifySession(token) : null;
+  const userId = user?.id || "learner-1";
+
   const courses = await store.getCourses();
   const visibleCourses = courses.filter(c => 
     (c.status === "published" || c.status === "coming_soon") &&
-    (!c.isCustom || c.learnerId === "learner-1")
+    (!c.isCustom || c.learnerId === userId)
   );
 
-  const cookieStore = await cookies();
   const lang = (cookieStore.get("lang")?.value || "de") as "de" | "en";
   const dict = translations[lang] || translations.de;
   const t = (key: keyof typeof translations.de, params?: Record<string, string>) => {
@@ -50,7 +55,7 @@ export default async function LearnerLibraryPage() {
         const sprint = courses.find(c => c.id === sprintId);
         if (!sprint || sprint.status !== "published") continue;
         
-        const userProgress = await store.getUserProgress("learner-1", sprint.id);
+        const userProgress = await store.getUserProgress(userId, sprint.id);
         const modules = await store.getModules(sprint.id);
         
         for (const mod of modules) {
@@ -69,7 +74,7 @@ export default async function LearnerLibraryPage() {
       });
     } else {
       // Standard or Sprint course progress calculation
-      const userProgress = await store.getUserProgress("learner-1", course.id);
+      const userProgress = await store.getUserProgress(userId, course.id);
       const modules = await store.getModules(course.id);
       
       let totalBlocks = 0;

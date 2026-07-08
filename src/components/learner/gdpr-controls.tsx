@@ -8,18 +8,19 @@ import { toast } from "sonner";
 import { useTranslation } from "@/components/layout/language-context";
 
 interface GDPRControlsProps {
+  userId: string;
   reflections: any[];
   completedBlocksCount: number;
 }
 
-export function GDPRControls({ reflections, completedBlocksCount }: GDPRControlsProps) {
+export function GDPRControls({ userId, reflections, completedBlocksCount }: GDPRControlsProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const { t } = useTranslation();
 
   const handleExport = () => {
     try {
       const dataStr = JSON.stringify({
-        userId: "learner-1",
+        userId,
         exportedAt: new Date().toISOString(),
         reflections,
         completedBlocksCount,
