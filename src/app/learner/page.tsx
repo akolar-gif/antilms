@@ -5,6 +5,7 @@ import { GDPRControls } from "@/components/learner/gdpr-controls";
 import { I, Mark, AIChip } from "@/components/layout/static-icons";
 import { cookies } from "next/headers";
 import { translations } from "@/components/layout/translations";
+import { getAiImpulseAction } from "@/app/actions/ai-impulse";
 
 export const dynamic = 'force-dynamic';
 
@@ -36,6 +37,9 @@ export default async function LearnerDashboard() {
     day: 'numeric',
     month: 'long'
   }).toUpperCase();
+
+  const reflectionTexts = reflections.map(r => r.content);
+  const aiImpulse = await getAiImpulseAction(reflectionTexts, lang);
 
   // Calculate course progress percentages
   const courseProgresses = [];
@@ -117,8 +121,10 @@ export default async function LearnerDashboard() {
     }
   }
 
-  // Active course progress is the first in-progress course, or first published course
-  const playableProgresses = courseProgresses.filter(p => p.course.status === "published");
+  const bookedProgresses = courseProgresses.filter(p => p.course.isCustom || p.percentage > 0);
+
+  // Active course progress is the first in-progress course, or first published booked course
+  const playableProgresses = bookedProgresses.filter(p => p.course.status === "published");
   const activeCourseProgress = playableProgresses.find(p => p.percentage > 0 && p.percentage < 100) 
     || playableProgresses.find(p => p.percentage === 0) 
     || playableProgresses[0];
@@ -264,21 +270,73 @@ export default async function LearnerDashboard() {
         </div>
       </div>
 
+      {/* Lern-Impulse & Reality Check */}
+      <div className="sec-head animate-reveal">
+        <h2>{lang === "de" ? "Lern-Impulse & Reality Check" : "Learning Insights & Reality Check"}</h2>
+        <span className="meta">POWERED BY INNOVERSITY AI</span>
+      </div>
+      <div className="pad animate-reveal" style={{ marginBottom: 30 }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 bg-line border border-line">
+          {/* Card 1: AI Didaktischer Rückblick */}
+          <div className="cell bg-paper p-5 flex flex-col justify-between min-h-[140px]">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="eyebrow font-mono text-[9px] text-blue font-bold tracking-wider uppercase">
+                  {lang === "de" ? "Didaktischer Rückblick" : "Didactic Review"}
+                </span>
+                <Sparkles className="w-4 h-4 text-blue/40" style={{ color: "var(--blue)" }} />
+              </div>
+              <p className="text-xs text-ink leading-relaxed font-mono">
+                "{aiImpulse.reminder}"
+              </p>
+            </div>
+            <div className="text-[8px] text-ink-3 font-mono tracking-wide uppercase mt-4">
+              {lang === "de" ? "Fokus auf deine Lernschwerpunkte" : "Focus on your learning key points"}
+            </div>
+          </div>
+
+          {/* Card 2: Reality Check / Anti-Motivation */}
+          <div className="cell bg-paper p-5 flex flex-col justify-between min-h-[140px]">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="eyebrow font-mono text-[9px] text-coral font-bold tracking-wider uppercase">
+                  Reality Check
+                </span>
+                <Brain className="w-4 h-4 text-coral/40" style={{ color: "var(--coral)" }} />
+              </div>
+              <p className="text-xs text-ink-2 leading-relaxed italic">
+                "{aiImpulse.antiMotivation}"
+              </p>
+            </div>
+            <div className="text-[8px] text-ink-3 font-mono tracking-wide uppercase mt-4">
+              {lang === "de" ? "Humor ist der beste Lernbegleiter" : "Humor is the best learning companion"}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Library Preview */}
       <div className="sec-head">
-        <h2>{t("dashboard.paths_title")}</h2>
-        <span className="meta">{t("dashboard.paths_meta", { count: visibleCourses.filter(c => c.status === "published").length.toString() })}</span>
+        <h2>{lang === "de" ? "Meine Lernpfade" : "My Learning Paths"}</h2>
+        <span className="meta">{lang === "de" ? "AKTIVE KURSE & KETTEN" : "ACTIVE COURSES & TRACKS"} · {bookedProgresses.length}</span>
       </div>
       
-      {visibleCourses.length === 0 ? (
+      {bookedProgresses.length === 0 ? (
         <div className="pad">
-          <div className="p-8 text-center bg-paper-2 border border-line-soft rounded-2xl">
-            <p className="text-sm text-ink-2">{t("dashboard.paths_no_courses")}</p>
+          <div className="p-8 text-center bg-paper-2 border border-line-soft rounded-2xl flex flex-col items-center gap-3">
+            <p className="text-xs text-ink-2 max-w-sm">
+              {lang === "de" 
+                ? "Du hast noch keine Lernpfade gestartet. Gehe in die Bibliothek, um einen Kurs zu beginnen oder einen eigenen Skill Track zu erstellen!" 
+                : "You haven't started any learning paths yet. Visit the library to start a course or build your own custom Skill Track!"}
+            </p>
+            <Link href="/learner/library" className="btn blue text-[11px] font-mono font-bold uppercase tracking-wider py-2 px-4 rounded-xl mt-2 inline-flex">
+              {lang === "de" ? "Zur Bibliothek" : "Go to Library"}
+            </Link>
           </div>
         </div>
       ) : (
         <div className="courses border-t border-b border-line">
-          {courseProgresses.map((p, idx) => {
+          {bookedProgresses.map((p, idx) => {
             const course = p.course;
             const cardColor = idx % 3 === 0 ? "blue" : idx % 3 === 1 ? "ink" : "coral";
             const imageUrl = course.imageUrl;
