@@ -162,6 +162,9 @@ export function CourseBuilder({
                     block={block} 
                     onSave={handleSaveEdit} 
                     onCancel={() => setEditingBlockId(null)} 
+                    courseTitle={course.title}
+                    moduleTitle={module.title}
+                    moduleDescription={module.description}
                   />
                 ) : (
                   <div className="text-slate-600 prose prose-sm max-w-none">

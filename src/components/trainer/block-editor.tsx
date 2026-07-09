@@ -1,16 +1,27 @@
 import { useState } from "react";
 import { LearningBlock } from "@/types";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
+import { Upload, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { generateBlockAction } from "@/app/actions/ai";
 
 interface BlockEditorProps {
   block: LearningBlock;
   onSave: (id: string, content: string, title: string) => void;
   onCancel: () => void;
+  courseTitle?: string;
+  moduleTitle?: string;
+  moduleDescription?: string;
 }
 
-export function BlockEditor({ block, onSave, onCancel }: BlockEditorProps) {
+export function BlockEditor({ 
+  block, 
+  onSave, 
+  onCancel,
+  courseTitle,
+  moduleTitle,
+  moduleDescription
+}: BlockEditorProps) {
   const [titleContent, setTitleContent] = useState(block.title);
   const [textContent, setTextContent] = useState(block.content);
   
@@ -25,6 +36,46 @@ export function BlockEditor({ block, onSave, onCancel }: BlockEditorProps) {
     }
     return null;
   });
+
+  const [isAiGenerating, setIsAiGenerating] = useState(false);
+  const [customPrompt, setCustomPrompt] = useState("");
+
+  const handleAiGenerate = async () => {
+    setIsAiGenerating(true);
+    const toastId = toast.loading("KI generiert den Inhalt...");
+    try {
+      const partialBlock = await generateBlockAction({
+        type: block.type,
+        courseTopic: courseTitle || "Zukunftskompetenzen",
+        moduleObjective: moduleDescription || moduleTitle || "Kursinhalt",
+        context: "",
+        prompt: customPrompt,
+      });
+
+      if (partialBlock.title) {
+        setTitleContent(partialBlock.title);
+      }
+
+      if (partialBlock.content) {
+        if (block.type === 'quiz' || block.type === 'reflection' || block.type === 'punk_game') {
+          try {
+            const parsed = JSON.parse(partialBlock.content);
+            setStructuredData(parsed);
+          } catch (e) {
+            setTextContent(partialBlock.content);
+          }
+        } else {
+          setTextContent(partialBlock.content);
+        }
+      }
+      toast.success("Inhalt erfolgreich generiert!", { id: toastId });
+    } catch (error) {
+      console.error(error);
+      toast.error("Generierung fehlgeschlagen.", { id: toastId });
+    } finally {
+      setIsAiGenerating(false);
+    }
+  };
 
   const handleSave = () => {
     if (structuredData) {
@@ -47,6 +98,46 @@ export function BlockEditor({ block, onSave, onCancel }: BlockEditorProps) {
           onChange={e => setTitleContent(e.target.value)}
         />
       </div>
+
+      {/* AI Content Generation Assistant */}
+      {['text', 'quiz', 'reflection', 'punk_game', 'project_task', 'code'].includes(block.type) && (
+        <div className="mb-6 p-4 rounded-xl border border-emerald-green/20 bg-emerald-green/5 flex flex-col gap-3">
+          <div className="flex items-center gap-2 text-emerald-green">
+            <Sparkles className="w-4 h-4" />
+            <span className="text-xs font-heading font-bold uppercase tracking-wider">KI-Inhalts-Assistent</span>
+          </div>
+          <p className="text-xs text-slate-500">
+            Lass die KI die Inhalte für diesen Block-Typ basierend auf dem Kursthema und Modulziel entwerfen.
+          </p>
+          <div className="flex gap-2">
+            <input 
+              type="text"
+              placeholder="Zusätzliche Wünsche? Z.B.: 'Sehr praxisnah', 'Fokus auf Agilität' (optional)"
+              className="flex-1 px-3 py-1.5 border border-emerald-green/20 rounded-lg text-xs outline-none focus:border-emerald-green bg-white text-slate-700"
+              value={customPrompt}
+              onChange={e => setCustomPrompt(e.target.value)}
+              disabled={isAiGenerating}
+            />
+            <Button
+              type="button"
+              size="sm"
+              disabled={isAiGenerating}
+              onClick={handleAiGenerate}
+              className="bg-emerald-green hover:bg-emerald-green/90 text-white flex items-center gap-1 text-xs shrink-0"
+            >
+              {isAiGenerating ? (
+                <>
+                  <Loader2 className="w-3 h-3 animate-spin" /> Generiere...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-3 h-3" /> Füllen mit KI
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      )}
 
       {block.type === 'quiz' && structuredData ? (
         <div className="space-y-4">
