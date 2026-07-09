@@ -7,10 +7,14 @@ import { cookies } from "next/headers";
 import { translations } from "@/components/layout/translations";
 import { getAiImpulseAction } from "@/app/actions/ai-impulse";
 import { verifySession } from "@/lib/session";
+import { GrowthProfile } from "@/components/learner/growth-profile";
 
 export const dynamic = 'force-dynamic';
 
-export default async function LearnerDashboard() {
+export default async function LearnerDashboard(props: { searchParams: Promise<{ tab?: string }> }) {
+  const searchParams = await props.searchParams;
+  const activeTab = searchParams.tab || "overview";
+
   const cookieStore = await cookies();
   const token = cookieStore.get("user_session")?.value;
   const user = token ? await verifySession(token) : null;
@@ -196,8 +200,46 @@ export default async function LearnerDashboard() {
         </div>
       </header>
 
-      {/* Grid Layout (Lattice & Cells) */}
-      <div className="lattice hero-grid">
+      {/* Tab Navigation */}
+      <div className="pad mb-6" style={{ marginTop: 20 }}>
+        <div className="flex gap-2 pb-px" style={{ display: "flex", gap: 16, borderBottom: "1px solid var(--line)" }}>
+          <Link 
+            href="/learner" 
+            className="pb-3 text-xs font-mono uppercase tracking-wider font-bold transition-all"
+            style={{ 
+              borderBottom: activeTab === "overview" ? "2px solid var(--blue)" : "2px solid transparent", 
+              color: activeTab === "overview" ? "var(--blue)" : "var(--ink-3)" 
+            }}
+          >
+            {lang === "de" ? "Workspace" : "Workspace"}
+          </Link>
+          <Link 
+            href="/learner?tab=growth" 
+            className="pb-3 text-xs font-mono uppercase tracking-wider font-bold transition-all"
+            style={{ 
+              borderBottom: activeTab === "growth" ? "2px solid var(--blue)" : "2px solid transparent", 
+              color: activeTab === "growth" ? "var(--blue)" : "var(--ink-3)" 
+            }}
+          >
+            {lang === "de" ? "Mein Logbuch & Profil" : "Logbook & Profile"}
+          </Link>
+        </div>
+      </div>
+
+      {activeTab === "growth" ? (
+        <div className="pad">
+          <GrowthProfile 
+            reflections={reflections} 
+            completedBlocksTotal={completedBlocksTotal} 
+            courseProgresses={courseProgresses}
+            userId={userId}
+            lang={lang}
+          />
+        </div>
+      ) : (
+        <>
+          {/* Grid Layout (Lattice & Cells) */}
+          <div className="lattice hero-grid">
         {/* Left Welcome Cell */}
         <div className="cell">
           <div className="eyebrow" style={{ marginBottom: 18 }}>{t("dashboard.welcome_back")}</div>
@@ -491,6 +533,8 @@ export default async function LearnerDashboard() {
           <GDPRControls userId={userId} reflections={reflections} completedBlocksCount={completedBlocksTotal} />
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 }
