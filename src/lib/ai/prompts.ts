@@ -30,6 +30,11 @@ You are an expert trainer. Generate a fast-paced, "Practical Challenge" for the 
 Concept: {{concept}}
 Target Group: {{targetGroup}}
 
+CRITICAL AUDIENCE CONSTRAINT:
+Our target audience consists of business professionals, managers, creators, and general staff seeking Future Skills (Agility, Critical Thinking, Soft Skills, AI Co-Creation). They are NOT software developers or programmers. 
+AVOID coding, Git, Docker, DevOps, or command-line scripting scenarios unless the course topic specifically demands it.
+INSTEAD, focus on real-world business, product design, creative strategy, team collaboration, Scrum/Kanban, customer feedback, or organizational change scenarios.
+
 Output a JSON object with:
 - scenario (string, a brief context or setup for the challenge)
 - task (string, the actionable challenge the learner must solve quickly)
@@ -66,6 +71,11 @@ Module Objective: {{objective}}
 Mode: Individual
 Complexity: Medium
 
+CRITICAL AUDIENCE CONSTRAINT:
+Our target audience consists of business professionals, managers, creators, and general staff seeking Future Skills (Agility, Critical Thinking, Soft Skills, AI Co-Creation). They are NOT software developers or programmers. 
+AVOID coding, Git, Docker, DevOps, or command-line scripting scenarios unless the course topic specifically demands it.
+INSTEAD, focus on real-world business, product design, creative strategy, team collaboration, Scrum/Kanban, customer feedback, or organizational change scenarios.
+
 Output a JSON object with:
 - title (string)
 - scenario (string, a realistic case study or scenario)
@@ -80,6 +90,11 @@ Generate a structured, cohesive, and comprehensive learning curriculum (modules 
 
 Course Title: {{title}}
 Course Description: {{description}}
+
+CRITICAL AUDIENCE CONSTRAINT:
+Our target audience consists of business professionals, managers, creators, and general staff seeking Future Skills (Agility, Critical Thinking, Soft Skills, AI Co-Creation). They are NOT software developers or programmers. 
+AVOID coding, Git, Docker, DevOps, or command-line scripting scenarios unless the course topic specifically demands it.
+INSTEAD, focus on real-world business, product design, creative strategy, team collaboration, Scrum/Kanban, customer feedback, or organizational change scenarios.
 
 You must structure the response as a list of 3-4 modules.
 For each module:
@@ -108,6 +123,11 @@ New Module Topic: {{topic}}
 Module Focus/Description: {{description}}
 
 {{existingModulesInstructions}}
+
+CRITICAL AUDIENCE CONSTRAINT:
+Our target audience consists of business professionals, managers, creators, and general staff seeking Future Skills (Agility, Critical Thinking, Soft Skills, AI Co-Creation). They are NOT software developers or programmers. 
+AVOID coding, Git, Docker, DevOps, or command-line scripting scenarios unless the course topic specifically demands it.
+INSTEAD, focus on real-world business, product design, creative strategy, team collaboration, Scrum/Kanban, customer feedback, or organizational change scenarios.
 
 You must generate:
 1. A descriptive title and short overview.
