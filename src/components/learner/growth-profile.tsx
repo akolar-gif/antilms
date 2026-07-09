@@ -23,6 +23,26 @@ export function GrowthProfile({
   const [milestoneNote, setMilestoneNote] = useState<string | null>(null);
   const [isLoadingMilestone, setIsLoadingMilestone] = useState(true);
 
+  const [weeklyReport, setWeeklyReport] = useState<any>(null);
+  const [isLoadingReport, setIsLoadingReport] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleGenerateWeeklyReport = async () => {
+    setIsModalOpen(true);
+    setIsLoadingReport(true);
+    try {
+      const res = await fetch("/api/ai-weekly-report");
+      if (res.ok) {
+        const data = await res.json();
+        setWeeklyReport(data);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoadingReport(false);
+    }
+  };
+
   // Switch translations
   const t = (key: string) => {
     const deDict: Record<string, string> = {
@@ -173,11 +193,18 @@ export function GrowthProfile({
         {/* Growth Radar Arcs Card */}
         <div className="lg:col-span-2 cell border border-line bg-paper p-6 flex flex-col justify-between">
           <div>
-            <div className="flex justify-between items-start mb-4">
+            <div className="flex flex-wrap justify-between items-start gap-4 mb-4">
               <div>
                 <span className="eyebrow text-blue">{t("growth_title")}</span>
                 <h3 className="h-lg mt-1 font-heading font-extrabold uppercase tracking-tight text-ink">{t("growth_title")}</h3>
               </div>
+              <button 
+                onClick={handleGenerateWeeklyReport}
+                className="btn blue text-xs font-mono font-bold uppercase tracking-wider py-2.5 px-4 rounded-xl flex items-center gap-1.5"
+                style={{ background: "var(--blue)", color: "var(--on-blue)", border: "none" }}
+              >
+                <Sparkles className="w-3.5 h-3.5" /> {lang === "de" ? "KI-Wochenbericht" : "AI Weekly Report"}
+              </button>
             </div>
             <p className="text-xs text-ink-3 max-w-md leading-relaxed mb-6">
               {t("growth_desc")}
@@ -385,6 +412,114 @@ export function GrowthProfile({
           )}
         </div>
       </div>
+
+      {/* Weekly Report Modal */}
+      {isModalOpen && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.45)", backdropFilter: "blur(4px)", position: "fixed" }}
+        >
+          <div 
+            className="bg-paper border border-line rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative flex flex-col gap-6"
+            style={{ 
+              backgroundColor: "var(--paper)", 
+              borderColor: "var(--line)", 
+              maxHeight: "85vh", 
+              overflowY: "auto",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" 
+            }}
+          >
+            {/* Close Button */}
+            <button 
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 border-none bg-transparent cursor-pointer font-bold text-lg"
+              style={{ fontSize: 18 }}
+            >
+              ✕
+            </button>
+
+            {isLoadingReport ? (
+              <div className="py-12 flex flex-col items-center justify-center gap-3">
+                <Loader2 className="w-8 h-8 animate-spin text-blue" style={{ color: "var(--blue)" }} />
+                <p className="text-xs text-ink-3 font-mono">KI analysiert deine Lernwoche...</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 text-emerald-green">
+                  <Sparkles className="w-5 h-5 animate-pulse" />
+                  <span className="text-xs font-mono uppercase tracking-wider font-bold">Wöchentliches Lern-Review</span>
+                </div>
+                
+                <div>
+                  <h3 className="h-lg font-heading font-extrabold uppercase tracking-tight text-ink animate-reveal" style={{ fontSize: 24 }}>
+                    Dein Kompetenz-Bericht
+                  </h3>
+                  <div className="text-[10px] font-mono text-slate-400 uppercase mt-1">
+                    Zeitraum: Letzte 7 Tage
+                  </div>
+                </div>
+
+                <div className="space-y-5 divide-y divide-line pt-2">
+                  
+                  {/* Summary */}
+                  <div className="space-y-2">
+                    <h5 className="text-xs uppercase font-mono font-bold text-blue tracking-wider">Didaktische Übersicht</h5>
+                    <p className="text-xs text-slate-700 leading-relaxed font-mono">
+                      {weeklyReport?.summary}
+                    </p>
+                  </div>
+
+                  {/* Cognitive Depth */}
+                  <div className="space-y-2 pt-4">
+                    <h5 className="text-xs uppercase font-mono font-bold text-coral tracking-wider">Reflexions-Tiefe & Haltung</h5>
+                    <p className="text-xs text-slate-700 leading-relaxed font-mono">
+                      {weeklyReport?.cognitiveDepth}
+                    </p>
+                  </div>
+
+                  {/* Competency Focus */}
+                  <div className="space-y-2 pt-4">
+                    <h5 className="text-xs uppercase font-mono font-bold text-amber-500 tracking-wider">Fokus-Zukunftskompetenz</h5>
+                    <p className="text-xs text-slate-700 leading-relaxed font-mono">
+                      {weeklyReport?.competencyFocus}
+                    </p>
+                  </div>
+
+                  {/* Transfer Challenge */}
+                  <div className="space-y-2 pt-4">
+                    <h5 className="text-xs uppercase font-mono font-bold text-purple-500 tracking-wider">Praktische Transferaufgabe</h5>
+                    <div className="p-4 bg-emerald-green/5 border border-emerald-green/20 rounded-xl">
+                      <p className="text-xs text-slate-800 leading-relaxed font-mono font-medium">
+                        {weeklyReport?.transferChallenge}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Reality Check Quote */}
+                {weeklyReport?.closingQuote && (
+                  <div className="relative bg-slate-50 border border-slate-200/50 p-4 rounded-xl mt-4">
+                    <Quote className="w-8 h-8 text-slate-200 absolute -top-3 -left-2 rotate-180 z-0" />
+                    <p className="text-xs text-slate-600 leading-relaxed font-mono relative z-1 italic">
+                      "{weeklyReport.closingQuote}"
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex justify-end pt-4">
+                  <button 
+                    onClick={() => setIsModalOpen(false)}
+                    className="btn blue text-xs font-mono font-bold uppercase tracking-wider py-2.5 px-6 rounded-xl border-none cursor-pointer"
+                    style={{ background: "var(--blue)", color: "var(--on-blue)" }}
+                  >
+                    Schließen
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
