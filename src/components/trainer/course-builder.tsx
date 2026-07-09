@@ -13,6 +13,152 @@ import { GenerateBlockModal } from "./generate-block-modal";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
+function BlockPreview({ block }: { block: LearningBlock }) {
+  if (block.type === 'quiz') {
+    try {
+      const data = JSON.parse(block.content);
+      return (
+        <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3 text-sm">
+          <div className="font-bold text-slate-800">Frage: {data.question}</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+            {(data.options || []).map((opt: string, idx: number) => (
+              <div 
+                key={idx} 
+                className={`p-2.5 rounded-lg border text-xs flex items-center gap-2 ${
+                  opt === data.correctAnswer 
+                    ? 'bg-emerald-50 border-emerald-300 text-emerald-800 font-medium' 
+                    : 'bg-white border-slate-200 text-slate-600'
+                }`}
+              >
+                <span className="w-5 h-5 rounded-full flex items-center justify-center bg-slate-100 text-slate-600 font-mono text-[10px]">
+                  {String.fromCharCode(65 + idx)}
+                </span>
+                {opt}
+              </div>
+            ))}
+          </div>
+          {data.explanation && (
+            <div className="mt-2 text-xs text-slate-500 italic bg-white p-2.5 rounded border border-slate-100">
+              <strong>Erklärung:</strong> {data.explanation}
+            </div>
+          )}
+        </div>
+      );
+    } catch (e) {
+      // Fallback to end of function
+    }
+  }
+
+  if (block.type === 'reflection') {
+    try {
+      const data = JSON.parse(block.content);
+      return (
+        <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3 text-sm">
+          <div className="font-semibold text-slate-800">{data.reflectionPrompt}</div>
+          {data.followUpQuestions && data.followUpQuestions.length > 0 && (
+            <div className="mt-3 space-y-1">
+              <div className="text-xs uppercase font-bold text-slate-400 tracking-wider">Vertiefende Fragen:</div>
+              <ul className="list-disc pl-4 text-xs text-slate-600 space-y-1">
+                {data.followUpQuestions.map((q: string, idx: number) => (
+                  <li key={idx}>{q}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      );
+    } catch (e) {
+      // Fallback
+    }
+  }
+
+  if (block.type === 'punk_game') {
+    try {
+      const data = JSON.parse(block.content);
+      return (
+        <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3 text-sm">
+          <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+            <span className="text-xs font-mono uppercase font-bold text-coral bg-coral/10 px-2 py-0.5 rounded">Punk Game Challenge</span>
+            {data.timeboxMinutes && (
+              <span className="text-xs text-slate-500 font-medium">⏱ Zeitfenster: {data.timeboxMinutes} Min.</span>
+            )}
+          </div>
+          <div>
+            <div className="text-xs uppercase font-bold text-slate-400 tracking-wider mb-1">Ausgangslage:</div>
+            <p className="text-slate-700 text-xs leading-relaxed">{data.scenario}</p>
+          </div>
+          <div>
+            <div className="text-xs uppercase font-bold text-slate-400 tracking-wider mb-1">Deine Aufgabe:</div>
+            <p className="text-slate-800 text-xs font-medium leading-relaxed">{data.task}</p>
+          </div>
+          {data.evaluationCriteria && data.evaluationCriteria.length > 0 && (
+            <div>
+              <div className="text-xs uppercase font-bold text-slate-400 tracking-wider mb-1.5">Bewertungskriterien:</div>
+              <ul className="list-decimal pl-4 text-xs text-slate-600 space-y-1">
+                {data.evaluationCriteria.map((c: string, idx: number) => (
+                  <li key={idx}>{c}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      );
+    } catch (e) {
+      // Fallback
+    }
+  }
+
+  if (block.type === 'project_task') {
+    try {
+      const data = JSON.parse(block.content);
+      return (
+        <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3 text-sm">
+          <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+            <span className="text-xs font-mono uppercase font-bold text-blue bg-blue/10 px-2 py-0.5 rounded">Praxisprojekt</span>
+            {data.deliverable && (
+              <span className="text-xs text-slate-500 font-medium">Abgabe: {data.deliverable}</span>
+            )}
+          </div>
+          <div>
+            <div className="text-xs uppercase font-bold text-slate-400 tracking-wider mb-1">Szenario:</div>
+            <p className="text-slate-700 text-xs leading-relaxed">{data.scenario}</p>
+          </div>
+          <div>
+            <div className="text-xs uppercase font-bold text-slate-400 tracking-wider mb-1">Aufgabe:</div>
+            <p className="text-slate-800 text-xs font-medium leading-relaxed">{data.task}</p>
+          </div>
+          {data.constraints && data.constraints.length > 0 && (
+            <div>
+              <div className="text-xs uppercase font-bold text-slate-400 tracking-wider mb-1">Bedingungen:</div>
+              <ul className="list-disc pl-4 text-xs text-slate-600 space-y-0.5">
+                {data.constraints.map((c: string, idx: number) => (
+                  <li key={idx}>{c}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      );
+    } catch (e) {
+      // Fallback
+    }
+  }
+
+  if (block.type === 'code') {
+    return (
+      <pre className="p-4 bg-slate-900 text-slate-100 rounded-xl text-xs font-mono overflow-x-auto border border-slate-800">
+        <code>{block.content}</code>
+      </pre>
+    );
+  }
+
+  return (
+    <pre className="p-4 bg-slate-50 rounded text-xs overflow-x-auto">
+      {block.content}
+    </pre>
+  );
+}
+
 export function CourseBuilder({ 
   course, 
   module, 
@@ -169,9 +315,7 @@ export function CourseBuilder({
                 ) : (
                   <div className="text-slate-600 prose prose-sm max-w-none">
                     {block.type === 'quiz' || block.type === 'reflection' || block.type === 'code' || block.type === 'project_task' || block.type === 'punk_game' ? (
-                       <pre className="p-4 bg-slate-50 rounded text-xs overflow-x-auto">
-                         {block.content}
-                       </pre>
+                       <BlockPreview block={block} />
                     ) : block.type === 'video' ? (
                       <div className="aspect-video max-w-sm bg-slate-900 flex items-center justify-center rounded-xl border border-slate-200 overflow-hidden relative shadow-sm">
                         {block.content && (block.content.includes("youtube.com") || block.content.includes("youtu.be") || block.content.includes("vimeo.com") || block.content.includes("embed")) ? (
