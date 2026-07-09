@@ -8,6 +8,9 @@ Target Group: {{targetGroup}}
 Tone: {{tone}}
 Length: {{length}}
 
+TONE CONSTRAINT:
+If generating in German, you MUST address the user using the informal 'du' (Du-Form) e.g., 'du hast', 'deine Rolle'. NEVER use the formal 'Sie' or 'Ihr'.
+
 Output a JSON object with:
 - title (string)
 - content (string, using clear instructional language)
@@ -18,6 +21,9 @@ You are an expert trainer. Generate a knowledge check for this concept.
 Concept: {{concept}}
 Difficulty: {{difficulty}}
 Target Group: {{targetGroup}}
+
+TONE CONSTRAINT:
+If generating in German, you MUST address the user using the informal 'du' (Du-Form) e.g., 'deine Antwort', 'du hast'. NEVER use the formal 'Sie' or 'Ihr'.
 
 Output a JSON object with:
 - question (string)
@@ -35,6 +41,9 @@ Our target audience consists of business professionals, managers, creators, and 
 AVOID coding, Git, Docker, DevOps, or command-line scripting scenarios unless the course topic specifically demands it.
 INSTEAD, focus on real-world business, product design, creative strategy, team collaboration, Scrum/Kanban, customer feedback, or organizational change scenarios.
 
+TONE CONSTRAINT:
+You MUST address the user using the informal German 'du' (Du-Form) e.g., 'du', 'dir', 'dein'. NEVER use 'Sie' or 'Ihr'.
+
 Output a JSON object with:
 - scenario (string, a brief context or setup for the challenge)
 - task (string, the actionable challenge the learner must solve quickly)
@@ -45,6 +54,9 @@ Output a JSON object with:
 Generate a reflection prompt that focuses on future skills.
 Module Topic: {{moduleTopic}}
 Future Skill Focus: {{futureSkillFocus}}
+
+TONE CONSTRAINT:
+You MUST address the user using the informal German 'du' (Du-Form) e.g., 'du', 'dir', 'dein'. NEVER use 'Sie' or 'Ihr'.
 
 Output a JSON object with:
 - reflectionPrompt (string)
@@ -58,6 +70,9 @@ Module Context: {{moduleContext}}
 Block Context: {{blockContext}}
 Learner Message: {{learnerMessage}}
 Learner Confidence: {{learnerConfidence}}
+
+TONE CONSTRAINT:
+You MUST address the user using the informal German 'du' (Du-Form) e.g., 'du', 'dir', 'dein'. NEVER use 'Sie' or 'Ihr'.
 
 Output a JSON object with:
 - answer (string, supportive and empathetic)
@@ -75,6 +90,9 @@ CRITICAL AUDIENCE CONSTRAINT:
 Our target audience consists of business professionals, managers, creators, and general staff seeking Future Skills (Agility, Critical Thinking, Soft Skills, AI Co-Creation). They are NOT software developers or programmers. 
 AVOID coding, Git, Docker, DevOps, or command-line scripting scenarios unless the course topic specifically demands it.
 INSTEAD, focus on real-world business, product design, creative strategy, team collaboration, Scrum/Kanban, customer feedback, or organizational change scenarios.
+
+TONE CONSTRAINT:
+You MUST address the user using the informal German 'du' (Du-Form) e.g., 'du', 'dir', 'dein'. NEVER use 'Sie' or 'Ihr'.
 
 Output a JSON object with:
 - title (string)
@@ -95,6 +113,9 @@ CRITICAL AUDIENCE CONSTRAINT:
 Our target audience consists of business professionals, managers, creators, and general staff seeking Future Skills (Agility, Critical Thinking, Soft Skills, AI Co-Creation). They are NOT software developers or programmers. 
 AVOID coding, Git, Docker, DevOps, or command-line scripting scenarios unless the course topic specifically demands it.
 INSTEAD, focus on real-world business, product design, creative strategy, team collaboration, Scrum/Kanban, customer feedback, or organizational change scenarios.
+
+TONE CONSTRAINT:
+All German learning content (texts, quiz questions, reflection prompts, tasks, scenarios, descriptions) MUST address the learner using the informal 'du' (Du-Form) e.g., 'du', 'dir', 'dein'. NEVER use the formal 'Sie' or 'Ihr'.
 
 You must structure the response as a list of 3-4 modules.
 For each module:
@@ -128,6 +149,9 @@ CRITICAL AUDIENCE CONSTRAINT:
 Our target audience consists of business professionals, managers, creators, and general staff seeking Future Skills (Agility, Critical Thinking, Soft Skills, AI Co-Creation). They are NOT software developers or programmers. 
 AVOID coding, Git, Docker, DevOps, or command-line scripting scenarios unless the course topic specifically demands it.
 INSTEAD, focus on real-world business, product design, creative strategy, team collaboration, Scrum/Kanban, customer feedback, or organizational change scenarios.
+
+TONE CONSTRAINT:
+All German learning content (texts, quiz questions, reflection prompts, tasks, scenarios, descriptions) MUST address the learner using the informal 'du' (Du-Form) e.g., 'du', 'dir', 'dein'. NEVER use the formal 'Sie' or 'Ihr'.
 
 You must generate:
 1. A descriptive title and short overview.

@@ -47,9 +47,12 @@ export async function GET(req: NextRequest) {
 
     const prompt = `Write a highly personalized, thoughtful, and slightly philosophical (but encouraging and witty, matching the innoversity tone) milestone review for a learner named ${user.name}.
 Do NOT use generic praises. Read their completed courses and actual reflections to point out their specific insights and learning style.
-Completed Courses: ${completedCoursesList.length > 0 ? completedCoursesList.join(", ") : "Keine bisher vollständig abgeschlossen - motiviere sie zum Start"}
+Completed Courses: ${completedCoursesList.length > 0 ? completedCoursesList.join(", ") : "Keine bisher vollständig abgeschlossen - motiviere sie/ihn zum Start"}
 Their Reflections:
 ${reflectionSummaries || "Noch keine Reflexionen geschrieben."}
+
+TONE CONSTRAINT:
+You MUST address the user using the informal German 'du' (Du-Form) e.g., 'du', 'dir', 'dein', 'deine Reflexionen'. NEVER use 'Sie' or 'Ihr'.
 
 Write in German. Keep it around 3-4 sentences. Format as a single paragraph. Make it feel authentic, like a real human mentor who actually read their thoughts.`;
 

@@ -55,6 +55,9 @@ export async function GET(req: NextRequest) {
 Our target audience consists of business professionals, managers, creators, and general staff seeking Future Skills. They are NOT software developers or programmers. 
 Avoid technical coding, Git, Docker, or DevOps jargon. Focus on real-world business, product design, agility (Scrum/Kanban), team collaboration, and change management scenarios.
 
+TONE CONSTRAINT:
+You MUST address the user using the informal German 'du' (Du-Form) e.g., 'du', 'dir', 'dein', 'deine Lernwoche'. NEVER use 'Sie' or 'Ihr'.
+
 Analyze their learning data:
 Completed Courses: ${completedCoursesList.length > 0 ? completedCoursesList.join(", ") : "Keine diese Woche abgeschlossen"}
 Active Courses: ${activeCoursesList.length > 0 ? activeCoursesList.join(", ") : "Keine aktiven Kurse"}
