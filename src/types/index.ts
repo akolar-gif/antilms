@@ -32,6 +32,7 @@ export interface Course {
   createdBy: string; // User ID
   isCustom?: boolean;
   learnerId?: string;
+  price?: number;
   createdAt: string;
   updatedAt: string;
 }

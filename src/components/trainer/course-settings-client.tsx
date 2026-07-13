@@ -64,6 +64,39 @@ export function CourseSettingsClient({ course }: { course: Course }) {
             </div>
 
             <div>
+              <label htmlFor="type" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">Kurs-Typ</label>
+              <select
+                id="type"
+                name="type"
+                defaultValue={course.type === "sprint" ? "sprint" : "comprehensive"}
+                className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all bg-paper text-ink"
+                style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
+              >
+                <option value="comprehensive">Standard-Kurs (Umfangreiches Training)</option>
+                <option value="sprint">Sprint-Kurs (Fokussiertes Modul)</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="price" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">Preis (in €)</label>
+              <div className="relative">
+                <input 
+                  type="text" 
+                  id="price" 
+                  name="price" 
+                  placeholder="z.B. 49,00 (Leer lassen für Standard-Preis)"
+                  defaultValue={course.price !== undefined && course.price !== null ? course.price.toString().replace(".", ",") : ""}
+                  className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all pr-12"
+                  style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
+                />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-mono text-ink-3">EUR</span>
+              </div>
+              <p className="text-[10px] text-ink-3 mt-1.5">
+                Frei lassen, um den Standardpreis von 49,00 € anzuwenden. Setze 0 für einen kostenlosen Kurs.
+              </p>
+            </div>
+
+            <div>
               <label htmlFor="description" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">Beschreibung</label>
               <textarea 
                 id="description" 

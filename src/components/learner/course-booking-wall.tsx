@@ -13,6 +13,7 @@ interface CourseBookingWallProps {
   courseDescription: string;
   courseCategory?: string;
   modulesCount: number;
+  coursePrice?: number;
   lang: "de" | "en";
 }
 
@@ -23,11 +24,17 @@ export function CourseBookingWall({
   courseDescription,
   courseCategory,
   modulesCount,
+  coursePrice,
   lang
 }: CourseBookingWallProps) {
   const de = lang === "de";
   const router = useRouter();
   const [showCheckout, setShowCheckout] = useState(false);
+
+  const priceVal = coursePrice !== undefined && coursePrice !== null ? coursePrice : 49;
+  const priceFormatted = priceVal === 0 
+    ? (de ? "Kostenlos" : "Free") 
+    : priceVal.toLocaleString(de ? "de-DE" : "en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
   const [cardNumber, setCardNumber] = useState("4242 •••• •••• 4242");
   const [cardExpiry, setCardExpiry] = useState("12 / 29");
   const [cardCvc, setCardCvc] = useState("123");
@@ -94,13 +101,13 @@ export function CourseBookingWall({
         <div className="bg-paper-2 border border-line-soft rounded-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-6 mt-2">
           <div className="text-center sm:text-left">
             <div className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">
-              {de ? "Einmalige Freischaltung" : "One-Time Unlock"}
+              {priceVal === 0 ? (de ? "Kostenloser Kurs" : "Free Course") : (de ? "Einmalige Freischaltung" : "One-Time Unlock")}
             </div>
             <div className="text-3xl font-display font-extrabold text-ink mt-1">
-              49,00 €
+              {priceFormatted}
             </div>
             <div className="text-[9px] text-ink-3 font-mono mt-0.5">
-              {de ? "Inkl. MwSt., lebenslanger Zugriff" : "VAT included, lifetime access"}
+              {priceVal === 0 ? (de ? "Keine Kosten, lebenslanger Zugriff" : "Inkl. MwSt., lebenslanger Zugriff") : (de ? "Inkl. MwSt., lebenslanger Zugriff" : "VAT included, lifetime access")}
             </div>
           </div>
 
@@ -164,7 +171,7 @@ export function CourseBookingWall({
                   </h3>
                   <div className="flex justify-between items-baseline mt-2 border-b border-line pb-3">
                     <span className="text-xs text-ink-2 font-mono">{courseTitle}</span>
-                    <span className="text-lg font-bold text-ink">49,00 €</span>
+                    <span className="text-lg font-bold text-ink">{priceFormatted}</span>
                   </div>
                 </div>
 
@@ -226,7 +233,9 @@ export function CourseBookingWall({
                     <Loader2 className="w-4 h-4 animate-spin text-paper" />
                   ) : (
                     <>
-                      {de ? "Zahlung simulieren" : "Simulate Payment"}
+                      {priceVal === 0 
+                        ? (de ? "Kostenlos freischalten" : "Unlock for Free") 
+                        : (de ? "Zahlung simulieren" : "Simulate Payment")}
                       <CheckCircle2 className="w-4 h-4" />
                     </>
                   )}

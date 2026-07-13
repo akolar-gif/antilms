@@ -11,6 +11,7 @@ export interface CreateCourseInput {
   sprintCourseIds?: string[];
   isCustom?: boolean;
   learnerId?: string;
+  price?: number;
 }
 
 export type UpdateCourseInput = Partial<CreateCourseInput> & {

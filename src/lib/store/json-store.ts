@@ -80,6 +80,7 @@ export class JsonStore implements LearningStore {
       createdBy: input.createdBy,
       isCustom: input.isCustom ?? false,
       learnerId: input.learnerId,
+      price: input.price,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

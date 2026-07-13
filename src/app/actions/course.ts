@@ -80,6 +80,8 @@ export async function updateCourseSettingsAction(formData: FormData) {
   const categoryInput = formData.get("category") as string;
   const courseImage = formData.get("courseImage") as File | null;
   const stockImageUrl = formData.get("stockImageUrl") as string;
+  const priceRaw = formData.get("price") as string;
+  const type = formData.get("type") as string;
   
   if (!courseId || !title || !description) {
     throw new Error("Missing required fields.");
@@ -96,7 +98,15 @@ export async function updateCourseSettingsAction(formData: FormData) {
     finalImageUrl = stockImageUrl;
   }
 
-  const updates: any = { title, description, category };
+  const price = priceRaw && priceRaw.trim() !== "" ? parseFloat(priceRaw.trim().replace(",", ".")) : null;
+
+  const updates: any = { 
+    title, 
+    description, 
+    category,
+    price: price !== null && !isNaN(price) ? price : null,
+    type: type === "sprint" ? "sprint" : "comprehensive"
+  };
   if (finalImageUrl) {
     updates.imageUrl = finalImageUrl;
   }

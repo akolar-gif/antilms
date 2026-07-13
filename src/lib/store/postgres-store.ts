@@ -20,6 +20,7 @@ function mapCourseFromDb(row: any): Course {
     createdBy: row.created_by,
     isCustom: !!row.is_custom,
     learnerId: row.learner_id || undefined,
+    price: row.price !== null && row.price !== undefined ? parseFloat(row.price) : undefined,
     createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
     updatedAt: row.updated_at instanceof Date ? row.updated_at.toISOString() : row.updated_at,
   };
@@ -107,8 +108,8 @@ export class PostgresStore implements LearningStore {
     const isCustom = input.isCustom ?? false;
     const learnerId = input.learnerId || null;
     const { rows } = await pool.query(
-      `INSERT INTO courses (id, title, description, target_group, category, image_url, status, type, sprint_course_ids, is_custom, learner_id, created_by, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, 'draft', $7, $8, $9, $10, $11, NOW(), NOW())
+      `INSERT INTO courses (id, title, description, target_group, category, image_url, status, type, sprint_course_ids, is_custom, learner_id, created_by, price, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, 'draft', $7, $8, $9, $10, $11, $12, NOW(), NOW())
        RETURNING *`,
       [
         id,
@@ -121,7 +122,8 @@ export class PostgresStore implements LearningStore {
         sprintCourseIds,
         isCustom,
         learnerId,
-        input.createdBy
+        input.createdBy,
+        input.price !== undefined ? input.price : null
       ]
     );
     return mapCourseFromDb(rows[0]);
@@ -171,6 +173,10 @@ export class PostgresStore implements LearningStore {
     if (input.learnerId !== undefined) {
       setClause.push(`learner_id = $${paramIdx++}`);
       values.push(input.learnerId);
+    }
+    if (input.price !== undefined) {
+      setClause.push(`price = $${paramIdx++}`);
+      values.push(input.price);
     }
 
     setClause.push(`updated_at = NOW()`);

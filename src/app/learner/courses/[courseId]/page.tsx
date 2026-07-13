@@ -53,6 +53,7 @@ export default async function LearnerCoursePage({ params }: { params: Promise<{ 
           courseDescription={course.description || ""}
           courseCategory={course.category}
           modulesCount={modules.length}
+          coursePrice={course.price}
           lang={lang}
         />
       </div>
