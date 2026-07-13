@@ -85,6 +85,12 @@ export interface LearningStore {
   getSystemSetting(key: string, defaultValue: string): Promise<string>;
   setSystemSetting(key: string, value: string): Promise<void>;
 
+  // Booking methods
+  bookCourse(userId: string, courseId: string): Promise<void>;
+  revokeCourseBooking(userId: string, courseId: string): Promise<void>;
+  isCourseBooked(userId: string, courseId: string): Promise<boolean>;
+  getUserBookings(userId: string): Promise<string[]>;
+
   // Data administration (GDPR)
   clearUserData(userId: string): Promise<void>;
 }

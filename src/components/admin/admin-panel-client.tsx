@@ -8,10 +8,13 @@ import {
 } from "lucide-react";
 import { useTranslation } from "@/components/layout/language-context";
 import { 
-  updateAdminEmailSettingAction, 
+  updateSystemSettingsAction, 
   toggleUserApprovalAction,
   toggleUserArchivedAction,
-  deleteUserAction
+  deleteUserAction,
+  bookCourseAction,
+  revokeCourseBookingAction,
+  getUserBookingsAction
 } from "@/app/actions/admin";
 import { moderateCourseAction, deleteCourseAction } from "@/app/actions/course";
 import { toast } from "sonner";
@@ -21,6 +24,7 @@ interface AdminPanelClientProps {
   initialUsers: UserType[];
   initialCourses: Course[];
   adminEmail: string;
+  initialTestRegistrationEnabled: boolean;
   aiStatus: {
     configured: boolean;
     working: boolean;
@@ -34,6 +38,7 @@ export function AdminPanelClient({
   initialUsers,
   initialCourses,
   adminEmail,
+  initialTestRegistrationEnabled,
   aiStatus,
   lang
 }: AdminPanelClientProps) {
@@ -44,10 +49,63 @@ export function AdminPanelClient({
   
   // Settings Form State
   const [emailInput, setEmailInput] = useState(adminEmail);
+  const [testRegistrationEnabled, setTestRegistrationEnabled] = useState(initialTestRegistrationEnabled);
   const [isSavingSettings, startSavingSettings] = useTransition();
 
   // User Actions Loading State
   const [loadingUserIds, setLoadingUserIds] = useState<Record<string, boolean>>({});
+
+  // Bookings management state
+  const [bookingUser, setBookingUser] = useState<UserType | null>(null);
+  const [userBookedCourseIds, setUserBookedCourseIds] = useState<string[]>([]);
+  const [isLoadingBookings, setIsLoadingBookings] = useState(false);
+  const [loadingCourseBookingId, setLoadingCourseBookingId] = useState<string | null>(null);
+
+  const openBookingModal = async (user: UserType) => {
+    setBookingUser(user);
+    setIsLoadingBookings(true);
+    try {
+      const res = await getUserBookingsAction(user.id);
+      if (res.success && res.bookings) {
+        setUserBookedCourseIds(res.bookings);
+      } else {
+        toast.error(de ? "Fehler beim Laden der Buchungen." : "Failed to load bookings.");
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoadingBookings(false);
+    }
+  };
+
+  const handleToggleBooking = async (courseId: string) => {
+    if (!bookingUser) return;
+    setLoadingCourseBookingId(courseId);
+    const isCurrentlyBooked = userBookedCourseIds.includes(courseId);
+    try {
+      if (isCurrentlyBooked) {
+        const res = await revokeCourseBookingAction(bookingUser.id, courseId);
+        if (res.success) {
+          setUserBookedCourseIds(prev => prev.filter(id => id !== courseId));
+          toast.success(de ? "Buchung storniert." : "Booking revoked.");
+        } else {
+          toast.error(res.error || (de ? "Fehler beim Stornieren." : "Cancellation failed."));
+        }
+      } else {
+        const res = await bookCourseAction(bookingUser.id, courseId);
+        if (res.success) {
+          setUserBookedCourseIds(prev => [...prev, courseId]);
+          toast.success(de ? "Kurs erfolgreich gebucht." : "Course booked successfully.");
+        } else {
+          toast.error(res.error || (de ? "Fehler beim Buchen." : "Booking failed."));
+        }
+      }
+    } catch (e) {
+      toast.error(de ? "Unerwarteter Fehler." : "Unexpected error.");
+    } finally {
+      setLoadingCourseBookingId(null);
+    }
+  };
 
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState("");
@@ -59,7 +117,7 @@ export function AdminPanelClient({
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
     startSavingSettings(async () => {
-      const res = await updateAdminEmailSettingAction(emailInput);
+      const res = await updateSystemSettingsAction(emailInput, testRegistrationEnabled);
       if (res.success) {
         toast.success(de ? "Einstellungen erfolgreich gespeichert." : "Settings saved successfully.");
       } else {
@@ -576,6 +634,18 @@ export function AdminPanelClient({
                                       </button>
                                     )}
 
+                                    {/* Manage Bookings Button */}
+                                    {!user.archived && !isPending && (
+                                      <button
+                                        onClick={() => openBookingModal(user)}
+                                        className="px-2.5 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all bg-paper-2 hover:bg-paper-3 text-ink-2 border border-line-soft cursor-pointer flex items-center justify-center gap-1"
+                                        title={de ? "Kurse verwalten" : "Manage Bookings"}
+                                      >
+                                        <BookOpen className="w-3.5 h-3.5 text-blue" />
+                                        <span>{de ? "Kurse" : "Courses"}</span>
+                                      </button>
+                                    )}
+
                                     {/* Archive / Restore Toggle */}
                                     <button
                                       disabled={isLoading}
@@ -814,6 +884,29 @@ export function AdminPanelClient({
                   </div>
                 </div>
 
+                {/* Test-User Registration Toggle */}
+                <div className="flex flex-col gap-1.5 mt-2">
+                  <label className="eyebrow block text-left text-ink-2">
+                    {de ? "Test-User Registrierung" : "Test-User Registration"}
+                  </label>
+                  <p className="text-[10px] text-ink-3 leading-normal mb-1.5">
+                    {de 
+                      ? "Erlaube freien Zugang für Testuser mit anschließender Freischaltung." 
+                      : "Allow free registration for test users with manual approval."}
+                  </p>
+                  <label className="flex items-center gap-3 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={testRegistrationEnabled}
+                      onChange={e => setTestRegistrationEnabled(e.target.checked)}
+                      className="w-4 h-4 rounded text-blue border-line focus:ring-0 focus:ring-offset-0 focus:outline-none"
+                    />
+                    <span className="text-xs text-ink-2 font-medium">
+                      {de ? "Freie Registrierung aktiv" : "Free registration active"}
+                    </span>
+                  </label>
+                </div>
+
                 <button
                   type="submit"
                   disabled={isSavingSettings}
@@ -861,6 +954,102 @@ export function AdminPanelClient({
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bookings Modal */}
+      {bookingUser && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.45)", backdropFilter: "blur(4px)", position: "fixed" }}
+        >
+          <div className="bg-paper border border-line rounded-2xl max-w-lg w-full p-6 shadow-2xl relative flex flex-col gap-5">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-blue" />
+                <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-ink">
+                  {de ? "Kursbuchungen verwalten" : "Manage Course Bookings"}
+                </h3>
+              </div>
+              <button 
+                onClick={() => setBookingUser(null)}
+                className="text-slate-400 hover:text-slate-600 border-none bg-transparent cursor-pointer font-bold text-base"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* User Info */}
+            <div className="bg-paper-2 border border-line-soft rounded-xl p-3.5 flex flex-col gap-0.5">
+              <div className="text-xs font-bold text-ink">{bookingUser.name}</div>
+              <div className="text-[10px] text-ink-3 font-mono">{bookingUser.email}</div>
+              {bookingUser.approved && (
+                <div className="text-[9px] text-emerald-green-d font-mono mt-1.5 flex items-center gap-1 font-bold">
+                  <Check className="w-3 h-3" />
+                  {de 
+                    ? "Freigeschalteter Testuser (hat automatisch Zugriff auf alle Kurse)" 
+                    : "Approved test user (has access to all courses automatically)"}
+                </div>
+              )}
+            </div>
+
+            {/* Courses list */}
+            <div className="max-h-[300px] overflow-y-auto space-y-2 pr-1">
+              {isLoadingBookings ? (
+                <div className="py-12 flex flex-col items-center justify-center gap-2 text-ink-3">
+                  <Loader2 className="w-6 h-6 animate-spin text-blue" />
+                  <span className="text-xs">{de ? "Lade Buchungsdaten..." : "Loading bookings..."}</span>
+                </div>
+              ) : courses.filter(c => c.status === "published" && !c.isCustom).length === 0 ? (
+                <div className="py-8 text-center text-xs text-ink-3">
+                  {de ? "Keine freigegebenen Standardkurse verfügbar." : "No published standard courses available."}
+                </div>
+              ) : (
+                courses
+                  .filter(c => c.status === "published" && !c.isCustom)
+                  .map(course => {
+                    const isBooked = userBookedCourseIds.includes(course.id);
+                    const isToggling = loadingCourseBookingId === course.id;
+
+                    return (
+                      <div 
+                        key={course.id} 
+                        className="flex items-center justify-between p-3 rounded-xl border border-line-soft bg-paper hover:bg-paper-2/50 transition-colors"
+                      >
+                        <div className="min-w-0 pr-3">
+                          <div className="text-xs font-bold text-ink truncate max-w-[240px] sm:max-w-xs">{course.title}</div>
+                          <div className="text-[9px] text-ink-3 uppercase font-mono mt-0.5">{course.category || (de ? "Allgemein" : "General")}</div>
+                        </div>
+
+                        <div>
+                          {isToggling ? (
+                            <Loader2 className="w-4 h-4 animate-spin text-blue" />
+                          ) : (
+                            <label className="relative flex items-center cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={isBooked}
+                                onChange={() => handleToggleBooking(course.id)}
+                                className="w-4 h-4 rounded text-blue border-line focus:ring-0 focus:ring-offset-0 focus:outline-none"
+                              />
+                            </label>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })
+              )}
+            </div>
+
+            {/* Footer */}
+            <button
+              onClick={() => setBookingUser(null)}
+              className="w-full bg-ink text-paper py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider hover:bg-ink-2 active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center"
+            >
+              {de ? "Fertig" : "Done"}
+            </button>
           </div>
         </div>
       )}

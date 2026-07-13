@@ -565,4 +565,36 @@ export class PostgresStore implements LearningStore {
       [key, value]
     );
   }
+
+  async bookCourse(userId: string, courseId: string): Promise<void> {
+    await pool.query(
+      `INSERT INTO bookings (user_id, course_id)
+       VALUES ($1, $2)
+       ON CONFLICT (user_id, course_id) DO NOTHING`,
+      [userId, courseId]
+    );
+  }
+
+  async revokeCourseBooking(userId: string, courseId: string): Promise<void> {
+    await pool.query(
+      "DELETE FROM bookings WHERE user_id = $1 AND course_id = $2",
+      [userId, courseId]
+    );
+  }
+
+  async isCourseBooked(userId: string, courseId: string): Promise<boolean> {
+    const { rows } = await pool.query(
+      "SELECT 1 FROM bookings WHERE user_id = $1 AND course_id = $2",
+      [userId, courseId]
+    );
+    return rows.length > 0;
+  }
+
+  async getUserBookings(userId: string): Promise<string[]> {
+    const { rows } = await pool.query(
+      "SELECT course_id FROM bookings WHERE user_id = $1",
+      [userId]
+    );
+    return rows.map(r => r.course_id);
+  }
 }

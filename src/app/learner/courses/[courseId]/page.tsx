@@ -5,6 +5,7 @@ import { translations } from "@/components/layout/translations";
 import Link from "next/link";
 import { verifySession } from "@/lib/session";
 import { Lock, CheckCircle, PlayCircle, ArrowRight } from "lucide-react";
+import { CourseBookingWall } from "@/components/learner/course-booking-wall";
 
 export default async function LearnerCoursePage({ params }: { params: Promise<{ courseId: string }> }) {
   const { courseId } = await params;
@@ -29,6 +30,34 @@ export default async function LearnerCoursePage({ params }: { params: Promise<{ 
     }
     return text;
   };
+
+  const userRole = user?.role || "learner";
+  const isApproved = user?.approved || false;
+
+  const isLocked = !(
+    userRole === "trainer" || 
+    userRole === "admin" || 
+    course.isCustom || 
+    isApproved || 
+    await store.isCourseBooked(userId, courseId)
+  );
+
+  if (isLocked) {
+    const modules = await store.getModules(courseId);
+    return (
+      <div className="flex-1 bg-paper min-h-[calc(100vh-4rem)] p-8">
+        <CourseBookingWall 
+          courseId={courseId}
+          userId={userId}
+          courseTitle={course.title}
+          courseDescription={course.description || ""}
+          courseCategory={course.category}
+          modulesCount={modules.length}
+          lang={lang}
+        />
+      </div>
+    );
+  }
 
   if (course.type === "track") {
     // Render Skill Track page

@@ -65,6 +65,15 @@ export async function loginAction(
   }
 }
 
+export async function getRegistrationSettingAction(): Promise<{ enabled: boolean }> {
+  try {
+    const val = await store.getSystemSetting("test_user_registration_enabled", "true");
+    return { enabled: val === "true" };
+  } catch (err) {
+    return { enabled: true };
+  }
+}
+
 export async function registerAction(
   name: string,
   email: string,
@@ -72,10 +81,15 @@ export async function registerAction(
   role: "learner" | "trainer" = "learner"
 ): Promise<{ success: boolean; role?: Role; requiresApproval?: boolean; error?: string }> {
   if (!name || !email || !passwordInput) {
-    return { success: false, error: "Bitte füllen Sie alle Felder aus." };
+    return { success: false, error: "Bitte fülle alle Felder aus." };
   }
 
   try {
+    const isEnabled = await store.getSystemSetting("test_user_registration_enabled", "true");
+    if (isEnabled !== "true") {
+      return { success: false, error: "Die freie Test-Registrierung ist derzeit deaktiviert. Zugang ist nur über Kursbuchung möglich." };
+    }
+
     const existingUser = await store.getUserByEmail(email);
     if (existingUser) {
       return { success: false, error: "Diese E-Mail-Adresse wird bereits verwendet." };

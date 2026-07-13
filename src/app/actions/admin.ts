@@ -86,3 +86,78 @@ export async function deleteUserAction(
     return { success: false, error: "Fehler beim Löschen des Benutzers." };
   }
 }
+
+export async function updateSystemSettingsAction(
+  email: string,
+  testRegistrationEnabled: boolean
+): Promise<{ success: boolean; error?: string }> {
+  if (!email || !email.includes("@")) {
+    return { success: false, error: "Ungültige E-Mail-Adresse." };
+  }
+
+  try {
+    await store.setSystemSetting("admin_notification_email", email.trim());
+    await store.setSystemSetting("test_user_registration_enabled", testRegistrationEnabled ? "true" : "false");
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Failed to update system settings:", error);
+    return { success: false, error: "Fehler beim Speichern der Einstellungen." };
+  }
+}
+
+export async function getSystemSettingsAction(): Promise<{ adminEmail: string; testRegistrationEnabled: boolean }> {
+  try {
+    const adminEmail = await store.getSystemSetting("admin_notification_email", "andreas@kolar.biz");
+    const testRegistrationEnabled = await store.getSystemSetting("test_user_registration_enabled", "true");
+    return {
+      adminEmail,
+      testRegistrationEnabled: testRegistrationEnabled === "true"
+    };
+  } catch (err) {
+    return {
+      adminEmail: "andreas@kolar.biz",
+      testRegistrationEnabled: true
+    };
+  }
+}
+
+export async function bookCourseAction(
+  userId: string,
+  courseId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await store.bookCourse(userId, courseId);
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Failed to book course:", error);
+    return { success: false, error: "Fehler beim Buchen des Kurses." };
+  }
+}
+
+export async function revokeCourseBookingAction(
+  userId: string,
+  courseId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await store.revokeCourseBooking(userId, courseId);
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Failed to revoke course booking:", error);
+    return { success: false, error: "Fehler beim Stornieren der Kursbuchung." };
+  }
+}
+
+export async function getUserBookingsAction(
+  userId: string
+): Promise<{ success: boolean; bookings?: string[]; error?: string }> {
+  try {
+    const bookings = await store.getUserBookings(userId);
+    return { success: true, bookings };
+  } catch (error: any) {
+    console.error("Failed to get user bookings:", error);
+    return { success: false, error: "Fehler beim Abrufen der Kursbuchungen." };
+  }
+}

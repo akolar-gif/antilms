@@ -5,8 +5,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Shield, User, Award, Key, ArrowRight, Loader2, Mail, UserCheck } from "lucide-react";
-import { loginAction, registerAction } from "@/app/actions/auth";
+import { loginAction, registerAction, getRegistrationSettingAction } from "@/app/actions/auth";
 import { toast } from "sonner";
+import { useEffect } from "react";
+
+interface LoginContentProps {}
 
 function LoginContent() {
   const router = useRouter();
@@ -20,6 +23,23 @@ function LoginContent() {
   const [name, setName] = useState("");
   const [registerRole, setRegisterRole] = useState<"learner" | "trainer">("learner");
   const [isPending, startTransition] = useTransition();
+  const [isRegisterEnabled, setIsRegisterEnabled] = useState(true);
+
+  // Load registration setting on mount
+  useEffect(() => {
+    async function loadSetting() {
+      try {
+        const res = await getRegistrationSettingAction();
+        setIsRegisterEnabled(res.enabled);
+        if (!res.enabled && mode === "register") {
+          setMode("login");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    loadSetting();
+  }, [mode]);
 
   // Show error toast if redirected from middleware with error
   useState(() => {
@@ -63,12 +83,17 @@ function LoginContent() {
         return;
       }
 
+      if (!isRegisterEnabled) {
+        toast.error("Die Test-Registrierung ist derzeit deaktiviert.");
+        return;
+      }
+
       startTransition(async () => {
         try {
           const res = await registerAction(name, email, password, registerRole);
           if (res.success) {
             if (res.requiresApproval) {
-              toast.success("Registrierung abgeschlossen! Ihr Konto wird nun von einem Administrator geprüft. Sie werden per E-Mail informiert, sobald Ihr Konto freigeschaltet wurde.");
+              toast.success("Registrierung abgeschlossen! Dein Konto wird nun von einem Administrator geprüft. Du wirst per E-Mail informiert, sobald dein Konto freigeschaltet wurde.");
               setMode("login");
               setName("");
               setPassword("");
@@ -110,30 +135,32 @@ function LoginContent() {
         </div>
 
         {/* Mode Toggle Tabs */}
-        <div className="flex bg-paper-2 p-1 rounded-xl border-1.5 border-line-soft mb-6">
-          <button
-            type="button"
-            onClick={() => setMode("login")}
-            className={`flex-1 py-2 px-3 text-xs font-bold uppercase tracking-wider font-mono rounded-lg transition-all ${
-              mode === "login"
-                ? "bg-ink text-paper shadow-sm"
-                : "text-ink-2 hover:text-ink"
-            }`}
-          >
-            Anmelden
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("register")}
-            className={`flex-1 py-2 px-3 text-xs font-bold uppercase tracking-wider font-mono rounded-lg transition-all ${
-              mode === "register"
-                ? "bg-ink text-paper shadow-sm"
-                : "text-ink-2 hover:text-ink"
-            }`}
-          >
-            Registrieren
-          </button>
-        </div>
+        {isRegisterEnabled && (
+          <div className="flex bg-paper-2 p-1 rounded-xl border-1.5 border-line-soft mb-6">
+            <button
+              type="button"
+              onClick={() => setMode("login")}
+              className={`flex-1 py-2 px-3 text-xs font-bold uppercase tracking-wider font-mono rounded-lg transition-all ${
+                mode === "login"
+                  ? "bg-ink text-paper shadow-sm"
+                  : "text-ink-2 hover:text-ink"
+              }`}
+            >
+              Anmelden
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("register")}
+              className={`flex-1 py-2 px-3 text-xs font-bold uppercase tracking-wider font-mono rounded-lg transition-all ${
+                mode === "register"
+                  ? "bg-ink text-paper shadow-sm"
+                  : "text-ink-2 hover:text-ink"
+              }`}
+            >
+              Registrieren
+            </button>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <AnimatePresence mode="wait">

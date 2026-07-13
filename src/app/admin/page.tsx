@@ -13,12 +13,14 @@ export default async function AdminPage() {
   const users = await store.getUsers();
   const courses = await store.getCourses();
   const adminEmail = await store.getSystemSetting("admin_notification_email", "andreas@kolar.biz");
+  const testRegistrationEnabled = (await store.getSystemSetting("test_user_registration_enabled", "true")) === "true";
 
   return (
     <AdminPanelClient 
       initialUsers={users} 
       initialCourses={courses}
       adminEmail={adminEmail} 
+      initialTestRegistrationEnabled={testRegistrationEnabled}
       aiStatus={aiStatus} 
       lang={lang} 
     />

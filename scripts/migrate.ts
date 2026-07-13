@@ -102,6 +102,13 @@ CREATE TABLE IF NOT EXISTS reflections (
   difficulty INTEGER NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS bookings (
+  user_id VARCHAR(255) NOT NULL,
+  course_id VARCHAR(255) NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  PRIMARY KEY (user_id, course_id)
+);
 `;
 
 async function main() {

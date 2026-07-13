@@ -437,4 +437,36 @@ export class JsonStore implements LearningStore {
     (data as any).settings[key] = value;
     await this.writeData(data);
   }
+
+  async bookCourse(userId: string, courseId: string): Promise<void> {
+    const data = await this.readData();
+    if (!data.bookings) {
+      data.bookings = [];
+    }
+    const exists = data.bookings.some(b => b.userId === userId && b.courseId === courseId);
+    if (!exists) {
+      data.bookings.push({ userId, courseId, createdAt: new Date().toISOString() });
+      await this.writeData(data);
+    }
+  }
+
+  async revokeCourseBooking(userId: string, courseId: string): Promise<void> {
+    const data = await this.readData();
+    if (data.bookings) {
+      data.bookings = data.bookings.filter(b => !(b.userId === userId && b.courseId === courseId));
+      await this.writeData(data);
+    }
+  }
+
+  async isCourseBooked(userId: string, courseId: string): Promise<boolean> {
+    const data = await this.readData();
+    if (!data.bookings) return false;
+    return data.bookings.some(b => b.userId === userId && b.courseId === courseId);
+  }
+
+  async getUserBookings(userId: string): Promise<string[]> {
+    const data = await this.readData();
+    if (!data.bookings) return [];
+    return data.bookings.filter(b => b.userId === userId).map(b => b.courseId);
+  }
 }
