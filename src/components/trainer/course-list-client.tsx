@@ -7,7 +7,15 @@ import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { deleteCourseAction } from "@/app/actions/course";
 
-export function CourseListClient({ courses, role }: { courses: Course[], role: "trainer" | "learner" }) {
+export function CourseListClient({ 
+  courses, 
+  role, 
+  currentUserId 
+}: { 
+  courses: Course[]; 
+  role: "trainer" | "learner"; 
+  currentUserId?: string; 
+}) {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
   const categories = ["All", ...Array.from(new Set(courses.map(c => c.category || "General"))).sort()];
@@ -87,9 +95,14 @@ export function CourseListClient({ courses, role }: { courses: Course[], role: "
                           <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-blue-500/30 border border-blue-400/50 uppercase">
                             {course.type === "sprint" ? "Sprint" : course.type === "track" ? "Track" : "Standard"}
                           </span>
+                          {role === "trainer" && currentUserId && course.createdBy !== currentUserId && (
+                            <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-coral/20 border border-coral/40 uppercase text-coral flex items-center gap-0.5">
+                              🔒 NUR ANSICHT
+                            </span>
+                          )}
                         </div>
                         
-                        {role === "trainer" && (
+                        {role === "trainer" && (!currentUserId || course.createdBy === currentUserId) && (
                           <button 
                             type="button"
                             onClick={async (e) => {

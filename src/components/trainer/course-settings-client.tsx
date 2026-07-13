@@ -7,7 +7,7 @@ import { ImagePicker } from "@/components/trainer/image-picker";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-export function CourseSettingsClient({ course }: { course: Course }) {
+export function CourseSettingsClient({ course, readOnly }: { course: Course; readOnly?: boolean }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -18,9 +18,16 @@ export function CourseSettingsClient({ course }: { course: Course }) {
           <span className="eyebrow" style={{ color: "var(--blue)" }}>COURSE SETUP</span>
           <h2 className="display" style={{ fontSize: 32, marginTop: 4 }}>Kurseinstellungen</h2>
         </div>
+
+        {readOnly && (
+          <div className="p-4 bg-coral/5 border border-coral/10 rounded-xl text-coral text-xs font-mono leading-relaxed">
+            🔒 Du siehst diesen Kurs im **schreibgeschützten Modus**. Nur der Ersteller dieses Kurses kann die Einstellungen und Kursinhalte bearbeiten.
+          </div>
+        )}
         
         <form 
           action={async (formData) => {
+            if (readOnly) return;
             setIsLoading(true);
             const toastId = toast.loading("Speichere Einstellungen...");
             try {
@@ -45,8 +52,9 @@ export function CourseSettingsClient({ course }: { course: Course }) {
                 id="title" 
                 name="title" 
                 required 
+                disabled={readOnly}
                 defaultValue={course.title}
-                className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all"
+                className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all disabled:opacity-75 disabled:cursor-not-allowed"
                 style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
               />
             </div>
@@ -57,8 +65,9 @@ export function CourseSettingsClient({ course }: { course: Course }) {
                 type="text" 
                 id="category" 
                 name="category" 
+                disabled={readOnly}
                 defaultValue={course.category}
-                className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all"
+                className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all disabled:opacity-75 disabled:cursor-not-allowed"
                 style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
               />
             </div>
@@ -68,8 +77,9 @@ export function CourseSettingsClient({ course }: { course: Course }) {
               <select
                 id="type"
                 name="type"
+                disabled={readOnly}
                 defaultValue={course.type === "sprint" ? "sprint" : "comprehensive"}
-                className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all bg-paper text-ink"
+                className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all bg-paper text-ink disabled:opacity-75 disabled:cursor-not-allowed"
                 style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
               >
                 <option value="comprehensive">Standard-Kurs (Umfangreiches Training)</option>
@@ -84,9 +94,10 @@ export function CourseSettingsClient({ course }: { course: Course }) {
                   type="text" 
                   id="price" 
                   name="price" 
+                  disabled={readOnly}
                   placeholder="z.B. 49,00 (Leer lassen für Standard-Preis)"
                   defaultValue={course.price !== undefined && course.price !== null ? course.price.toString().replace(".", ",") : ""}
-                  className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all pr-12"
+                  className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all pr-12 disabled:opacity-75 disabled:cursor-not-allowed"
                   style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
                 />
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-mono text-ink-3">EUR</span>
@@ -103,14 +114,15 @@ export function CourseSettingsClient({ course }: { course: Course }) {
                 name="description" 
                 required 
                 rows={4}
+                disabled={readOnly}
                 defaultValue={course.description}
-                className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all resize-none"
+                className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all resize-none disabled:opacity-75 disabled:cursor-not-allowed"
                 style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
               />
             </div>
 
             <div>
-              <label className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-2">Titelbild ändern</label>
+              <label className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-2">Titelbild</label>
               {course.imageUrl && (
                 <div className="mb-4">
                   <p className="text-[11px] font-mono text-ink-3 mb-1.5 uppercase tracking-wider">Aktuelles Bild:</p>
@@ -118,15 +130,17 @@ export function CourseSettingsClient({ course }: { course: Course }) {
                   <img src={course.imageUrl} alt="Current cover" className="w-48 h-32 object-cover rounded-xl border border-line" />
                 </div>
               )}
-              <ImagePicker />
+              {!readOnly && <ImagePicker />}
             </div>
           </div>
           
-          <div className="mt-4 flex justify-end">
-            <button type="submit" className="btn blue" disabled={isLoading}>
-              {isLoading ? "Speichere..." : "Änderungen speichern"}
-            </button>
-          </div>
+          {!readOnly && (
+            <div className="mt-4 flex justify-end">
+              <button type="submit" className="btn blue" disabled={isLoading}>
+                {isLoading ? "Speichere..." : "Änderungen speichern"}
+              </button>
+            </div>
+          )}
         </form>
       </div>
     </div>

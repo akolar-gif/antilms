@@ -6,6 +6,7 @@ import { uploadImageAction } from "./upload";
 import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { verifySession } from "@/lib/session";
+import { cookies } from "next/headers";
 
 export async function createCourseAction(formData: FormData) {
   const title = formData.get("title") as string;
@@ -35,6 +36,11 @@ export async function createCourseAction(formData: FormData) {
     finalImageUrl = stockImageUrl;
   }
 
+  const cookieStore = await cookies();
+  const token = cookieStore.get("user_session")?.value;
+  const user = token ? await verifySession(token) : null;
+  const createdBy = user ? user.id : "Trainer";
+
   // Create course
   const course = await store.createCourse({
     title,
@@ -44,7 +50,7 @@ export async function createCourseAction(formData: FormData) {
     imageUrl: finalImageUrl,
     type,
     sprintCourseIds,
-    createdBy: "Trainer",
+    createdBy,
   });
 
   // Create a default first module (only for non-tracks)
@@ -143,7 +149,6 @@ export async function updateModuleAction(courseId: string, moduleId: string, inp
 
 import { RealAIProvider } from "@/lib/ai/real-provider";
 import { GeneratedCurriculumResult } from "@/lib/ai/provider";
-import { cookies } from "next/headers";
 
 const aiProvider = new RealAIProvider();
 

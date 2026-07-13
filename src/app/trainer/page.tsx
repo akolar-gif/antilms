@@ -67,7 +67,11 @@ export default async function TrainerDashboard({ searchParams }: PageProps) {
         <span className="meta">{t("trainer.paths_meta", { count: String(courses.length).padStart(2, "0") })}</span>
       </div>
 
-      <CourseListClient courses={courses} role="trainer" />
+      <CourseListClient 
+        courses={courses} 
+        role="trainer" 
+        currentUserId={user?.id || ""} 
+      />
     </div>
   );
 }

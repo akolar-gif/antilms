@@ -5,6 +5,7 @@ import { SidebarModules } from "@/components/trainer/sidebar-modules";
 import { SidebarModuleActions } from "@/components/trainer/sidebar-actions";
 import { cookies } from "next/headers";
 import { translations } from "@/components/layout/translations";
+import { verifySession } from "@/lib/session";
 
 export const dynamic = 'force-dynamic';
 import { publishCourseAction } from "@/app/actions/course";
@@ -23,9 +24,14 @@ export default async function CourseEditorLayout({
     notFound();
   }
 
-  const modules = await store.getModules(courseId);
-
   const cookieStore = await cookies();
+  const token = cookieStore.get("user_session")?.value;
+  const user = token ? await verifySession(token) : null;
+  const currentUserId = user?.id || "";
+  const isOwner = !course.createdBy || course.createdBy === "Trainer" || course.createdBy === currentUserId;
+
+  const modules = isOwner ? await store.getModules(courseId) : [];
+
   const lang = (cookieStore.get("lang")?.value || "de") as "de" | "en";
   const dict = translations[lang] || translations.de;
   const t = (key: keyof typeof translations.de, params?: Record<string, string>) => {
@@ -70,7 +76,7 @@ export default async function CourseEditorLayout({
                 {statusLabel}
               </span>
               
-              {course.status === "draft" && (
+              {isOwner && course.status === "draft" && (
                 <form action={publishCourseAction.bind(null, course.id)}>
                   <button type="submit" className="text-xs font-mono font-bold text-blue hover:underline bg-transparent border-none cursor-pointer">
                     {lang === 'en' ? 'Submit' : 'Freigeben'}
@@ -95,18 +101,30 @@ export default async function CourseEditorLayout({
             {t("trainer.settings")}
           </Link>
 
-          <Link 
-            href={`/trainer/courses/${course.id}/analytics`}
-            className="block p-3 rounded-xl border border-line text-xs font-mono uppercase tracking-wider text-center text-ink hover:bg-paper-3 transition-colors"
-            style={{ background: "var(--paper)" }}
-          >
-            {lang === 'en' ? 'Analytics & Reflections' : 'Fortschritt & Analysen'}
-          </Link>
+          {isOwner && (
+            <Link 
+              href={`/trainer/courses/${course.id}/analytics`}
+              className="block p-3 rounded-xl border border-line text-xs font-mono uppercase tracking-wider text-center text-ink hover:bg-paper-3 transition-colors"
+              style={{ background: "var(--paper)" }}
+            >
+              {lang === 'en' ? 'Analytics & Reflections' : 'Fortschritt & Analysen'}
+            </Link>
+          )}
 
           <div>
             <div className="text-xs font-mono uppercase tracking-widest text-ink-3 mb-3">{t("trainer.modules_title")}</div>
-            <SidebarModules courseId={course.id} modules={modules} />
-            <SidebarModuleActions courseId={course.id} />
+            {isOwner ? (
+              <>
+                <SidebarModules courseId={course.id} modules={modules} />
+                <SidebarModuleActions courseId={course.id} />
+              </>
+            ) : (
+              <div className="p-3 bg-coral/5 border border-coral/10 rounded-xl text-coral text-[11px] font-mono leading-normal">
+                🔒 {lang === "de" 
+                  ? "Inhalte geschützt. Du bist nicht der Ersteller dieses Kurses." 
+                  : "Contents locked. You are not the creator of this course."}
+              </div>
+            )}
           </div>
         </div>
       </aside>
