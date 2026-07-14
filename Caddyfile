@@ -1,3 +1,12 @@
 http://82.165.60.238, innoversity.berlin, www.innoversity.berlin {
-    reverse_proxy web:3000
+    # Mediadateien direkt über Caddy ausliefern (spart Node.js Arbeitsspeicher & ermöglicht schnelles Video-Streaming)
+    handle_path /uploads/* {
+        root * /var/www/uploads
+        file_server
+    }
+
+    # Alles andere an Next.js weiterleiten
+    handle {
+        reverse_proxy web:3000
+    }
 }
