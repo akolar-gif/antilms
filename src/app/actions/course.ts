@@ -389,3 +389,69 @@ export async function createCustomTrackAction(
     return { success: false, error: "Fehler beim Erstellen des Skill Tracks." };
   }
 }
+
+export async function importCourseAction(data: any): Promise<{ success: boolean; courseId?: string; error?: string }> {
+  try {
+    if (!data || typeof data !== "object") {
+      return { success: false, error: "Ungültige Kursdaten." };
+    }
+
+    const { title, description } = data;
+    if (!title || !description) {
+      return { success: false, error: "Titel und Beschreibung sind erforderlich." };
+    }
+
+    const cookieStore = await cookies();
+    const token = cookieStore.get("user_session")?.value;
+    const user = token ? await verifySession(token) : null;
+    if (!user) {
+      return { success: false, error: "Nicht angemeldet." };
+    }
+
+    // Create course
+    const course = await store.createCourse({
+      title,
+      description,
+      targetGroup: data.targetGroup || "General",
+      category: data.category || "Importiert",
+      imageUrl: data.imageUrl || undefined,
+      type: data.type === "sprint" ? "sprint" : "comprehensive",
+      price: data.price !== undefined ? Number(data.price) : undefined,
+      createdBy: user.id,
+      status: "draft",
+    });
+
+    // Create modules and blocks
+    const modulesData = Array.isArray(data.modules) ? data.modules : [];
+    for (let mIdx = 0; mIdx < modulesData.length; mIdx++) {
+      const modData = modulesData[mIdx];
+      const moduleTitle = modData.title || `Modul ${mIdx + 1}`;
+      
+      const mod = await store.createModule(course.id, {
+        title: moduleTitle,
+        orderIndex: mIdx,
+      });
+
+      const blocksData = Array.isArray(modData.blocks) ? modData.blocks : [];
+      for (let bIdx = 0; bIdx < blocksData.length; bIdx++) {
+        const blockData = blocksData[bIdx];
+        await store.createBlock({
+          moduleId: mod.id,
+          type: blockData.type || "text",
+          title: blockData.title || "Lerneinheit",
+          content: blockData.content || "",
+          settings: blockData.settings || {},
+          orderIndex: bIdx,
+        });
+      }
+    }
+
+    const { revalidatePath } = await import("next/cache");
+    revalidatePath("/trainer");
+
+    return { success: true, courseId: course.id };
+  } catch (error) {
+    console.error("Failed to import course:", error);
+    return { success: false, error: "Fehler beim Importieren des Kurses." };
+  }
+}

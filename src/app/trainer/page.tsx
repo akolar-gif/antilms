@@ -1,5 +1,6 @@
 import { store } from "@/lib/store";
 import { CreateCourseForm } from "@/components/trainer/create-course-form";
+import { ImportCourseForm } from "@/components/trainer/import-course-form";
 import { CourseListClient } from "@/components/trainer/course-list-client";
 import { cookies } from "next/headers";
 import { translations } from "@/components/layout/translations";
@@ -60,6 +61,7 @@ export default async function TrainerDashboard({ searchParams }: PageProps) {
               initialOpen={autoCreate} 
               sprints={courses.filter(c => c.type === "sprint")} 
             />
+            <ImportCourseForm />
           </div>
         </div>
       </div>
