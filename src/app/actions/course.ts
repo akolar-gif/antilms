@@ -447,11 +447,52 @@ export async function importCourseAction(data: any): Promise<{ success: boolean;
           learningMode = "co-design";
         }
 
+        let contentValue = blockData.content || "";
+        
+        if (blockData.type === "quiz") {
+          let correctAnswerText = "";
+          if (blockData.settings?.correctAnswer !== undefined) {
+            const idx = Number(blockData.settings.correctAnswer);
+            if (Array.isArray(blockData.settings.options) && idx >= 0 && idx < blockData.settings.options.length) {
+              correctAnswerText = blockData.settings.options[idx];
+            } else {
+              correctAnswerText = String(blockData.settings.correctAnswer);
+            }
+          }
+          contentValue = JSON.stringify({
+            question: blockData.settings?.question || blockData.content || "",
+            options: blockData.settings?.options || [],
+            correctAnswer: correctAnswerText,
+            explanation: blockData.settings?.explanation || ""
+          });
+        } else if (blockData.type === "reflection") {
+          contentValue = JSON.stringify({
+            reflectionPrompt: blockData.content || "",
+            followUpQuestions: blockData.settings?.followUpQuestions || []
+          });
+        } else if (blockData.type === "punk_game") {
+          contentValue = JSON.stringify({
+            scenario: blockData.settings?.scenario || blockData.content || "",
+            task: blockData.settings?.task || "",
+            timeboxMinutes: blockData.settings?.timeboxMinutes || 8,
+            evaluationCriteria: blockData.settings?.evaluationCriteria || []
+          });
+        } else if (blockData.type === "project_task") {
+          contentValue = JSON.stringify({
+            title: blockData.title || "",
+            scenario: blockData.settings?.scenario || blockData.content || "",
+            task: blockData.settings?.task || "",
+            deliverable: blockData.settings?.deliverable || "",
+            constraints: blockData.settings?.constraints || [],
+            reflectionPrompt: blockData.settings?.reflectionPrompt || ""
+          });
+        }
+
         await store.createBlock({
           moduleId: mod.id,
           type: blockData.type || "text",
           title: blockData.title || "Lerneinheit",
-          content: blockData.content || "",
+          content: contentValue,
           learningMode,
           source: "user_created",
           metadata: blockData.settings || {},
