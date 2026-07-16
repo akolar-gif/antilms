@@ -21,73 +21,149 @@ Hier ist das formale JSON-Schema zur Validierung:
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "InnoversityCourseImport",
-  "type": "OBJECT",
+  "type": "object",
   "required": ["title", "description"],
+  "additionalProperties": false,
   "properties": {
     "title": {
-      "type": "STRING",
+      "type": "string",
       "description": "Der Name des Kurses (z.B. für die Bibliothekskarte)."
     },
     "description": {
-      "type": "STRING",
+      "type": "string",
       "description": "Ausführliche Beschreibung des Kurses, die auf der Buchungsseite angezeigt wird."
     },
     "category": {
-      "type": "STRING",
+      "type": "string",
       "default": "Importiert",
       "description": "Rubrik zur Einsortierung (z.B. Leadership, Tech, HR)."
     },
     "type": {
-      "type": "STRING",
+      "type": "string",
       "enum": ["comprehensive", "sprint"],
       "default": "comprehensive",
       "description": "Kurstyp: 'comprehensive' (Standard-Kurs) oder 'sprint' (Skill Sprint)."
     },
     "price": {
-      "type": "NUMBER",
-      "description": "Verkaufspreis in Euro. Leer lassen für Standardpreis (49€). Setze 0 für kostenlos."
+      "type": "number",
+      "description": "Verkaufspreis in Euro. Muss eine Zahl sein (z.B. 29.90). Leer lassen für Standardpreis (49€)."
     },
     "imageUrl": {
-      "type": "STRING",
+      "type": "string",
       "format": "uri",
       "description": "Optionale URL zu einem Titelbild."
     },
     "modules": {
-      "type": "ARRAY",
+      "type": "array",
       "description": "Liste der Module (Kapitel). Werden in der Reihenfolge des Arrays importiert.",
       "items": {
-        "type": "OBJECT",
+        "type": "object",
         "required": ["title"],
+        "additionalProperties": false,
         "properties": {
           "title": {
-            "type": "STRING",
+            "type": "string",
             "description": "Name des Moduls."
           },
           "blocks": {
-            "type": "ARRAY",
+            "type": "array",
             "description": "Lerneinheiten (Lektionen) innerhalb des Moduls.",
             "items": {
-              "type": "OBJECT",
+              "type": "object",
               "required": ["type", "title"],
+              "additionalProperties": false,
               "properties": {
                 "type": {
-                  "type": "STRING",
+                  "type": "string",
                   "enum": ["text", "quiz", "reflection", "ai_chat", "video", "audio"],
                   "description": "Inhaltstyp der Lerneinheit."
                 },
                 "title": {
-                  "type": "STRING",
+                  "type": "string",
                   "description": "Name der Lerneinheit (wird in der Navigation angezeigt)."
                 },
                 "content": {
-                  "type": "STRING",
+                  "type": "string",
                   "description": "Der Hauptinhalt (Freitext oder Markdown) für Text-, Reflexions- oder Chat-Blöcke."
                 },
                 "settings": {
-                  "type": "OBJECT",
-                  "description": "Spezifische Einstellungen je nach Lerneinheitstyp (siehe Abschnitt 3)."
+                  "type": "object",
+                  "description": "Spezifische Einstellungen je nach Lerneinheitstyp.",
+                  "additionalProperties": false,
+                  "properties": {
+                    "question": {
+                      "type": "string",
+                      "description": "Nur für 'quiz': Die Frage."
+                    },
+                    "options": {
+                      "type": "array",
+                      "description": "Nur für 'quiz': Antwortmöglichkeiten.",
+                      "items": { "type": "string" }
+                    },
+                    "correctAnswer": {
+                      "type": "number",
+                      "description": "Nur für 'quiz': 0-basierter Index der richtigen Antwort."
+                    },
+                    "systemPrompt": {
+                      "type": "string",
+                      "description": "Nur für 'ai_chat': System-Prompt für den KI-Begleiter."
+                    },
+                    "mediaUrl": {
+                      "type": "string",
+                      "description": "Nur für 'video'/'audio': Dateipfad oder externe URL."
+                    }
+                  }
                 }
-              }
+              },
+              "allOf": [
+                {
+                  "if": {
+                    "properties": { "type": { "const": "quiz" } }
+                  },
+                  "then": {
+                    "required": ["settings"],
+                    "properties": {
+                      "settings": {
+                        "required": ["question", "options", "correctAnswer"]
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": { "type": { "const": "ai_chat" } }
+                  },
+                  "then": {
+                    "required": ["content", "settings"],
+                    "properties": {
+                      "settings": {
+                        "required": ["systemPrompt"]
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": { "type": { "const": "reflection" } }
+                  },
+                  "then": {
+                    "required": ["content"]
+                  }
+                },
+                {
+                  "if": {
+                    "properties": { "type": { "enum": ["video", "audio"] } }
+                  },
+                  "then": {
+                    "required": ["settings"],
+                    "properties": {
+                      "settings": {
+                        "required": ["mediaUrl"]
+                      }
+                    }
+                  }
+                }
+              ]
             }
           }
         }
