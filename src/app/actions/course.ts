@@ -427,21 +427,34 @@ export async function importCourseAction(data: any): Promise<{ success: boolean;
       const modData = modulesData[mIdx];
       const moduleTitle = modData.title || `Modul ${mIdx + 1}`;
       
-      const mod = await store.createModule(course.id, {
+      const mod = await store.createModule({
+        courseId: course.id,
         title: moduleTitle,
-        orderIndex: mIdx,
+        description: "",
+        learningObjectives: [],
       });
 
       const blocksData = Array.isArray(modData.blocks) ? modData.blocks : [];
       for (let bIdx = 0; bIdx < blocksData.length; bIdx++) {
         const blockData = blocksData[bIdx];
+        
+        let learningMode: "understand" | "practice" | "reflect" | "co-design" = "understand";
+        if (blockData.type === "quiz") {
+          learningMode = "practice";
+        } else if (blockData.type === "reflection") {
+          learningMode = "reflect";
+        } else if (blockData.type === "ai_chat") {
+          learningMode = "co-design";
+        }
+
         await store.createBlock({
           moduleId: mod.id,
           type: blockData.type || "text",
           title: blockData.title || "Lerneinheit",
           content: blockData.content || "",
-          settings: blockData.settings || {},
-          orderIndex: bIdx,
+          learningMode,
+          source: "user_created",
+          metadata: blockData.settings || {},
         });
       }
     }
