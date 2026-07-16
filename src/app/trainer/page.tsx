@@ -3,6 +3,7 @@ import { CreateCourseForm } from "@/components/trainer/create-course-form";
 import { CourseListClient } from "@/components/trainer/course-list-client";
 import { cookies } from "next/headers";
 import { translations } from "@/components/layout/translations";
+import { verifySession } from "@/lib/session";
 
 export const dynamic = 'force-dynamic';
 
@@ -16,6 +17,8 @@ export default async function TrainerDashboard({ searchParams }: PageProps) {
   const courses = await store.getCourses();
 
   const cookieStore = await cookies();
+  const token = cookieStore.get("user_session")?.value;
+  const user = token ? await verifySession(token) : null;
   const lang = (cookieStore.get("lang")?.value || "de") as "de" | "en";
   const dict = translations[lang] || translations.de;
   const t = (key: keyof typeof translations.de, params?: Record<string, string>) => {
