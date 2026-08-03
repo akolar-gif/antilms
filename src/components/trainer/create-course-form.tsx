@@ -33,16 +33,65 @@ export function CreateCourseForm({ initialOpen, sprints = [] }: CreateCourseForm
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const text = event.target?.result as string;
-      setCurriculumText(text);
-      toast.success(`Lehrplan aus "${file.name}" geladen!`);
-    };
-    reader.onerror = () => {
-      toast.error("Fehler beim Lesen der Datei.");
-    };
-    reader.readAsText(file);
+    if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
+      const toastId = toast.loading("PDF wird eingelesen...");
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const arrayBuffer = event.target?.result as ArrayBuffer;
+          
+          // Load PDF.js dynamically
+          const loadPdfJs = () => {
+            return new Promise<any>((resolve, reject) => {
+              if ((window as any).pdfjsLib) {
+                resolve((window as any).pdfjsLib);
+                return;
+              }
+              const script = document.createElement("script");
+              script.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js";
+              script.onload = () => resolve((window as any).pdfjsLib);
+              script.onerror = () => reject(new Error("PDF-Parser konnte nicht geladen werden."));
+              document.head.appendChild(script);
+            });
+          };
+
+          const pdfjs = await loadPdfJs();
+          pdfjs.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+
+          const loadingTask = pdfjs.getDocument({ data: new Uint8Array(arrayBuffer) });
+          const pdf = await loadingTask.promise;
+          let fullText = "";
+
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            const pageText = textContent.items.map((item: any) => item.str).join(" ");
+            fullText += pageText + "\n";
+          }
+
+          setCurriculumText(fullText);
+          toast.success(`Lehrplan aus PDF (${pdf.numPages} Seiten) extrahiert!`, { id: toastId });
+        } catch (error) {
+          console.error(error);
+          toast.error("Fehler beim Extrahieren der PDF-Inhalte.", { id: toastId });
+        }
+      };
+      reader.onerror = () => {
+        toast.error("Fehler beim Lesen der Datei.", { id: toastId });
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const text = event.target?.result as string;
+        setCurriculumText(text);
+        toast.success(`Lehrplan aus "${file.name}" geladen!`);
+      };
+      reader.onerror = () => {
+        toast.error("Fehler beim Lesen der Datei.");
+      };
+      reader.readAsText(file);
+    }
   };
 
   const handleClose = () => {
@@ -298,13 +347,13 @@ export function CreateCourseForm({ initialOpen, sprints = [] }: CreateCourseForm
                     </div>
 
                     <div className="border-t border-line/60 pt-2 flex items-center justify-between gap-2">
-                      <span className="text-[10px] text-ink-3">Oder lade eine Lehrplandatei hoch (.txt, .md):</span>
+                      <span className="text-[10px] text-ink-3">Oder lade eine Lehrplandatei hoch (.txt, .md, .pdf):</span>
                       <label className="flex items-center gap-1 bg-blue/10 hover:bg-blue/20 text-blue font-bold px-2.5 py-1.5 rounded-lg text-[10px] cursor-pointer transition-colors border border-blue/15">
                         <Upload className="w-3 h-3" />
                         Datei auswählen
                         <input
                           type="file"
-                          accept=".txt,.md"
+                          accept=".txt,.md,.pdf"
                           onChange={handleFileChange}
                           className="hidden"
                         />
