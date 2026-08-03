@@ -285,7 +285,7 @@ Format your reply in Markdown.` + getLanguageInstruction(input.language);
             content: z.string(),
             learningMode: z.enum(["understand", "practice", "reflect", "apply", "create", "discuss", "test", "transfer", "challenge"])
           })).min(1)
-        })).min(1).max(5)
+        })).min(1).max(15)
       }),
       prompt,
     });

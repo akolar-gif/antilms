@@ -117,11 +117,14 @@ INSTEAD, focus on real-world business, product design, creative strategy, team c
 TONE CONSTRAINT:
 All German learning content (texts, quiz questions, reflection prompts, tasks, scenarios, descriptions) MUST address the learner using the informal 'du' (Du-Form) e.g., 'du', 'dir', 'dein'. NEVER use the formal 'Sie' or 'Ihr'.
 
-You must structure the response as a list of 3-4 modules.
+MODULE STRUCTURE INSTRUCTION:
+- If a custom curriculum/syllabus outline is provided at the bottom of this prompt: You MUST create exactly one module for each main topic/theme numbered in that syllabus (do NOT merge them or skip any; if the syllabus has 7 or 10 topics, generate exactly 7 or 10 modules). The learning blocks for each module must cover the subtopics listed under that specific main topic.
+- Otherwise (if no custom syllabus is provided): You must structure the response as a list of 3-4 modules.
+
 For each module:
 1. Provide a title and short description.
 2. Define 2-3 key learning objectives.
-3. Generate 3-4 learning blocks of different types that support the module's objectives.
+3. Generate 2-3 learning blocks of different types that support the module's objectives (such as text, quiz, reflection, punk_game, or project_task).
    The block types you can use are:
    - "text": For introducing concepts or providing reading material. Content is raw text/markdown.
    - "quiz": For quick comprehension checks. Content MUST be a JSON string of schema: {"question": string, "options": string[], "correctAnswer": string, "explanation": string} (with exactly 3 or 4 options, correctAnswer must match one of the options).
