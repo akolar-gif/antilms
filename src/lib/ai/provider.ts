@@ -64,6 +64,7 @@ export interface GenerateCurriculumInput {
   title: string;
   description: string;
   language?: string;
+  curriculumSyllabus?: string;
 }
 
 export interface GeneratedBlock {

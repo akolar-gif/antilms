@@ -7,7 +7,7 @@ import { uploadImageAction } from "@/app/actions/upload";
 import { ImagePicker } from "@/components/trainer/image-picker";
 import { CurriculumWizard } from "./curriculum-wizard";
 import { GeneratedCurriculumResult } from "@/lib/ai/provider";
-import { Sparkles, X, BookOpen, FastForward, Link as LinkIcon } from "lucide-react";
+import { Sparkles, X, BookOpen, FastForward, Link as LinkIcon, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "@/components/layout/language-context";
 import { Course } from "@/types";
@@ -22,11 +22,28 @@ export function CreateCourseForm({ initialOpen, sprints = [] }: CreateCourseForm
   const [isOpen, setIsOpen] = useState(initialOpen || false);
   const [isLoading, setIsLoading] = useState(false);
   const [generateWithAI, setGenerateWithAI] = useState(false);
+  const [curriculumText, setCurriculumText] = useState("");
   const [generatedCurriculum, setGeneratedCurriculum] = useState<GeneratedCurriculumResult | null>(null);
   const [tempCourseData, setTempCourseData] = useState<any>(null);
   const [courseType, setCourseType] = useState<"comprehensive" | "sprint" | "track">("comprehensive");
   const [selectedSprintIds, setSelectedSprintIds] = useState<string[]>([]);
   const { t } = useTranslation();
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target?.result as string;
+      setCurriculumText(text);
+      toast.success(`Lehrplan aus "${file.name}" geladen!`);
+    };
+    reader.onerror = () => {
+      toast.error("Fehler beim Lesen der Datei.");
+    };
+    reader.readAsText(file);
+  };
 
   const handleClose = () => {
     setIsOpen(false);
@@ -84,7 +101,7 @@ export function CreateCourseForm({ initialOpen, sprints = [] }: CreateCourseForm
 
       if (useAI) {
         // Call server action to generate modules & blocks
-        const curriculum = await generateCurriculumAction(title, description);
+        const curriculum = await generateCurriculumAction(title, description, curriculumText || undefined);
         setTempCourseData({ title, description, category, imageUrl: finalImageUrl, type: courseType });
         setGeneratedCurriculum(curriculum);
         toast.success(t("creator.toast_gen_success"), { id: toastId });
@@ -244,21 +261,57 @@ export function CreateCourseForm({ initialOpen, sprints = [] }: CreateCourseForm
 
             {/* AI Toggle Option */}
             {courseType !== "track" && (
-              <div 
-                className="flex items-center gap-3 p-4 border border-line rounded-2xl"
-                style={{ background: "var(--paper-2)" }}
-              >
-                <input 
-                  type="checkbox" 
-                  id="generateWithAI" 
-                  checked={generateWithAI}
-                  onChange={(e) => setGenerateWithAI(e.target.checked)}
-                  className="w-4 h-4 cursor-pointer accent-blue"
-                />
-                <label htmlFor="generateWithAI" className="text-sm font-bold text-ink flex items-center gap-1.5 cursor-pointer select-none">
-                  <Sparkles className="w-4 h-4 text-blue animate-pulse" />
-                  {t("creator.co_design")}
-                </label>
+              <div className="flex flex-col gap-3">
+                <div 
+                  className="flex items-center gap-3 p-4 border border-line rounded-2xl"
+                  style={{ background: "var(--paper-2)" }}
+                >
+                  <input 
+                    type="checkbox" 
+                    id="generateWithAI" 
+                    checked={generateWithAI}
+                    onChange={(e) => setGenerateWithAI(e.target.checked)}
+                    className="w-4 h-4 cursor-pointer accent-blue"
+                  />
+                  <label htmlFor="generateWithAI" className="text-sm font-bold text-ink flex items-center gap-1.5 cursor-pointer select-none">
+                    <Sparkles className="w-4 h-4 text-blue animate-pulse" />
+                    {t("creator.co_design")}
+                  </label>
+                </div>
+
+                {generateWithAI && (
+                  <div className="flex flex-col gap-3 p-4 border border-line rounded-2xl bg-paper-2 animate-in slide-in-from-top-2 duration-200">
+                    <div>
+                      <label htmlFor="curriculumText" className="block text-[10px] font-mono uppercase tracking-wider text-ink-3 mb-1">
+                        Bestehender Lehrplan / Syllabus Outline (Optional)
+                      </label>
+                      <textarea
+                        id="curriculumText"
+                        name="curriculumText"
+                        value={curriculumText}
+                        onChange={(e) => setCurriculumText(e.target.value)}
+                        placeholder="Füge hier deine Agenda, ein PDF als Textkopie oder eine Themen-Gliederung ein. Die KI richtet sich exakt nach diesem Ablauf."
+                        rows={4}
+                        className="w-full p-2.5 border border-line rounded-xl outline-none focus:border-blue text-xs resize-none"
+                        style={{ background: "var(--paper)", color: "var(--ink)" }}
+                      />
+                    </div>
+
+                    <div className="border-t border-line/60 pt-2 flex items-center justify-between gap-2">
+                      <span className="text-[10px] text-ink-3">Oder lade eine Lehrplandatei hoch (.txt, .md):</span>
+                      <label className="flex items-center gap-1 bg-blue/10 hover:bg-blue/20 text-blue font-bold px-2.5 py-1.5 rounded-lg text-[10px] cursor-pointer transition-colors border border-blue/15">
+                        <Upload className="w-3 h-3" />
+                        Datei auswählen
+                        <input
+                          type="file"
+                          accept=".txt,.md"
+                          onChange={handleFileChange}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

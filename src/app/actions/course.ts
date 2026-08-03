@@ -174,13 +174,13 @@ import { GeneratedCurriculumResult } from "@/lib/ai/provider";
 
 const aiProvider = new RealAIProvider();
 
-export async function generateCurriculumAction(title: string, description: string): Promise<GeneratedCurriculumResult> {
+export async function generateCurriculumAction(title: string, description: string, curriculumSyllabus?: string): Promise<GeneratedCurriculumResult> {
   if (!title || !description) {
     throw new Error("Title and description are required.");
   }
   const cookieStore = await cookies();
   const language = cookieStore.get("lang")?.value || "de";
-  return await aiProvider.generateCurriculum({ title, description, language });
+  return await aiProvider.generateCurriculum({ title, description, language, curriculumSyllabus });
 }
 
 export async function saveCurriculumAction(

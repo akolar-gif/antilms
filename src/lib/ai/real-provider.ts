@@ -262,10 +262,15 @@ Format your reply in Markdown.` + getLanguageInstruction(input.language);
   }
 
   async generateCurriculum(input: GenerateCurriculumInput): Promise<GeneratedCurriculumResult> {
-    const prompt = PROMPT_TEMPLATES.generateCurriculum
+    let prompt = PROMPT_TEMPLATES.generateCurriculum
       .replace("{{title}}", input.title)
-      .replace("{{description}}", input.description)
-      + getLanguageInstruction(input.language);
+      .replace("{{description}}", input.description);
+
+    if (input.curriculumSyllabus) {
+      prompt += `\n\nCRITICAL REQUIREMENT:\nThe user has uploaded/provided the following existing curriculum/syllabus outline as a base. You MUST map your generated modules and blocks to fit this exact outline structure, expanding the lessons with appropriate didactical content (like quizzes, reflections, etc.) conforming to our didactical manifest:\n\n=== CURRICULUM SYLLABUS ===\n${input.curriculumSyllabus}\n===========================`;
+    }
+
+    prompt += getLanguageInstruction(input.language);
 
     const { object } = await generateObject({
       model: this.model,
