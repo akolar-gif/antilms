@@ -1,4 +1,4 @@
-import { Course, Module, LearningBlock, Reflection, User, UserRecord, Role } from "@/types";
+import { Course, Module, LearningBlock, Reflection, User, UserRecord, Role, Submission, SubmissionFeedback } from "@/types";
 
 export interface CreateCourseInput {
   title: string;
@@ -12,6 +12,11 @@ export interface CreateCourseInput {
   isCustom?: boolean;
   learnerId?: string;
   price?: number;
+  learningOutcomes?: string[];
+  competencyTags?: string[];
+  estimatedMinutes?: number;
+  difficulty?: Course["difficulty"];
+  prerequisiteCourseIds?: string[];
 }
 
 export type UpdateCourseInput = Partial<CreateCourseInput> & {
@@ -23,6 +28,11 @@ export interface CreateModuleInput {
   title: string;
   description: string;
   learningObjectives: string[];
+  competencyTags?: string[];
+  estimatedMinutes?: number;
+  difficulty?: Module["difficulty"];
+  prerequisiteModuleIds?: string[];
+  successCriteria?: string[];
 }
 
 export type UpdateModuleInput = Partial<Omit<CreateModuleInput, "courseId">>;
@@ -35,6 +45,9 @@ export interface CreateBlockInput {
   learningMode?: LearningBlock["learningMode"];
   source: LearningBlock["source"];
   metadata?: Record<string, any>;
+  competencyTags?: string[];
+  estimatedMinutes?: number;
+  assessmentRole?: LearningBlock["assessmentRole"];
 }
 
 export type UpdateBlockInput = Partial<Omit<CreateBlockInput, "moduleId" | "type">>;
@@ -69,6 +82,13 @@ export interface LearningStore {
   getReflections(userId: string): Promise<Reflection[]>;
   saveReflection(userId: string, blockId: string, content: string, confidence: number, difficulty: number): Promise<Reflection>;
   getCourseReflections(courseId: string): Promise<(Reflection & { userName: string; blockTitle: string })[]>;
+
+  // Submission methods
+  getSubmission(userId: string, blockId: string): Promise<Submission | null>;
+  saveSubmission(userId: string, blockId: string, solution: string, reflection?: string): Promise<Submission>;
+  updateSubmissionFeedback(id: string, feedback: SubmissionFeedback[]): Promise<Submission>;
+  saveSubmissionRevision(id: string, solution: string, reflection?: string): Promise<Submission>;
+  updateMasteryStatus(id: string, status: "not_assessed" | "developing" | "demonstrated"): Promise<Submission>;
   
   // User methods
   getUser(id: string): Promise<User | null>;

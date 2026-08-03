@@ -9,12 +9,14 @@ export function MentorChat({
   courseId, 
   moduleId, 
   activeContext,
-  moduleTitle
+  moduleTitle,
+  activeBlockId
 }: { 
   courseId: string; 
   moduleId: string; 
   activeContext?: string;
   moduleTitle?: string;
+  activeBlockId?: string;
 }) {
   const { t, language } = useTranslation();
 
@@ -73,7 +75,8 @@ export function MentorChat({
         learnerMessage: text,
         courseContext: courseId,
         moduleContext: moduleId + (activeContext ? `\n\nAktueller aktiver Block:\n${activeContext}` : ''),
-        language
+        language,
+        blockId: activeBlockId
       });
 
       const formattedAnswer = `${response.answer}${response.question ? `\n\n${response.question}` : ''}${response.nextStep ? `\n\n${response.nextStep}` : ''}`;

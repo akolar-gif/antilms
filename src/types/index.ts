@@ -33,6 +33,11 @@ export interface Course {
   isCustom?: boolean;
   learnerId?: string;
   price?: number;
+  learningOutcomes?: string[];
+  competencyTags?: string[];
+  estimatedMinutes?: number;
+  difficulty?: "beginner" | "intermediate" | "advanced";
+  prerequisiteCourseIds?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -44,6 +49,11 @@ export interface Module {
   description: string;
   order: number;
   learningObjectives: string[];
+  competencyTags?: string[];
+  estimatedMinutes?: number;
+  difficulty?: "beginner" | "intermediate" | "advanced";
+  prerequisiteModuleIds?: string[];
+  successCriteria?: string[];
 }
 
 export type BlockType = "text" | "quiz" | "reflection" | "ai_chat" | "project_task" | "media" | "video" | "code" | "punk_game" | "audio";
@@ -60,6 +70,34 @@ export interface LearningBlock {
   learningMode?: LearningMode;
   source: BlockSource;
   metadata?: Record<string, any>;
+  competencyTags?: string[];
+  estimatedMinutes?: number;
+  assessmentRole?: "none" | "practice" | "formative" | "mastery";
+}
+
+export interface SubmissionFeedback {
+  id: string;
+  source: "ai" | "peer" | "trainer" | "self";
+  evaluatorId?: string; // "ai" or user_id
+  text: string;
+  createdAt: string;
+}
+
+export interface SubmissionVersion {
+  solution: string;
+  reflection?: string;
+  feedback?: SubmissionFeedback[];
+  createdAt: string;
+}
+
+export interface Submission {
+  id: string;
+  learnerId: string;
+  blockId: string;
+  versions: SubmissionVersion[];
+  masteryStatus: "not_assessed" | "developing" | "demonstrated";
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface QuizQuestion {

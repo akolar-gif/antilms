@@ -1,5 +1,5 @@
 import { LearningStore, CreateCourseInput, UpdateCourseInput, CreateModuleInput, UpdateModuleInput, CreateBlockInput, UpdateBlockInput } from "./types";
-import { Course, Module, LearningBlock, Reflection, User, UserRecord, Role } from "@/types";
+import { Course, Module, LearningBlock, Reflection, User, UserRecord, Role, Submission, SubmissionFeedback } from "@/types";
 import { pool } from "../db";
 
 function mapCourseFromDb(row: any): Course {
@@ -21,6 +21,11 @@ function mapCourseFromDb(row: any): Course {
     isCustom: !!row.is_custom,
     learnerId: row.learner_id || undefined,
     price: row.price !== null && row.price !== undefined ? parseFloat(row.price) : undefined,
+    learningOutcomes: Array.isArray(row.learning_outcomes) ? row.learning_outcomes : (typeof row.learning_outcomes === "string" ? JSON.parse(row.learning_outcomes || "[]") : (row.learning_outcomes || [])),
+    competencyTags: Array.isArray(row.competency_tags) ? row.competency_tags : (typeof row.competency_tags === "string" ? JSON.parse(row.competency_tags || "[]") : (row.competency_tags || [])),
+    estimatedMinutes: row.estimated_minutes !== null && row.estimated_minutes !== undefined ? parseInt(row.estimated_minutes) : undefined,
+    difficulty: row.difficulty || undefined,
+    prerequisiteCourseIds: Array.isArray(row.prerequisite_course_ids) ? row.prerequisite_course_ids : (typeof row.prerequisite_course_ids === "string" ? JSON.parse(row.prerequisite_course_ids || "[]") : (row.prerequisite_course_ids || [])),
     createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
     updatedAt: row.updated_at instanceof Date ? row.updated_at.toISOString() : row.updated_at,
   };
@@ -36,6 +41,11 @@ function mapModuleFromDb(row: any): Module {
     learningObjectives: Array.isArray(row.learning_objectives) 
       ? row.learning_objectives 
       : JSON.parse(row.learning_objectives || "[]"),
+    competencyTags: Array.isArray(row.competency_tags) ? row.competency_tags : (row.competency_tags ? (typeof row.competency_tags === "string" ? JSON.parse(row.competency_tags) : row.competency_tags) : []),
+    estimatedMinutes: row.estimated_minutes !== null && row.estimated_minutes !== undefined ? parseInt(row.estimated_minutes) : undefined,
+    difficulty: row.difficulty || undefined,
+    prerequisiteModuleIds: Array.isArray(row.prerequisite_module_ids) ? row.prerequisite_module_ids : (row.prerequisite_module_ids ? (typeof row.prerequisite_module_ids === "string" ? JSON.parse(row.prerequisite_module_ids) : row.prerequisite_module_ids) : []),
+    successCriteria: Array.isArray(row.success_criteria) ? row.success_criteria : (row.success_criteria ? (typeof row.success_criteria === "string" ? JSON.parse(row.success_criteria) : row.success_criteria) : []),
   };
 }
 
@@ -50,6 +60,9 @@ function mapBlockFromDb(row: any): LearningBlock {
     learningMode: row.learning_mode,
     source: row.source,
     metadata: row.metadata ? (typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata) : undefined,
+    competencyTags: Array.isArray(row.competency_tags) ? row.competency_tags : (row.competency_tags ? (typeof row.competency_tags === "string" ? JSON.parse(row.competency_tags) : row.competency_tags) : []),
+    estimatedMinutes: row.estimated_minutes !== null && row.estimated_minutes !== undefined ? parseInt(row.estimated_minutes) : undefined,
+    assessmentRole: row.assessment_role || undefined,
   };
 }
 
@@ -62,6 +75,22 @@ function mapReflectionFromDb(row: any): Reflection {
     confidence: row.confidence,
     difficulty: row.difficulty,
     createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
+  };
+}
+
+function mapSubmissionFromDb(row: any): Submission {
+  let versions = [];
+  if (row.versions) {
+    versions = typeof row.versions === "string" ? JSON.parse(row.versions) : row.versions;
+  }
+  return {
+    id: row.id,
+    learnerId: row.learner_id,
+    blockId: row.block_id,
+    versions,
+    masteryStatus: row.mastery_status || "not_assessed",
+    createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
+    updatedAt: row.updated_at instanceof Date ? row.updated_at.toISOString() : row.updated_at,
   };
 }
 
@@ -108,8 +137,8 @@ export class PostgresStore implements LearningStore {
     const isCustom = input.isCustom ?? false;
     const learnerId = input.learnerId || null;
     const { rows } = await pool.query(
-      `INSERT INTO courses (id, title, description, target_group, category, image_url, status, type, sprint_course_ids, is_custom, learner_id, created_by, price, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, 'draft', $7, $8, $9, $10, $11, $12, NOW(), NOW())
+      `INSERT INTO courses (id, title, description, target_group, category, image_url, status, type, sprint_course_ids, is_custom, learner_id, created_by, price, learning_outcomes, competency_tags, estimated_minutes, difficulty, prerequisite_course_ids, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, 'draft', $7, $8, $9, $10, $11, $12, $13::jsonb, $14::jsonb, $15, $16, $17::jsonb, NOW(), NOW())
        RETURNING *`,
       [
         id,
@@ -123,7 +152,12 @@ export class PostgresStore implements LearningStore {
         isCustom,
         learnerId,
         input.createdBy,
-        input.price !== undefined ? input.price : null
+        input.price !== undefined ? input.price : null,
+        JSON.stringify(input.learningOutcomes || []),
+        JSON.stringify(input.competencyTags || []),
+        input.estimatedMinutes !== undefined ? input.estimatedMinutes : null,
+        input.difficulty || null,
+        JSON.stringify(input.prerequisiteCourseIds || [])
       ]
     );
     return mapCourseFromDb(rows[0]);
@@ -178,6 +212,26 @@ export class PostgresStore implements LearningStore {
       setClause.push(`price = $${paramIdx++}`);
       values.push(input.price);
     }
+    if (input.learningOutcomes !== undefined) {
+      setClause.push(`learning_outcomes = $${paramIdx++}::jsonb`);
+      values.push(JSON.stringify(input.learningOutcomes));
+    }
+    if (input.competencyTags !== undefined) {
+      setClause.push(`competency_tags = $${paramIdx++}::jsonb`);
+      values.push(JSON.stringify(input.competencyTags));
+    }
+    if (input.estimatedMinutes !== undefined) {
+      setClause.push(`estimated_minutes = $${paramIdx++}`);
+      values.push(input.estimatedMinutes);
+    }
+    if (input.difficulty !== undefined) {
+      setClause.push(`difficulty = $${paramIdx++}`);
+      values.push(input.difficulty);
+    }
+    if (input.prerequisiteCourseIds !== undefined) {
+      setClause.push(`prerequisite_course_ids = $${paramIdx++}::jsonb`);
+      values.push(JSON.stringify(input.prerequisiteCourseIds));
+    }
 
     setClause.push(`updated_at = NOW()`);
     values.push(id);
@@ -222,10 +276,22 @@ export class PostgresStore implements LearningStore {
     const displayOrder = parseInt(countRows[0].count);
 
     const { rows } = await pool.query(
-      `INSERT INTO modules (id, course_id, title, description, display_order, learning_objectives)
-       VALUES ($1, $2, $3, $4, $5, $6::jsonb)
+      `INSERT INTO modules (id, course_id, title, description, display_order, learning_objectives, competency_tags, estimated_minutes, difficulty, prerequisite_module_ids, success_criteria)
+       VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7::jsonb, $8, $9, $10::jsonb, $11::jsonb)
        RETURNING *`,
-      [id, input.courseId, input.title, input.description, displayOrder, JSON.stringify(input.learningObjectives)]
+      [
+        id,
+        input.courseId,
+        input.title,
+        input.description,
+        displayOrder,
+        JSON.stringify(input.learningObjectives),
+        JSON.stringify(input.competencyTags || []),
+        input.estimatedMinutes !== undefined ? input.estimatedMinutes : null,
+        input.difficulty || null,
+        JSON.stringify(input.prerequisiteModuleIds || []),
+        JSON.stringify(input.successCriteria || [])
+      ]
     );
     return mapModuleFromDb(rows[0]);
   }
@@ -246,6 +312,26 @@ export class PostgresStore implements LearningStore {
     if (input.learningObjectives !== undefined) {
       setClause.push(`learning_objectives = $${paramIdx++}::jsonb`);
       values.push(JSON.stringify(input.learningObjectives));
+    }
+    if (input.competencyTags !== undefined) {
+      setClause.push(`competency_tags = $${paramIdx++}::jsonb`);
+      values.push(JSON.stringify(input.competencyTags));
+    }
+    if (input.estimatedMinutes !== undefined) {
+      setClause.push(`estimated_minutes = $${paramIdx++}`);
+      values.push(input.estimatedMinutes);
+    }
+    if (input.difficulty !== undefined) {
+      setClause.push(`difficulty = $${paramIdx++}`);
+      values.push(input.difficulty);
+    }
+    if (input.prerequisiteModuleIds !== undefined) {
+      setClause.push(`prerequisite_module_ids = $${paramIdx++}::jsonb`);
+      values.push(JSON.stringify(input.prerequisiteModuleIds));
+    }
+    if (input.successCriteria !== undefined) {
+      setClause.push(`success_criteria = $${paramIdx++}::jsonb`);
+      values.push(JSON.stringify(input.successCriteria));
     }
 
     values.push(id);
@@ -282,10 +368,23 @@ export class PostgresStore implements LearningStore {
     const displayOrder = parseInt(countRows[0].count);
 
     const { rows } = await pool.query(
-      `INSERT INTO blocks (id, module_id, type, title, content, display_order, learning_mode, source, metadata)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb)
+      `INSERT INTO blocks (id, module_id, type, title, content, display_order, learning_mode, source, metadata, competency_tags, estimated_minutes, assessment_role)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, $10::jsonb, $11, $12)
        RETURNING *`,
-      [id, input.moduleId, input.type, input.title, input.content, displayOrder, input.learningMode || "understand", input.source, JSON.stringify(input.metadata || {})]
+      [
+        id,
+        input.moduleId,
+        input.type,
+        input.title,
+        input.content,
+        displayOrder,
+        input.learningMode || "understand",
+        input.source,
+        JSON.stringify(input.metadata || {}),
+        JSON.stringify(input.competencyTags || []),
+        input.estimatedMinutes !== undefined ? input.estimatedMinutes : null,
+        input.assessmentRole || "none"
+      ]
     );
     return mapBlockFromDb(rows[0]);
   }
@@ -314,6 +413,18 @@ export class PostgresStore implements LearningStore {
     if (input.metadata !== undefined) {
       setClause.push(`metadata = $${paramIdx++}::jsonb`);
       values.push(JSON.stringify(input.metadata));
+    }
+    if (input.competencyTags !== undefined) {
+      setClause.push(`competency_tags = $${paramIdx++}::jsonb`);
+      values.push(JSON.stringify(input.competencyTags));
+    }
+    if (input.estimatedMinutes !== undefined) {
+      setClause.push(`estimated_minutes = $${paramIdx++}`);
+      values.push(input.estimatedMinutes);
+    }
+    if (input.assessmentRole !== undefined) {
+      setClause.push(`assessment_role = $${paramIdx++}`);
+      values.push(input.assessmentRole);
     }
 
     values.push(id);
@@ -464,6 +575,7 @@ export class PostgresStore implements LearningStore {
       await client.query("BEGIN");
       await client.query("DELETE FROM progress WHERE user_id = $1", [userId]);
       await client.query("DELETE FROM reflections WHERE learner_id = $1", [userId]);
+      await client.query("DELETE FROM submissions WHERE learner_id = $1", [userId]);
       await client.query("COMMIT");
     } catch (e) {
       await client.query("ROLLBACK");
@@ -602,5 +714,103 @@ export class PostgresStore implements LearningStore {
       [userId]
     );
     return rows.map(r => r.course_id);
+  }
+
+  // Submission methods
+  async getSubmission(userId: string, blockId: string): Promise<Submission | null> {
+    const { rows } = await pool.query(
+      "SELECT * FROM submissions WHERE learner_id = $1 AND block_id = $2",
+      [userId, blockId]
+    );
+    return rows.length > 0 ? mapSubmissionFromDb(rows[0]) : null;
+  }
+
+  async saveSubmission(userId: string, blockId: string, solution: string, reflection?: string): Promise<Submission> {
+    const existing = await this.getSubmission(userId, blockId);
+    
+    const initialVersion = {
+      solution,
+      reflection: reflection || null,
+      feedback: [],
+      createdAt: new Date().toISOString()
+    };
+
+    if (existing) {
+      const updatedVersions = [...existing.versions, initialVersion];
+      const { rows } = await pool.query(
+        `UPDATE submissions 
+         SET versions = $1, updated_at = NOW() 
+         WHERE id = $2 
+         RETURNING *`,
+        [JSON.stringify(updatedVersions), existing.id]
+      );
+      return mapSubmissionFromDb(rows[0]);
+    } else {
+      const id = "sub-" + Date.now();
+      const { rows } = await pool.query(
+        `INSERT INTO submissions (id, learner_id, block_id, versions, mastery_status, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+         RETURNING *`,
+        [id, userId, blockId, JSON.stringify([initialVersion]), "not_assessed"]
+      );
+      return mapSubmissionFromDb(rows[0]);
+    }
+  }
+
+  async updateSubmissionFeedback(id: string, feedback: SubmissionFeedback[]): Promise<Submission> {
+    const { rows: findRows } = await pool.query("SELECT * FROM submissions WHERE id = $1", [id]);
+    if (findRows.length === 0) throw new Error("Submission not found");
+    const sub = mapSubmissionFromDb(findRows[0]);
+    const versions = [...sub.versions];
+    if (versions.length > 0) {
+      const lastIdx = versions.length - 1;
+      versions[lastIdx] = {
+        ...versions[lastIdx],
+        feedback: [...(versions[lastIdx].feedback || []), ...feedback]
+      };
+    }
+
+    const { rows } = await pool.query(
+      `UPDATE submissions 
+       SET versions = $1, updated_at = NOW() 
+       WHERE id = $2 
+       RETURNING *`,
+      [JSON.stringify(versions), id]
+    );
+    return mapSubmissionFromDb(rows[0]);
+  }
+
+  async saveSubmissionRevision(id: string, solution: string, reflection?: string): Promise<Submission> {
+    const { rows: findRows } = await pool.query("SELECT * FROM submissions WHERE id = $1", [id]);
+    if (findRows.length === 0) throw new Error("Submission not found");
+    const sub = mapSubmissionFromDb(findRows[0]);
+    
+    const newVer = { 
+      solution, 
+      reflection: reflection || null, 
+      feedback: [], 
+      createdAt: new Date().toISOString() 
+    };
+
+    const { rows } = await pool.query(
+      `UPDATE submissions 
+       SET versions = $1, updated_at = NOW() 
+       WHERE id = $2 
+       RETURNING *`,
+      [JSON.stringify([...sub.versions, newVer]), id]
+    );
+    return mapSubmissionFromDb(rows[0]);
+  }
+
+  async updateMasteryStatus(id: string, status: "not_assessed" | "developing" | "demonstrated"): Promise<Submission> {
+    const { rows } = await pool.query(
+      `UPDATE submissions 
+       SET mastery_status = $1, updated_at = NOW() 
+       WHERE id = $2 
+       RETURNING *`,
+      [status, id]
+    );
+    if (rows.length === 0) throw new Error("Submission not found");
+    return mapSubmissionFromDb(rows[0]);
   }
 }

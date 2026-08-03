@@ -108,6 +108,65 @@ export function CourseSettingsClient({ course, readOnly }: { course: Course; rea
             </div>
 
             <div>
+              <label htmlFor="estimatedMinutes" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">Geschätzte Dauer (in Minuten)</label>
+              <input 
+                type="number" 
+                id="estimatedMinutes" 
+                name="estimatedMinutes" 
+                disabled={readOnly}
+                placeholder="z.B. 120"
+                defaultValue={course.estimatedMinutes !== undefined && course.estimatedMinutes !== null ? course.estimatedMinutes.toString() : ""}
+                className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all disabled:opacity-75 disabled:cursor-not-allowed"
+                style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="difficulty" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">Schwierigkeitsgrad</label>
+              <select
+                id="difficulty"
+                name="difficulty"
+                disabled={readOnly}
+                defaultValue={course.difficulty || ""}
+                className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all bg-paper text-ink disabled:opacity-75 disabled:cursor-not-allowed"
+                style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
+              >
+                <option value="">Nicht definiert</option>
+                <option value="beginner">Anfänger (Beginner)</option>
+                <option value="intermediate">Fortgeschritten (Intermediate)</option>
+                <option value="advanced">Experte (Advanced)</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="competencyTags" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">Kompetenz-Tags (Kommagetrennt)</label>
+              <input 
+                type="text" 
+                id="competencyTags" 
+                name="competencyTags" 
+                disabled={readOnly}
+                placeholder="z.B. kritische-denken, problem-solving, ai-literacy"
+                defaultValue={course.competencyTags !== undefined && course.competencyTags !== null ? course.competencyTags.join(", ") : ""}
+                className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all disabled:opacity-75 disabled:cursor-not-allowed"
+                style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="learningOutcomes" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">Lernziele / Outcomes (Kommagetrennt)</label>
+              <input 
+                type="text" 
+                id="learningOutcomes" 
+                name="learningOutcomes" 
+                disabled={readOnly}
+                placeholder="z.B. Probleme systematisch zerlegen, KI-Modelle effektiv prompten"
+                defaultValue={course.learningOutcomes !== undefined && course.learningOutcomes !== null ? course.learningOutcomes.join(", ") : ""}
+                className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all disabled:opacity-75 disabled:cursor-not-allowed"
+                style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
+              />
+            </div>
+
+            <div>
               <label htmlFor="description" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">Beschreibung</label>
               <textarea 
                 id="description" 

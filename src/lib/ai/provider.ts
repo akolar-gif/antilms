@@ -32,6 +32,7 @@ export interface MentorReplyInput {
   blockContext?: string;
   learnerConfidence?: number;
   language?: string;
+  blockId?: string;
 }
 
 export interface MentorReplyResult {
@@ -99,6 +100,20 @@ export interface WrapUpReplyResult {
   finished: boolean;
 }
 
+export interface ReviewSubmissionInput {
+  solution: string;
+  reflection?: string;
+  taskTitle: string;
+  taskScenario: string;
+  taskInstructions: string;
+  successCriteria: string[];
+  language?: string;
+}
+
+export interface ReviewSubmissionResult {
+  feedback: string;
+}
+
 export interface AIProvider {
   generateText(input: GenerateTextInput): Promise<GenerateTextResult>;
   generateStructuredBlock(input: GenerateBlockInput): Promise<Partial<LearningBlock>>;
@@ -107,6 +122,7 @@ export interface AIProvider {
   generateCurriculum(input: GenerateCurriculumInput): Promise<GeneratedCurriculumResult>;
   generateModule(input: GenerateModuleInput): Promise<GeneratedModule>;
   wrapUpReply(input: WrapUpReplyInput): Promise<WrapUpReplyResult>;
+  reviewSubmission(input: ReviewSubmissionInput): Promise<ReviewSubmissionResult>;
 }
 
 export interface GenerateModuleInput {

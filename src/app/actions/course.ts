@@ -88,6 +88,12 @@ export async function updateCourseSettingsAction(formData: FormData) {
   const stockImageUrl = formData.get("stockImageUrl") as string;
   const priceRaw = formData.get("price") as string;
   const type = formData.get("type") as string;
+
+  const learningOutcomesRaw = formData.get("learningOutcomes") as string;
+  const competencyTagsRaw = formData.get("competencyTags") as string;
+  const estimatedMinutesRaw = formData.get("estimatedMinutes") as string;
+  const difficulty = formData.get("difficulty") as string;
+  const prerequisiteCourseIdsRaw = formData.get("prerequisiteCourseIds") as string;
   
   if (!courseId || !title || !description) {
     throw new Error("Missing required fields.");
@@ -115,6 +121,22 @@ export async function updateCourseSettingsAction(formData: FormData) {
   };
   if (finalImageUrl) {
     updates.imageUrl = finalImageUrl;
+  }
+
+  if (learningOutcomesRaw !== null) {
+    updates.learningOutcomes = learningOutcomesRaw ? learningOutcomesRaw.split(",").map(x => x.trim()).filter(Boolean) : [];
+  }
+  if (competencyTagsRaw !== null) {
+    updates.competencyTags = competencyTagsRaw ? competencyTagsRaw.split(",").map(x => x.trim()).filter(Boolean) : [];
+  }
+  if (estimatedMinutesRaw !== null) {
+    updates.estimatedMinutes = estimatedMinutesRaw.trim() !== "" ? Number(estimatedMinutesRaw) : null;
+  }
+  if (difficulty !== null) {
+    updates.difficulty = difficulty || null;
+  }
+  if (prerequisiteCourseIdsRaw !== null) {
+    updates.prerequisiteCourseIds = prerequisiteCourseIdsRaw ? JSON.parse(prerequisiteCourseIdsRaw) : [];
   }
 
   await store.updateCourse(courseId, updates);
@@ -415,10 +437,15 @@ export async function importCourseAction(data: any): Promise<{ success: boolean;
       targetGroup: data.targetGroup || "General",
       category: data.category || "Importiert",
       imageUrl: data.imageUrl || undefined,
-      type: data.type === "sprint" ? "sprint" : "comprehensive",
+      type: data.type === "track" ? "track" : (data.type === "sprint" ? "sprint" : "comprehensive"),
       price: data.price !== undefined ? Number(data.price) : undefined,
       createdBy: user.id,
       status: "draft",
+      learningOutcomes: data.learningOutcomes || [],
+      competencyTags: data.competencyTags || [],
+      estimatedMinutes: data.estimatedMinutes !== undefined ? Number(data.estimatedMinutes) : undefined,
+      difficulty: data.difficulty || undefined,
+      prerequisiteCourseIds: data.prerequisiteCourseIds || [],
     });
 
     // Create modules and blocks
@@ -430,21 +457,28 @@ export async function importCourseAction(data: any): Promise<{ success: boolean;
       const mod = await store.createModule({
         courseId: course.id,
         title: moduleTitle,
-        description: "",
-        learningObjectives: [],
+        description: modData.description || "",
+        learningObjectives: modData.learningObjectives || [],
+        competencyTags: modData.competencyTags || [],
+        estimatedMinutes: modData.estimatedMinutes !== undefined ? Number(modData.estimatedMinutes) : undefined,
+        difficulty: modData.difficulty || undefined,
+        prerequisiteModuleIds: modData.prerequisiteModuleIds || [],
+        successCriteria: modData.successCriteria || [],
       });
 
       const blocksData = Array.isArray(modData.blocks) ? modData.blocks : [];
       for (let bIdx = 0; bIdx < blocksData.length; bIdx++) {
         const blockData = blocksData[bIdx];
         
-        let learningMode: "understand" | "practice" | "reflect" | "co-design" = "understand";
-        if (blockData.type === "quiz") {
-          learningMode = "practice";
-        } else if (blockData.type === "reflection") {
-          learningMode = "reflect";
-        } else if (blockData.type === "ai_chat") {
-          learningMode = "co-design";
+        let learningMode = blockData.learningMode || "understand";
+        if (!blockData.learningMode) {
+          if (blockData.type === "quiz") {
+            learningMode = "practice";
+          } else if (blockData.type === "reflection") {
+            learningMode = "reflect";
+          } else if (blockData.type === "ai_chat") {
+            learningMode = "co-design";
+          }
         }
 
         let contentValue = blockData.content || "";
@@ -496,6 +530,9 @@ export async function importCourseAction(data: any): Promise<{ success: boolean;
           learningMode,
           source: "user_created",
           metadata: blockData.settings || {},
+          competencyTags: blockData.competencyTags || [],
+          estimatedMinutes: blockData.estimatedMinutes !== undefined ? Number(blockData.estimatedMinutes) : undefined,
+          assessmentRole: blockData.assessmentRole || "none",
         });
       }
     }

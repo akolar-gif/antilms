@@ -1,4 +1,4 @@
-import { AIProvider, GenerateTextInput, GenerateTextResult, GenerateBlockInput, MentorReplyInput, MentorReplyResult, CoDesignerInput, CoDesignerResult, GenerateCurriculumInput, GeneratedCurriculumResult, GenerateModuleInput, GeneratedModule, WrapUpReplyInput, WrapUpReplyResult } from "./provider";
+import { AIProvider, GenerateTextInput, GenerateTextResult, GenerateBlockInput, MentorReplyInput, MentorReplyResult, CoDesignerInput, CoDesignerResult, GenerateCurriculumInput, GeneratedCurriculumResult, GenerateModuleInput, GeneratedModule, WrapUpReplyInput, WrapUpReplyResult, ReviewSubmissionInput, ReviewSubmissionResult } from "./provider";
 import { LearningBlock } from "@/types";
 import { generateText, generateObject } from "ai";
 import { google } from "@ai-sdk/google";
@@ -352,5 +352,23 @@ Output a JSON object matching this schema:
     });
 
     return object;
+  }
+
+  async reviewSubmission(input: ReviewSubmissionInput): Promise<ReviewSubmissionResult> {
+    const prompt = PROMPT_TEMPLATES.reviewSubmission
+      .replace("{{taskTitle}}", input.taskTitle)
+      .replace("{{taskScenario}}", input.taskScenario)
+      .replace("{{taskInstructions}}", input.taskInstructions)
+      .replace("{{successCriteria}}", input.successCriteria.map(c => `- ${c}`).join("\n"))
+      .replace("{{solution}}", input.solution)
+      .replace("{{reflection}}", input.reflection || "")
+      + getLanguageInstruction(input.language);
+
+    const { text } = await generateText({
+      model: this.model,
+      prompt,
+    });
+
+    return { feedback: text };
   }
 }

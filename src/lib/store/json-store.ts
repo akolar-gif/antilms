@@ -12,6 +12,7 @@ type Database = {
   blocks: LearningBlock[];
   progress?: UserProgress[];
   reflections?: Reflection[];
+  submissions?: Submission[];
   users?: UserRecord[];
 };
 
@@ -31,6 +32,10 @@ export class JsonStore implements LearningStore {
 
     if (!parsed.settings) {
       parsed.settings = {};
+    }
+
+    if (!parsed.submissions) {
+      parsed.submissions = [];
     }
 
     if (!parsed.users || parsed.users.length === 0) {
@@ -81,6 +86,11 @@ export class JsonStore implements LearningStore {
       isCustom: input.isCustom ?? false,
       learnerId: input.learnerId,
       price: input.price,
+      learningOutcomes: input.learningOutcomes || [],
+      competencyTags: input.competencyTags || [],
+      estimatedMinutes: input.estimatedMinutes,
+      difficulty: input.difficulty,
+      prerequisiteCourseIds: input.prerequisiteCourseIds || [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -317,6 +327,11 @@ export class JsonStore implements LearningStore {
       data.reflections = data.reflections.filter(r => r.learnerId !== userId);
     }
 
+    // Clear submissions
+    if (data.submissions) {
+      data.submissions = data.submissions.filter(s => s.learnerId !== userId);
+    }
+
     await this.writeData(data);
   }
 
@@ -469,5 +484,111 @@ export class JsonStore implements LearningStore {
     const data = await this.readData();
     if (!data.bookings) return [];
     return data.bookings.filter(b => b.userId === userId).map(b => b.courseId);
+  }
+
+  // Submission methods
+  async getSubmission(userId: string, blockId: string): Promise<Submission | null> {
+    const data = await this.readData();
+    if (!data.submissions) return null;
+    return data.submissions.find(s => s.learnerId === userId && s.blockId === blockId) || null;
+  }
+
+  async saveSubmission(userId: string, blockId: string, solution: string, reflection?: string): Promise<Submission> {
+    const data = await this.readData();
+    if (!data.submissions) data.submissions = [];
+    
+    const idx = data.submissions.findIndex(s => s.learnerId === userId && s.blockId === blockId);
+    
+    const initialVersion: SubmissionVersion = {
+      solution,
+      reflection,
+      feedback: [],
+      createdAt: new Date().toISOString()
+    };
+
+    const newSubmission: Submission = {
+      id: idx !== -1 ? data.submissions[idx].id : "sub-" + Date.now(),
+      learnerId: userId,
+      blockId,
+      versions: idx !== -1 ? [...data.submissions[idx].versions, initialVersion] : [initialVersion],
+      masteryStatus: idx !== -1 ? data.submissions[idx].masteryStatus : "not_assessed",
+      createdAt: idx !== -1 ? data.submissions[idx].createdAt : new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    if (idx !== -1) {
+      data.submissions[idx] = newSubmission;
+    } else {
+      data.submissions.push(newSubmission);
+    }
+
+    await this.writeData(data);
+    return newSubmission;
+  }
+
+  async updateSubmissionFeedback(id: string, feedback: SubmissionFeedback[]): Promise<Submission> {
+    const data = await this.readData();
+    if (!data.submissions) throw new Error("Submissions not initialized");
+    const idx = data.submissions.findIndex(s => s.id === id);
+    if (idx === -1) throw new Error("Submission not found");
+    
+    const submission = data.submissions[idx];
+    const versions = [...submission.versions];
+    if (versions.length > 0) {
+      const latestIdx = versions.length - 1;
+      versions[latestIdx] = {
+        ...versions[latestIdx],
+        feedback: [...(versions[latestIdx].feedback || []), ...feedback]
+      };
+    }
+
+    data.submissions[idx] = {
+      ...submission,
+      versions,
+      updatedAt: new Date().toISOString()
+    };
+
+    await this.writeData(data);
+    return data.submissions[idx];
+  }
+
+  async saveSubmissionRevision(id: string, solution: string, reflection?: string): Promise<Submission> {
+    const data = await this.readData();
+    if (!data.submissions) throw new Error("Submissions not initialized");
+    const idx = data.submissions.findIndex(s => s.id === id);
+    if (idx === -1) throw new Error("Submission not found");
+    
+    const submission = data.submissions[idx];
+    const newVersion: SubmissionVersion = {
+      solution,
+      reflection,
+      feedback: [],
+      createdAt: new Date().toISOString()
+    };
+
+    data.submissions[idx] = {
+      ...submission,
+      versions: [...submission.versions, newVersion],
+      updatedAt: new Date().toISOString()
+    };
+
+    await this.writeData(data);
+    return data.submissions[idx];
+  }
+
+  async updateMasteryStatus(id: string, status: "not_assessed" | "developing" | "demonstrated"): Promise<Submission> {
+    const data = await this.readData();
+    if (!data.submissions) throw new Error("Submissions not initialized");
+    const idx = data.submissions.findIndex(s => s.id === id);
+    if (idx === -1) throw new Error("Submission not found");
+    
+    data.submissions[idx] = {
+      ...data.submissions[idx],
+      masteryStatus: status,
+      updatedAt: new Date().toISOString()
+    };
+
+    await this.writeData(data);
+    return data.submissions[idx];
   }
 }

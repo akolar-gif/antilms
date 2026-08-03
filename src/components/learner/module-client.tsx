@@ -178,7 +178,12 @@ export function LearnerModuleClient({
                     )}
 
                     {block.type === 'project_task' && (
-                      <ProjectTaskBlock block={block} onComplete={() => handleComplete(block.id)} />
+                      <ProjectTaskBlock 
+                        block={block} 
+                        courseId={courseId}
+                        moduleId={moduleId}
+                        onComplete={() => handleComplete(block.id)} 
+                      />
                     )}
 
                     {block.type === 'video' && (
@@ -283,6 +288,7 @@ export function LearnerModuleClient({
         <MentorChat 
           courseId={courseId} 
           moduleId={moduleId} 
+          activeBlockId={activeBlock?.id || blocks.find(b => !completed.includes(b.id))?.id || blocks[0]?.id}
           activeContext={(() => {
             const currentBlock = activeBlock || blocks.find(b => !completed.includes(b.id)) || blocks[0];
             return currentBlock ? `Titel: ${currentBlock.title}\nInhalt: ${currentBlock.content}` : undefined;

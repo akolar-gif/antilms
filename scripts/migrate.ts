@@ -56,6 +56,11 @@ CREATE TABLE IF NOT EXISTS courses (
   learner_id VARCHAR(255),
   created_by VARCHAR(255),
   price NUMERIC(10, 2),
+  learning_outcomes JSONB DEFAULT '[]'::jsonb,
+  competency_tags JSONB DEFAULT '[]'::jsonb,
+  estimated_minutes INTEGER,
+  difficulty VARCHAR(50),
+  prerequisite_course_ids JSONB DEFAULT '[]'::jsonb,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -66,6 +71,11 @@ ALTER TABLE courses ADD COLUMN IF NOT EXISTS sprint_course_ids JSONB DEFAULT '[]
 ALTER TABLE courses ADD COLUMN IF NOT EXISTS is_custom BOOLEAN DEFAULT FALSE NOT NULL;
 ALTER TABLE courses ADD COLUMN IF NOT EXISTS learner_id VARCHAR(255);
 ALTER TABLE courses ADD COLUMN IF NOT EXISTS price NUMERIC(10, 2);
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS learning_outcomes JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS competency_tags JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS estimated_minutes INTEGER;
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS difficulty VARCHAR(50);
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS prerequisite_course_ids JSONB DEFAULT '[]'::jsonb;
 
 CREATE TABLE IF NOT EXISTS modules (
   id VARCHAR(255) PRIMARY KEY,
@@ -73,8 +83,19 @@ CREATE TABLE IF NOT EXISTS modules (
   title VARCHAR(255) NOT NULL,
   description TEXT,
   display_order INTEGER NOT NULL,
-  learning_objectives JSONB NOT NULL DEFAULT '[]'
+  learning_objectives JSONB NOT NULL DEFAULT '[]',
+  competency_tags JSONB DEFAULT '[]'::jsonb,
+  estimated_minutes INTEGER,
+  difficulty VARCHAR(50),
+  prerequisite_module_ids JSONB DEFAULT '[]'::jsonb,
+  success_criteria JSONB DEFAULT '[]'::jsonb
 );
+
+ALTER TABLE modules ADD COLUMN IF NOT EXISTS competency_tags JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE modules ADD COLUMN IF NOT EXISTS estimated_minutes INTEGER;
+ALTER TABLE modules ADD COLUMN IF NOT EXISTS difficulty VARCHAR(50);
+ALTER TABLE modules ADD COLUMN IF NOT EXISTS prerequisite_module_ids JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE modules ADD COLUMN IF NOT EXISTS success_criteria JSONB DEFAULT '[]'::jsonb;
 
 CREATE TABLE IF NOT EXISTS blocks (
   id VARCHAR(255) PRIMARY KEY,
@@ -85,8 +106,15 @@ CREATE TABLE IF NOT EXISTS blocks (
   display_order INTEGER NOT NULL,
   learning_mode VARCHAR(50) DEFAULT 'understand',
   source VARCHAR(255),
-  metadata JSONB NOT NULL DEFAULT '{}'
+  metadata JSONB NOT NULL DEFAULT '{}',
+  competency_tags JSONB DEFAULT '[]'::jsonb,
+  estimated_minutes INTEGER,
+  assessment_role VARCHAR(50) DEFAULT 'none'
 );
+
+ALTER TABLE blocks ADD COLUMN IF NOT EXISTS competency_tags JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE blocks ADD COLUMN IF NOT EXISTS estimated_minutes INTEGER;
+ALTER TABLE blocks ADD COLUMN IF NOT EXISTS assessment_role VARCHAR(50) DEFAULT 'none';
 
 CREATE TABLE IF NOT EXISTS progress (
   user_id VARCHAR(255) NOT NULL,
@@ -103,6 +131,17 @@ CREATE TABLE IF NOT EXISTS reflections (
   confidence INTEGER NOT NULL,
   difficulty INTEGER NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+DROP TABLE IF EXISTS submissions;
+CREATE TABLE submissions (
+  id VARCHAR(255) PRIMARY KEY,
+  learner_id VARCHAR(255) NOT NULL,
+  block_id VARCHAR(255) NOT NULL REFERENCES blocks(id) ON DELETE CASCADE,
+  versions JSONB DEFAULT '[]'::jsonb,
+  mastery_status VARCHAR(50) DEFAULT 'not_assessed',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS bookings (

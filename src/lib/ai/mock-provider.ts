@@ -1,4 +1,4 @@
-import { AIProvider, GenerateTextInput, GenerateTextResult, GenerateBlockInput, MentorReplyInput, MentorReplyResult, CoDesignerInput, CoDesignerResult, GenerateCurriculumInput, GeneratedCurriculumResult, GenerateModuleInput, GeneratedModule, WrapUpReplyInput, WrapUpReplyResult } from "./provider";
+import { AIProvider, GenerateTextInput, GenerateTextResult, GenerateBlockInput, MentorReplyInput, MentorReplyResult, CoDesignerInput, CoDesignerResult, GenerateCurriculumInput, GeneratedCurriculumResult, GenerateModuleInput, GeneratedModule, WrapUpReplyInput, WrapUpReplyResult, ReviewSubmissionInput, ReviewSubmissionResult } from "./provider";
 import { LearningBlock } from "@/types";
 
 export class MockAIProvider implements AIProvider {
@@ -417,6 +417,16 @@ export class MockAIProvider implements AIProvider {
         ? "Got it. One last question: What do you think was the most challenging part of this topic?"
         : "Verstanden. Eine letzte Frage: Was war deiner Meinung nach der anspruchsvollste Teil dieses Themas?",
       finished: false
+    };
+  }
+
+  async reviewSubmission(input: ReviewSubmissionInput): Promise<ReviewSubmissionResult> {
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    const isEn = input.language === "en";
+    return {
+      feedback: isEn
+        ? `### Mock Feedback\n- **Strengths**: Good application of the concepts.\n- **Improvement**: Check success criteria in detail.\n- **Action Tip**: Refine your deliverable outline.`
+        : `### Mock Feedback (KI-Rückmeldung)\n- **Lob & Stärken**: Das gezeigte Verständnis der Kernkonzepte ist bereits sehr gut ausgeprägt.\n- **Potenziale & Abgleich**: Versuche, die definierten Kriterien (${input.successCriteria.slice(0, 2).join(", ")}) noch präziser zu berücksichtigen.\n- **Nächster Schritt**: Nutze eine konkrete Analogie zur Veranschaulichung im nächsten Entwurf.`
     };
   }
 }

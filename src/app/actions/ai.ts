@@ -25,6 +25,7 @@ export async function askMentorAction(input: MentorReplyInput): Promise<MentorRe
 
   let courseContextStr = courseId;
   let moduleContextStr = input.moduleContext;
+  let blockContextStr = input.blockContext || "General";
 
   try {
     const course = await store.getCourse(courseId);
@@ -60,6 +61,38 @@ export async function askMentorAction(input: MentorReplyInput): Promise<MentorRe
       } else {
         moduleContextStr = moduleSummary;
       }
+
+      // Enrich active block details and didactical AI modes
+      if (input.blockId) {
+        const activeBlock = blocks.find(b => b.id === input.blockId);
+        if (activeBlock) {
+          blockContextStr = `Active Block Title: "${activeBlock.title}"\nType: ${activeBlock.type}\nContent: ${activeBlock.content}`;
+          const settings = activeBlock.metadata || {};
+          const aiMode = settings.aiMode;
+          const systemPrompt = settings.systemPrompt;
+          
+          let didacticalInstruction = "";
+          if (aiMode === "socratic") {
+            didacticalInstruction = "\nDIDACTICAL MODE: SOCRATIC. Do not give the final answer. Ask guiding questions, challenge assumptions, and help the user think step-by-step.";
+          } else if (aiMode === "coach") {
+            didacticalInstruction = "\nDIDACTICAL MODE: COACH. Provide constructive, brief hints, encouragement, and feedback. Help them improve.";
+          } else if (aiMode === "tutor") {
+            didacticalInstruction = "\nDIDACTICAL MODE: TUTOR. Directly explain the concepts, provide clear examples, and answer questions.";
+          } else if (aiMode === "reviewer") {
+            didacticalInstruction = "\nDIDACTICAL MODE: REVIEWER. Evaluate their solutions/artefacts against success criteria and provide objective feedback.";
+          } else if (aiMode === "simulation") {
+            didacticalInstruction = "\nDIDACTICAL MODE: SIMULATION. Act out a specific persona/role in a scenario. Do not break character.";
+          }
+
+          if (systemPrompt) {
+            didacticalInstruction += `\nROLE / SYSTEM PROMPT:\n${systemPrompt}`;
+          }
+          
+          if (didacticalInstruction) {
+            blockContextStr += `\n\n${didacticalInstruction}`;
+          }
+        }
+      }
     }
   } catch (error) {
     console.error("Error enriching mentor context:", error);
@@ -69,6 +102,7 @@ export async function askMentorAction(input: MentorReplyInput): Promise<MentorRe
     ...input,
     courseContext: courseContextStr,
     moduleContext: moduleContextStr,
+    blockContext: blockContextStr,
     language
   });
 }

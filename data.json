@@ -168,6 +168,35 @@
       "status": "published",
       "createdAt": "2026-06-22T13:44:32.976Z",
       "updatedAt": "2026-06-22T15:46:49.580Z"
+    },
+    {
+      "id": "course-1785760060250",
+      "title": "Mit KI bessere Probleme lösen",
+      "description": "Lerne, wie du künstliche Intelligenz nicht nur als Antwortmaschine, sondern als strategischen Denkpartner nutzt, um komplexe Business-Probleme systematisch zu analysieren, kreative Lösungen zu entwickeln und methodisch fundierte Entscheidungen zu treffen.",
+      "targetGroup": "Fachkräfte, Manager und Projektleiter, die ihre Problemlösungskompetenz durch den gezielten Einsatz von KI auf die nächste Stufe heben wollen.",
+      "category": "AI & Future Skills",
+      "status": "draft",
+      "type": "comprehensive",
+      "sprintCourseIds": [],
+      "createdBy": "Trainer",
+      "isCustom": false,
+      "price": 49,
+      "learningOutcomes": [
+        "Probleme systematisch analysieren und von Symptomen abgrenzen",
+        "KI-Modelle in didaktisch vielfältigen Modi (z.B. Sokratisch) als Denkpartner einsetzen",
+        "Methodisch fundierte und risikominimierte Entscheidungen unter Zeitdruck treffen",
+        "Ein individuelles KI-gestütztes Playbook für das eigene Team konzipieren"
+      ],
+      "competencyTags": [
+        "problem-solving",
+        "critical-thinking",
+        "ai-literacy"
+      ],
+      "estimatedMinutes": 240,
+      "difficulty": "intermediate",
+      "prerequisiteCourseIds": [],
+      "createdAt": "2026-08-03T12:27:40.250Z",
+      "updatedAt": "2026-08-03T12:27:40.251Z"
     }
   ],
   "modules": [
@@ -613,6 +642,80 @@
       "learningObjectives": [
         "Resilienz als dynamischen, fortlaufenden Prozess verstehen und beschreiben.",
         "Strategien zur Förderung einer resilienten Kultur in Teams und Organisationen entwickeln können."
+      ],
+      "order": 3
+    },
+    {
+      "id": "module-1785760060258",
+      "courseId": "course-1785760060250",
+      "title": "1. Das Problem hinter dem Prompt",
+      "description": "Lerne, wie du Probleme analysierst, bevor du eine KI befragst.",
+      "learningObjectives": [],
+      "competencyTags": [
+        "problem-analysis"
+      ],
+      "estimatedMinutes": 60,
+      "difficulty": "beginner",
+      "prerequisiteModuleIds": [],
+      "successCriteria": [
+        "Das tatsächliche Kernproblem ist präzise benannt.",
+        "Mindestens drei Einflussfaktoren wurden identifiziert."
+      ],
+      "order": 0
+    },
+    {
+      "id": "module-1785760060284",
+      "courseId": "course-1785760060250",
+      "title": "2. KI als kritischen Denkpartner einsetzen",
+      "description": "Verwende verschiedene didaktische KI-Modi (z.B. Sokratisch), um deine Gedanken zu schärfen.",
+      "learningObjectives": [],
+      "competencyTags": [
+        "ai-co-creation"
+      ],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "prerequisiteModuleIds": [],
+      "successCriteria": [
+        "Der Sokratische Dialog wurde aktiv durchgeführt.",
+        "Mindestens zwei Denkmuster wurden hinterfragt."
+      ],
+      "order": 1
+    },
+    {
+      "id": "module-1785760060301",
+      "courseId": "course-1785760060250",
+      "title": "3. Entscheidungs-Challenge unter Zeitdruck",
+      "description": "Löse ein reales Szenario in einem zeitbegrenzten Format.",
+      "learningObjectives": [],
+      "competencyTags": [
+        "decision-making",
+        "agility"
+      ],
+      "estimatedMinutes": 60,
+      "difficulty": "advanced",
+      "prerequisiteModuleIds": [],
+      "successCriteria": [
+        "Eine Entscheidung wurde innerhalb von 8 Minuten getroffen.",
+        "Die Entscheidung basiert auf logischen Kriterien."
+      ],
+      "order": 2
+    },
+    {
+      "id": "module-1785760060313",
+      "courseId": "course-1785760060250",
+      "title": "4. Projektaufgabe: Dein KI-Problem-Solving-Playbook",
+      "description": "Erstelle dein eigenes strukturiertes Playbook zur Problemlösung mit KI.",
+      "learningObjectives": [],
+      "competencyTags": [
+        "problem-solving",
+        "mastery"
+      ],
+      "estimatedMinutes": 60,
+      "difficulty": "advanced",
+      "prerequisiteModuleIds": [],
+      "successCriteria": [
+        "Das Playbook enthält mindestens 3 konkrete Phasen.",
+        "Das Playbook enthält KI-Prompts für sokratisches Coaching."
       ],
       "order": 3
     }
@@ -1897,6 +2000,150 @@
       "learningMode": "transfer",
       "source": "ai_assisted",
       "order": 3
+    },
+    {
+      "id": "block-1785760060265519",
+      "moduleId": "module-1785760060258",
+      "type": "text",
+      "title": "Einführung in Problem-Framing",
+      "content": "Bevor du eine KI mit einem Prompt fütterst, musst du verstehen, welches Problem du eigentlich lösen willst. Zu oft lösen wir die falschen Probleme besonders effizient. Problem-Framing hilft dir dabei, das tatsächliche Kernproblem freizulegen und den Kontext zu klären. Nutze künftig die 5-Why-Methode, um tiefer zu graben.",
+      "learningMode": "understand",
+      "source": "user_created",
+      "metadata": {},
+      "competencyTags": [
+        "problem-framing"
+      ],
+      "estimatedMinutes": 15,
+      "assessmentRole": "none",
+      "order": 0
+    },
+    {
+      "id": "block-1785760060272964",
+      "moduleId": "module-1785760060258",
+      "type": "quiz",
+      "title": "Verständnistest: Problem vs. Symptom",
+      "content": "{\"question\":\"Was unterscheidet ein Problem von einem Symptom?\",\"options\":[\"Ein Symptom ist die sichtbare Auswirkung, das Problem ist die Ursache.\",\"Ein Problem tritt nur in Software auf, ein Symptom im Business.\",\"Es gibt keinen Unterschied.\"],\"correctAnswer\":\"Ein Symptom ist die sichtbare Auswirkung, das Problem ist die Ursache.\",\"explanation\":\"Die Ursachenforschung hilft uns, das eigentliche Problem an der Wurzel zu packen, statt nur kosmetische Symptome zu behandeln.\"}",
+      "learningMode": "practice",
+      "source": "user_created",
+      "metadata": {
+        "question": "Was unterscheidet ein Problem von einem Symptom?",
+        "options": [
+          "Ein Symptom ist die sichtbare Auswirkung, das Problem ist die Ursache.",
+          "Ein Problem tritt nur in Software auf, ein Symptom im Business.",
+          "Es gibt keinen Unterschied."
+        ],
+        "correctAnswer": 0,
+        "explanation": "Die Ursachenforschung hilft uns, das eigentliche Problem an der Wurzel zu packen, statt nur kosmetische Symptome zu behandeln."
+      },
+      "competencyTags": [],
+      "estimatedMinutes": 15,
+      "assessmentRole": "none",
+      "order": 1
+    },
+    {
+      "id": "block-1785760060278398",
+      "moduleId": "module-1785760060258",
+      "type": "reflection",
+      "title": "Reflexion: Deine letzte Herausforderung",
+      "content": "{\"reflectionPrompt\":\"Denke an ein Problem, das du kürzlich mit KI gelöst hast. Hast du das Problem vorab schriftlich analysiert?\",\"followUpQuestions\":[\"Was hättest du durch eine tiefere Analyse anders gemacht?\",\"Wie hat dir die KI konkret geholfen?\"]}",
+      "learningMode": "reflect",
+      "source": "user_created",
+      "metadata": {
+        "reflectionPrompt": "Denke an ein Problem, das du kürzlich mit KI gelöst hast. Hast du das Problem vorab schriftlich analysiert?",
+        "followUpQuestions": [
+          "Was hättest du durch eine tiefere Analyse anders gemacht?",
+          "Wie hat dir die KI konkret geholfen?"
+        ]
+      },
+      "competencyTags": [],
+      "estimatedMinutes": 30,
+      "assessmentRole": "none",
+      "order": 2
+    },
+    {
+      "id": "block-1785760060289484",
+      "moduleId": "module-1785760060284",
+      "type": "text",
+      "title": "Der Sokratische Dialog mit KI",
+      "content": "Die meisten nutzen KI als Antwortmaschine. Viel mächtiger ist es, sie als sokratischen Gesprächspartner einzusetzen, der unsere Annahmen hinterfragt. Indem die KI uns geschickt Fragen stellt, deckt sie blinde Flecken in unserer Argumentation auf. So schärfen wir unser kritisches Denken.",
+      "learningMode": "understand",
+      "source": "user_created",
+      "metadata": {},
+      "competencyTags": [],
+      "estimatedMinutes": 15,
+      "assessmentRole": "none",
+      "order": 0
+    },
+    {
+      "id": "block-1785760060295388",
+      "moduleId": "module-1785760060284",
+      "type": "ai_chat",
+      "title": "Sokratische Reflexion aktivieren",
+      "content": "Nutze den AI-Tutor im sokratischen Modus (rechts in der Seitenleiste). Diskutiere ein aktuelles Business-Problem mit ihm. Erkläre ihm dein Vorhaben und lass dich durch seine Fragen herausfordern.",
+      "learningMode": "co-design",
+      "source": "user_created",
+      "metadata": {
+        "aiMode": "socratic",
+        "systemPrompt": "Du bist ein sokratischer Coach. Beantworte Fragen des Nutzers NIEMALS direkt, sondern stelle kluge Gegenfragen, um seine Annahmen zu hinterfragen."
+      },
+      "competencyTags": [],
+      "estimatedMinutes": 45,
+      "assessmentRole": "none",
+      "order": 1
+    },
+    {
+      "id": "block-1785760060306839",
+      "moduleId": "module-1785760060301",
+      "type": "punk_game",
+      "title": "Challenge: Der Server-Crash",
+      "content": "{\"scenario\":\"Euer wichtigster Kunde droht mit Kündigung, weil die Plattform offline ist. Euer technisches Team schlägt zwei Optionen vor: Ein altes Backup einspielen (Datenverlust von 24 Stunden) oder live nach dem Fehler suchen (unbekannte Dauer, evtl. kein Datenverlust). Ihr müsst sofort entscheiden.\",\"task\":\"Entwickle innerhalb von 8 Minuten einen klaren Handlungsplan für die interne und externe Kommunikation.\",\"timeboxMinutes\":8,\"evaluationCriteria\":[\"Klarer Fokus auf Schadensminimierung\",\"Einbeziehung von Risiken\",\"Kommunikationsstrategie zum Kunden\"]}",
+      "learningMode": "understand",
+      "source": "user_created",
+      "metadata": {
+        "scenario": "Euer wichtigster Kunde droht mit Kündigung, weil die Plattform offline ist. Euer technisches Team schlägt zwei Optionen vor: Ein altes Backup einspielen (Datenverlust von 24 Stunden) oder live nach dem Fehler suchen (unbekannte Dauer, evtl. kein Datenverlust). Ihr müsst sofort entscheiden.",
+        "task": "Entwickle innerhalb von 8 Minuten einen klaren Handlungsplan für die interne und externe Kommunikation.",
+        "timeboxMinutes": 8,
+        "evaluationCriteria": [
+          "Klarer Fokus auf Schadensminimierung",
+          "Einbeziehung von Risiken",
+          "Kommunikationsstrategie zum Kunden"
+        ]
+      },
+      "competencyTags": [],
+      "estimatedMinutes": 60,
+      "assessmentRole": "none",
+      "order": 0
+    },
+    {
+      "id": "block-1785760060320248",
+      "moduleId": "module-1785760060313",
+      "type": "project_task",
+      "title": "Das KI-Playbook erstellen",
+      "content": "{\"title\":\"Dein KI-Playbook\",\"scenario\":\"Du möchtest dein Team dazu befähigen, Probleme systematisch mit KI zu lösen, statt blind Prompts abzufeuern.\",\"task\":\"Entwirf ein 3-seitiges 'Problem-Solving-Playbook' für dein Team.\",\"deliverable\":\"Ein strukturiertes Playbook (Text oder Gliederung).\",\"constraints\":[\"Muss ohne Programmierkenntnisse verständlich sein.\",\"Muss mindestens einen Sokratischen Prompt enthalten.\"],\"reflectionPrompt\":\"Welches Element deines Playbooks wird für dein Team die größte Hürde sein?\"}",
+      "learningMode": "understand",
+      "source": "user_created",
+      "metadata": {
+        "title": "Dein KI-Playbook",
+        "scenario": "Du möchtest dein Team dazu befähigen, Probleme systematisch mit KI zu lösen, statt blind Prompts abzufeuern.",
+        "task": "Entwirf ein 3-seitiges 'Problem-Solving-Playbook' für dein Team.",
+        "deliverable": "Ein strukturiertes Playbook (Text oder Gliederung).",
+        "constraints": [
+          "Muss ohne Programmierkenntnisse verständlich sein.",
+          "Muss mindestens einen Sokratischen Prompt enthalten."
+        ],
+        "reflectionPrompt": "Welches Element deines Playbooks wird für dein Team die größte Hürde sein?",
+        "allowAiCoach": true,
+        "allowRevision": true,
+        "successCriteria": [
+          "Strukturierte Phasen vorhanden",
+          "Sokratische Prompts enthalten",
+          "Praxisnahe Anwendbarkeit"
+        ]
+      },
+      "competencyTags": [],
+      "estimatedMinutes": 60,
+      "assessmentRole": "mastery",
+      "order": 0
     }
   ],
   "progress": [
@@ -1958,5 +2205,7 @@
       "archived": false,
       "createdAt": "2026-06-22T13:40:45.820Z"
     }
-  ]
+  ],
+  "settings": {},
+  "submissions": []
 }
