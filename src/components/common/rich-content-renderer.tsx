@@ -127,16 +127,11 @@ function SmartImage({ src, alt, index = 0 }: { src: string; alt: string; index?:
   const [currentSrc, setCurrentSrc] = useState(src);
 
   useEffect(() => {
-    // Ensure every Pollinations URL gets a unique seed based on alt, src, and block index
-    if (src.includes("image.pollinations.ai")) {
-      const uniqueSeed = Math.abs(hashString(alt + src + index)) || (index * 1337 + 42);
-      let cleanSrc = src
-        .replace(/&seed=\d+/g, "")
-        .replace("&nologo=true", "")
-        .trim();
-      
-      cleanSrc += `&model=flux&nologo=true&seed=${uniqueSeed}`;
-      setCurrentSrc(cleanSrc);
+    // Route Pollinations AI / AI placeholders directly to our Gemini PRO API image generator
+    if (src.includes("image.pollinations.ai") || src.startsWith("gemini://") || !src.startsWith("http")) {
+      const rawPrompt = alt || src.split("/prompt/")[1] || "Minecraft learning module illustration";
+      const cleanPrompt = rawPrompt.replace(/[\?&].*/, "").replace(/[^a-zA-Z0-9 äöüÄÖÜß\-_]/g, " ").trim();
+      setCurrentSrc(`/api/generate-image?prompt=${encodeURIComponent(cleanPrompt)}`);
     } else {
       setCurrentSrc(src);
     }
@@ -146,7 +141,7 @@ function SmartImage({ src, alt, index = 0 }: { src: string; alt: string; index?:
     setIsLoading(false);
     if (!hasError) {
       setHasError(true);
-      // Fallback dynamically to a unique photo matching the exact image caption/keywords
+      // Fallback dynamically to a unique topic photo matching the exact image caption/keywords
       const matchedPhotoUrl = getTopicMatchedImageUrl(alt, src, index);
       setCurrentSrc(matchedPhotoUrl);
     }
