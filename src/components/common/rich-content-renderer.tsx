@@ -1,9 +1,25 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Maximize2, X, RefreshCw, Image as ImageIcon, Sparkles, AlertCircle, FileCode, Copy, Check } from "lucide-react";
+import { Maximize2, X, RefreshCw, Image as ImageIcon, Sparkles, AlertCircle, FileCode, Copy, Check, Workflow } from "lucide-react";
 
-// Smart Image Component with loading state, error fallback, zoom modal, and Pollinations/Unsplash support
+// Preprocesses markdown text so headings, images, and mermaid blocks are ALWAYS separated by double newlines
+function normalizeMarkdownNewlines(rawText: string): string {
+  if (!rawText) return "";
+  return rawText
+    // Insert newlines before headings if they follow text without newline
+    .replace(/([^\n])\s*(#{1,3}\s+)/g, "$1\n\n$2")
+    // Insert newlines before markdown images if they follow text
+    .replace(/([^\n])\s*(!\[.*?\]\(.*?\))/g, "$1\n\n$2\n\n")
+    // Insert newlines after markdown images if text follows immediately
+    .replace(/(!\[.*?\]\(.*?\))\s*([^\n])/g, "$1\n\n$2")
+    // Insert newlines before mermaid blocks if they follow text
+    .replace(/([^\n])\s*(```mermaid)/g, "$1\n\n$2")
+    // Clean up excessive newlines
+    .replace(/\n{3,}/g, "\n\n");
+}
+
+// Standalone Smart Image Component with card layout, zoom modal, and Pollinations/Unsplash support
 function SmartImage({ src, alt }: { src: string; alt: string }) {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -11,8 +27,18 @@ function SmartImage({ src, alt }: { src: string; alt: string }) {
 
   return (
     <>
-      <figure className="my-6 border border-line rounded-2xl overflow-hidden bg-paper-2 shadow-xs group relative transition-all">
-        <div className="relative overflow-hidden bg-paper-3 min-h-[200px] flex items-center justify-center">
+      <div className="my-8 rounded-2xl border border-line bg-paper shadow-sm overflow-hidden group transition-all">
+        {/* Card Header */}
+        <div className="px-4 py-3 bg-paper-2 border-b border-line flex items-center justify-between">
+          <div className="flex items-center gap-2 text-xs font-bold text-blue">
+            <Sparkles className="w-4 h-4 text-blue animate-pulse" />
+            <span className="uppercase tracking-wider font-mono text-[11px]">Visualisierung & Infografik</span>
+          </div>
+          <span className="text-[10px] font-mono text-ink-3 bg-paper px-2.5 py-0.5 rounded-full border border-line">Grafik-Block</span>
+        </div>
+
+        {/* Image Frame */}
+        <div className="relative overflow-hidden bg-paper-3 min-h-[220px] flex items-center justify-center">
           {isLoading && !hasError && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-ink-3 text-xs bg-paper-2 p-6 text-center">
               <RefreshCw className="w-5 h-5 animate-spin text-blue" />
@@ -38,7 +64,7 @@ function SmartImage({ src, alt }: { src: string; alt: string }) {
               alt={alt || "Inhaltsgrafik"} 
               onLoad={() => setIsLoading(false)}
               onError={() => { setIsLoading(false); setHasError(true); }}
-              className={`w-full max-h-[480px] object-cover transition-all duration-300 group-hover:scale-[1.01] ${isLoading ? "opacity-0" : "opacity-100"}`}
+              className={`w-full max-h-[520px] object-cover transition-all duration-300 group-hover:scale-[1.01] ${isLoading ? "opacity-0" : "opacity-100"}`}
             />
           )}
 
@@ -54,13 +80,13 @@ function SmartImage({ src, alt }: { src: string; alt: string }) {
           )}
         </div>
 
+        {/* Caption */}
         {alt && (
-          <figcaption className="p-3 text-center text-xs text-ink-2 font-medium bg-paper border-t border-line flex items-center justify-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-blue flex-shrink-0" />
-            <span>{alt}</span>
-          </figcaption>
+          <div className="p-4 bg-paper border-t border-line text-center">
+            <p className="text-xs text-ink-2 font-medium leading-relaxed">{alt}</p>
+          </div>
         )}
-      </figure>
+      </div>
 
       {/* Lightbox / Zoom Modal */}
       {isZoomed && (
@@ -85,7 +111,7 @@ function SmartImage({ src, alt }: { src: string; alt: string }) {
   );
 }
 
-// Client-side Mermaid Diagram Renderer with CDN Loader
+// Client-side Mermaid Diagram Renderer as Standalone Visual Block
 function MermaidDiagram({ chart, id }: { chart: string; id: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [svg, setSvg] = useState<string>("");
@@ -147,7 +173,7 @@ function MermaidDiagram({ chart, id }: { chart: string; id: string }) {
 
   if (isLoading) {
     return (
-      <div className="my-6 p-8 border border-line rounded-2xl bg-paper-2 flex flex-col items-center justify-center gap-3 text-ink-3 text-xs">
+      <div className="my-8 p-8 border border-line rounded-2xl bg-paper-2 flex flex-col items-center justify-center gap-3 text-ink-3 text-xs">
         <RefreshCw className="w-5 h-5 animate-spin text-blue" />
         <span>Ablaufschema & Diagramm wird gerendert...</span>
       </div>
@@ -156,7 +182,7 @@ function MermaidDiagram({ chart, id }: { chart: string; id: string }) {
 
   if (error || !svg) {
     return (
-      <div className="my-6 p-6 border border-line rounded-2xl bg-paper-2 text-ink-2">
+      <div className="my-8 p-6 border border-line rounded-2xl bg-paper-2 text-ink-2">
         <div className="flex items-center gap-2 text-amber-600 text-xs font-bold mb-2">
           <AlertCircle className="w-4 h-4" />
           <span>Prozess-Struktur (Text-Ansicht):</span>
@@ -169,15 +195,20 @@ function MermaidDiagram({ chart, id }: { chart: string; id: string }) {
   }
 
   return (
-    <div className="my-6 p-6 border border-line rounded-2xl bg-paper shadow-xs overflow-x-auto flex flex-col items-center">
-      <div 
-        ref={containerRef}
-        className="w-full flex justify-center [&>svg]:max-w-full [&>svg]:h-auto"
-        dangerouslySetInnerHTML={{ __html: svg }}
-      />
-      <div className="flex items-center gap-1.5 text-[10px] text-ink-3 font-mono uppercase tracking-wider mt-4">
-        <Sparkles className="w-3 h-3 text-blue" />
-        <span>Interaktives Prozess-Diagramm</span>
+    <div className="my-8 rounded-2xl border border-line bg-paper shadow-sm overflow-hidden">
+      <div className="px-4 py-3 bg-paper-2 border-b border-line flex items-center justify-between">
+        <div className="flex items-center gap-2 text-xs font-bold text-emerald-green">
+          <Workflow className="w-4 h-4 text-emerald-green" />
+          <span className="uppercase tracking-wider font-mono text-[11px]">Prozess- & Ablauf-Diagramm</span>
+        </div>
+        <span className="text-[10px] font-mono text-ink-3 bg-paper px-2.5 py-0.5 rounded-full border border-line">Diagramm-Block</span>
+      </div>
+      <div className="p-6 bg-paper overflow-x-auto flex flex-col items-center">
+        <div 
+          ref={containerRef}
+          className="w-full flex justify-center [&>svg]:max-w-full [&>svg]:h-auto"
+          dangerouslySetInnerHTML={{ __html: svg }}
+        />
       </div>
     </div>
   );
@@ -219,7 +250,6 @@ function CodeBlock({ code, language }: { code: string; language?: string }) {
 function formatInlineMarkdown(text: string) {
   if (!text) return null;
   
-  // Format bold **text**
   const parts = text.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`)/g);
   return parts.map((part, i) => {
     if (part.startsWith("**") && part.endsWith("**")) {
@@ -239,9 +269,11 @@ function formatInlineMarkdown(text: string) {
 export function RichContentRenderer({ content }: { content: string }) {
   if (!content) return null;
 
-  // Split content into blocks (code blocks, images, headings, paragraphs)
+  // Preprocess text to ensure clean line breaks before headings, images, and code blocks
+  const normalizedContent = normalizeMarkdownNewlines(content);
+  const lines = normalizedContent.split("\n");
+  
   const elements: React.ReactNode[] = [];
-  const lines = content.split("\n");
   
   let inMermaid = false;
   let mermaidBuffer: string[] = [];
@@ -289,7 +321,7 @@ export function RichContentRenderer({ content }: { content: string }) {
       continue;
     }
 
-    // Standalone or inline Markdown Images: ![alt](url)
+    // Standalone or extracted Markdown Images: ![alt](url)
     const imgMatch = line.match(/!\[(.*?)\]\((.*?)\)/);
     if (imgMatch) {
       const alt = imgMatch[1];
@@ -301,24 +333,24 @@ export function RichContentRenderer({ content }: { content: string }) {
     // Headings
     if (line.startsWith("### ")) {
       elements.push(
-        <h4 key={`h3-${i}`} className="text-sm font-bold mt-6 mb-3 text-ink uppercase tracking-wider font-mono flex items-center gap-2 border-b pb-2 border-line-soft">
-          {line.replace("### ", "")}
+        <h4 key={`h3-${i}`} className="text-base font-extrabold mt-8 mb-4 text-ink leading-snug flex items-center gap-2 border-b pb-2 border-line-soft">
+          {formatInlineMarkdown(line.replace("### ", ""))}
         </h4>
       );
       continue;
     }
     if (line.startsWith("## ")) {
       elements.push(
-        <h3 key={`h2-${i}`} className="text-base font-extrabold mt-8 mb-4 text-ink flex items-center gap-2 border-b pb-2 border-line">
-          {line.replace("## ", "")}
+        <h3 key={`h2-${i}`} className="text-lg font-extrabold mt-10 mb-5 text-ink leading-tight flex items-center gap-2 border-b pb-2 border-line">
+          {formatInlineMarkdown(line.replace("## ", ""))}
         </h3>
       );
       continue;
     }
     if (line.startsWith("# ")) {
       elements.push(
-        <h2 key={`h1-${i}`} className="text-lg font-extrabold mt-10 mb-4 text-blue uppercase tracking-tight">
-          {line.replace("# ", "")}
+        <h2 key={`h1-${i}`} className="text-xl font-extrabold mt-12 mb-6 text-blue uppercase tracking-tight">
+          {formatInlineMarkdown(line.replace("# ", ""))}
         </h2>
       );
       continue;
@@ -348,7 +380,7 @@ export function RichContentRenderer({ content }: { content: string }) {
     // Blockquotes / Callouts
     if (line.startsWith("> ")) {
       elements.push(
-        <blockquote key={`bq-${i}`} className="my-4 p-4 border-l-4 border-blue bg-blue/5 rounded-r-xl text-sm italic text-ink-2">
+        <blockquote key={`bq-${i}`} className="my-5 p-4 border-l-4 border-blue bg-blue/5 rounded-r-xl text-sm italic text-ink-2">
           {formatInlineMarkdown(line.replace("> ", ""))}
         </blockquote>
       );
@@ -357,13 +389,13 @@ export function RichContentRenderer({ content }: { content: string }) {
 
     // Blank lines
     if (line.trim() === "") {
-      elements.push(<div key={`space-${i}`} className="h-2" />);
+      elements.push(<div key={`space-${i}`} className="h-3" />);
       continue;
     }
 
     // Standard paragraph text
     elements.push(
-      <p key={`p-${i}`} className="text-sm text-ink-2 mb-3 leading-relaxed">
+      <p key={`p-${i}`} className="text-sm text-ink-2 mb-4 leading-relaxed font-sans">
         {formatInlineMarkdown(line)}
       </p>
     );
