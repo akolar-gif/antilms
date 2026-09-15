@@ -288,25 +288,28 @@ Format your reply in Markdown.` + getLanguageInstruction(input.language);
 
     prompt += getLanguageInstruction(input.language);
 
+    const validTypes = ["text", "quiz", "reflection", "punk_game", "project_task", "video", "code", "audio"];
+    const validModes = ["understand", "practice", "reflect", "apply", "create", "discuss", "test", "transfer", "challenge"];
+
     const { object } = await generateObject({
       model: this.model,
       schema: z.object({
         modules: z.array(z.object({
           title: z.string(),
           description: z.string(),
-          learningObjectives: z.array(z.string()).min(1),
+          learningObjectives: z.array(z.string()).catch(["Lernziel verstehen"]),
           blocks: z.array(z.object({
-            type: z.enum(["text", "quiz", "reflection", "punk_game", "project_task", "video", "code", "audio"]),
+            type: z.string().transform((val) => (validTypes.includes(val) ? (val as any) : "text")),
             title: z.string(),
             content: z.string(),
-            learningMode: z.enum(["understand", "practice", "reflect", "apply", "create", "discuss", "test", "transfer", "challenge"])
+            learningMode: z.string().transform((val) => (validModes.includes(val) ? (val as any) : "understand"))
           })).min(1)
         })).min(1).max(15)
       }),
       prompt,
     });
 
-    return object;
+    return object as GeneratedCurriculumResult;
   }
 
   async generateModule(input: GenerateModuleInput): Promise<GeneratedModule> {
@@ -321,23 +324,26 @@ Format your reply in Markdown.` + getLanguageInstruction(input.language);
       .replace("{{existingModulesInstructions}}", existingInstructions)
       + getLanguageInstruction(input.language);
 
+    const validTypes = ["text", "quiz", "reflection", "punk_game", "project_task", "video", "code", "audio"];
+    const validModes = ["understand", "practice", "reflect", "apply", "create", "discuss", "test", "transfer", "challenge"];
+
     const { object } = await generateObject({
       model: this.model,
       schema: z.object({
         title: z.string(),
         description: z.string(),
-        learningObjectives: z.array(z.string()).min(1),
+        learningObjectives: z.array(z.string()).catch(["Lernziel verstehen"]),
         blocks: z.array(z.object({
-          type: z.enum(["text", "quiz", "reflection", "punk_game", "project_task", "video", "code", "audio"]),
+          type: z.string().transform((val) => (validTypes.includes(val) ? (val as any) : "text")),
           title: z.string(),
           content: z.string(),
-          learningMode: z.enum(["understand", "practice", "reflect", "apply", "create", "discuss", "test", "transfer", "challenge"])
+          learningMode: z.string().transform((val) => (validModes.includes(val) ? (val as any) : "understand"))
         })).min(1)
       }),
       prompt,
     });
 
-    return object;
+    return object as GeneratedModule;
   }
 
   async wrapUpReply(input: WrapUpReplyInput): Promise<WrapUpReplyResult> {

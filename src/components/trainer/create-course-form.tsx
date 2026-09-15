@@ -165,9 +165,10 @@ export function CreateCourseForm({ initialOpen, sprints = [] }: CreateCourseForm
         setIsOpen(false);
         router.replace("/trainer");
       }
-    } catch (err) {
-      console.error(err);
-      toast.error(useAI ? t("creator.toast_gen_failed") : t("creator.toast_create_failed"), { id: toastId });
+    } catch (err: any) {
+      console.error("Course creation error:", err);
+      const detail = err?.message ? ` (${err.message})` : "";
+      toast.error(`${useAI ? t("creator.toast_gen_failed") : t("creator.toast_create_failed")}${detail}`, { id: toastId });
     } finally {
       setIsLoading(false);
     }
