@@ -38,21 +38,18 @@ function normalizeMarkdownNewlines(rawText: string): string {
     .replace(/\n{3,}/g, "\n\n");
 }
 
-// Topic-matched Unsplash Photo Library to guarantee relevant, high-definition fallbacks (never duplicate generic photos)
+// Topic-matched Unsplash Photo Library with distinct, highly targeted categories (zero duplicate gamer photos)
 const TOPIC_IMAGE_LIBRARY: { keywords: string[]; urls: string[] }[] = [
   {
-    keywords: ["minecraft", "spieler", "landscape", "landschaft", "biome", "welt", "world", "game", "gaming", "block", "avatar", "spielfigur"],
+    keywords: ["tastatur", "steuerung", "taste", "eingabe", "maus", "key", "keyboard", "wasd", "leertaste", "shift"],
     urls: [
-      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=1200&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=1200&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=1200&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1580234811497-9df7fd2f357e?w=1200&auto=format&fit=crop&q=80"
+      "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=1200&auto=format&fit=crop&q=80"
     ]
   },
   {
-    keywords: ["holz", "wood", "ressource", "crafting", "werkzeug", "material", "bauen", "bauwerk", "struktur", "ofen", "stein"],
+    keywords: ["holz", "wood", "ressource", "crafting", "werkzeug", "material", "werkbank", "sammeln", "rohstoff", "ofen", "stein"],
     urls: [
       "https://images.unsplash.com/photo-1546484475-7f7bd55792da?w=1200&auto=format&fit=crop&q=80",
       "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&auto=format&fit=crop&q=80",
@@ -61,7 +58,7 @@ const TOPIC_IMAGE_LIBRARY: { keywords: string[]; urls: string[] }[] = [
     ]
   },
   {
-    keywords: ["nacht", "überleben", "zombie", "gegner", "gefahr", "licht", "fackel", "dunkelheit", "night", "survival", "monster", "schlaf", "unterschlupf"],
+    keywords: ["nacht", "überleben", "zombie", "gegner", "gefahr", "licht", "fackel", "dunkelheit", "night", "survival", "monster", "schlaf", "unterschlupf", "feind"],
     urls: [
       "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=1200&auto=format&fit=crop&q=80",
       "https://images.unsplash.com/photo-1510312305653-8ed496efae75?w=1200&auto=format&fit=crop&q=80",
@@ -69,26 +66,36 @@ const TOPIC_IMAGE_LIBRARY: { keywords: string[]; urls: string[] }[] = [
     ]
   },
   {
-    keywords: ["agil", "scrum", "kanban", "team", "zusammenarbeit", "meeting", "workflow", "prozess", "management", "organisation"],
+    keywords: ["befehl", "cheat", "command", "selektor", "gamemode", "give", "teleport"],
+    urls: [
+      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    keywords: ["bauen", "bauwerk", "basis", "haus", "struktur", "not-unterschlupf", "architektur", "konstruktion"],
+    urls: [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    keywords: ["minecraft", "spieler", "landscape", "landschaft", "biome", "welt", "world", "game", "gaming", "block", "avatar", "spielfigur"],
+    urls: [
+      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=1200&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    keywords: ["agil", "scrum", "kanban", "team", "zusammenarbeit", "meeting", "workflow", "prozess", "management", "organisation", "strategie", "planung"],
     urls: [
       "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=1200&auto=format&fit=crop&q=80",
       "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&auto=format&fit=crop&q=80",
       "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&auto=format&fit=crop&q=80"
-    ]
-  },
-  {
-    keywords: ["code", "programmierung", "software", "befehl", "cheat", "ki", "ai", "digital", "tech", "taste", "tastatur", "steuerung"],
-    urls: [
-      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&auto=format&fit=crop&q=80"
-    ]
-  },
-  {
-    keywords: ["strategie", "planung", "problem", "lösung", "analyse", "denken", "kreativität", "ziel", "wissen"],
-    urls: [
-      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&auto=format&fit=crop&q=80"
     ]
   }
 ];
@@ -98,7 +105,8 @@ function getTopicMatchedImageUrl(altText: string, srcUrl?: string, index: number
   
   for (const group of TOPIC_IMAGE_LIBRARY) {
     if (group.keywords.some(kw => text.includes(kw))) {
-      const hash = Math.abs(hashString(text + index));
+      // Use composite offset incorporating text hash and block index to guarantee unique photo selection
+      const hash = Math.abs(hashString(text)) + (index * 7);
       return group.urls[hash % group.urls.length];
     }
   }
@@ -106,7 +114,7 @@ function getTopicMatchedImageUrl(altText: string, srcUrl?: string, index: number
   const fallbackUrls = [
     "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&auto=format&fit=crop&q=80",
     "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&auto=format&fit=crop&q=80"
+    "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&auto=format&fit=crop&q=80"
   ];
   return fallbackUrls[index % fallbackUrls.length];
 }
