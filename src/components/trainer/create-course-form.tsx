@@ -150,9 +150,12 @@ export function CreateCourseForm({ initialOpen, sprints = [] }: CreateCourseForm
 
       if (useAI) {
         // Call server action to generate modules & blocks
-        const curriculum = await generateCurriculumAction(title, description, curriculumText || undefined);
+        const res = await generateCurriculumAction(title, description, curriculumText || undefined);
+        if (!res.success || !res.data) {
+          throw new Error(res.error || "KI-Generierung fehlgeschlagen.");
+        }
         setTempCourseData({ title, description, category, imageUrl: finalImageUrl, type: courseType });
-        setGeneratedCurriculum(curriculum);
+        setGeneratedCurriculum(res.data);
         toast.success(t("creator.toast_gen_success"), { id: toastId });
       } else {
         // Append type & sprint connections

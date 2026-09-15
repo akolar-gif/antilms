@@ -174,13 +174,26 @@ import { GeneratedCurriculumResult } from "@/lib/ai/provider";
 
 const aiProvider = new RealAIProvider();
 
-export async function generateCurriculumAction(title: string, description: string, curriculumSyllabus?: string): Promise<GeneratedCurriculumResult> {
-  if (!title || !description) {
-    throw new Error("Title and description are required.");
+export async function generateCurriculumAction(
+  title: string, 
+  description: string, 
+  curriculumSyllabus?: string
+): Promise<{ success: boolean; data?: GeneratedCurriculumResult; error?: string }> {
+  try {
+    if (!title || !description) {
+      return { success: false, error: "Title and description are required." };
+    }
+    const cookieStore = await cookies();
+    const language = cookieStore.get("lang")?.value || "de";
+    const data = await aiProvider.generateCurriculum({ title, description, language, curriculumSyllabus });
+    return { success: true, data };
+  } catch (err: any) {
+    console.error("generateCurriculumAction error:", err);
+    return { 
+      success: false, 
+      error: err?.message || "Fehler bei der KI-Generierung. Bitte überprüfen Sie den Gemini API-Key in der .env auf dem Server." 
+    };
   }
-  const cookieStore = await cookies();
-  const language = cookieStore.get("lang")?.value || "de";
-  return await aiProvider.generateCurriculum({ title, description, language, curriculumSyllabus });
 }
 
 export async function saveCurriculumAction(
