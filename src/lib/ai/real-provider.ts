@@ -198,13 +198,15 @@ export class RealAIProvider implements AIProvider {
 CRITICAL VISUAL & FORMATTING INSTRUCTIONS:
 1. TYPOGRAPHY & EMOJIS: DO NOT use emojis in titles or headings (###). Keep titles clean, professional, and elegant.
 2. NEWLINES: ALWAYS place empty double newlines (\n\n) before and after EVERY heading (###), image, and diagram block. NEVER merge headings or image URLs inline into a paragraph string!
-3. STANDALONE IMAGES: Include at least 1 visual illustration or photograph on its own line using Markdown syntax:
-   ![Deutscher Untertitel](https://image.pollinations.ai/prompt/Detailed_English_prompt_matching_topic?width=1200&height=675&model=flux&nologo=true)
-4. PROCESS DIAGRAMS / FLOWCHARTS: Include a Mermaid flowchart as a standalone code block if explaining a workflow, structure, or decision framework:
+3. STANDALONE IMAGES: Include at least 1 visual illustration on its own line using Markdown syntax:
+   ![Deutscher Untertitel](https://image.pollinations.ai/prompt/Detailed_English_prompt_matching_topic?width=1200&height=675&model=flux&nologo=true&seed=12345)
+   (Use unique English prompt and distinct seed like &seed=84920).
+4. PROCESS DIAGRAMS / FLOWCHARTS: Include a Mermaid flowchart as a standalone code block if explaining a workflow.
+   ALL node labels MUST be wrapped in double quotes e.g.:
 \`\`\`mermaid
 graph TD
-  A[Input] --> B[Prozess]
-  B --> C[Ergebnis]
+  A["Input & Problem"] --> B["Analyse & Prozess"]
+  B --> C["Ergebnis & Transfer"]
 \`\`\`
 
 ${customPromptStr}`,

@@ -3,6 +3,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Maximize2, X, RefreshCw, AlertCircle, FileCode, Copy, Check, Workflow } from "lucide-react";
 
+// Helper string hash
+function hashString(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return hash;
+}
+
 // Strip emojis from heading strings for a clean, elegant typography look
 function stripEmojis(str: string): string {
   if (!str) return "";
@@ -36,7 +46,9 @@ const TOPIC_IMAGE_LIBRARY: { keywords: string[]; urls: string[] }[] = [
       "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200&auto=format&fit=crop&q=80",
       "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=1200&auto=format&fit=crop&q=80",
       "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=1200&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=1200&auto=format&fit=crop&q=80"
+      "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1580234811497-9df7fd2f357e?w=1200&auto=format&fit=crop&q=80"
     ]
   },
   {
@@ -44,7 +56,8 @@ const TOPIC_IMAGE_LIBRARY: { keywords: string[]; urls: string[] }[] = [
     urls: [
       "https://images.unsplash.com/photo-1546484475-7f7bd55792da?w=1200&auto=format&fit=crop&q=80",
       "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1200&auto=format&fit=crop&q=80"
+      "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1508873696983-2df515122519?w=1200&auto=format&fit=crop&q=80"
     ]
   },
   {
@@ -67,7 +80,8 @@ const TOPIC_IMAGE_LIBRARY: { keywords: string[]; urls: string[] }[] = [
     keywords: ["code", "programmierung", "software", "befehl", "cheat", "ki", "ai", "digital", "tech", "taste", "tastatur", "steuerung"],
     urls: [
       "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&auto=format&fit=crop&q=80"
+      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&auto=format&fit=crop&q=80"
     ]
   },
   {
@@ -79,42 +93,53 @@ const TOPIC_IMAGE_LIBRARY: { keywords: string[]; urls: string[] }[] = [
   }
 ];
 
-function getTopicMatchedImageUrl(altText: string, srcUrl?: string): string {
+function getTopicMatchedImageUrl(altText: string, srcUrl?: string, index: number = 0): string {
   const text = (altText + " " + (srcUrl || "")).toLowerCase();
   
   for (const group of TOPIC_IMAGE_LIBRARY) {
     if (group.keywords.some(kw => text.includes(kw))) {
-      const hash = text.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      const hash = Math.abs(hashString(text + index));
       return group.urls[hash % group.urls.length];
     }
   }
 
-  return "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&auto=format&fit=crop&q=80";
+  const fallbackUrls = [
+    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&auto=format&fit=crop&q=80"
+  ];
+  return fallbackUrls[index % fallbackUrls.length];
 }
 
 // High-definition Editorial Image Component
-function SmartImage({ src, alt }: { src: string; alt: string }) {
+function SmartImage({ src, alt, index = 0 }: { src: string; alt: string; index?: number }) {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isZoomed, setIsZoomed] = useState(false);
   const [currentSrc, setCurrentSrc] = useState(src);
 
   useEffect(() => {
-    // Clean up pollinations URLs or fallback to topic matching
+    // Ensure every Pollinations URL gets a unique seed based on alt, src, and block index
     if (src.includes("image.pollinations.ai")) {
-      const cleanSrc = src.replace("&nologo=true", "") + "&model=flux&nologo=true";
+      const uniqueSeed = Math.abs(hashString(alt + src + index)) || (index * 1337 + 42);
+      let cleanSrc = src
+        .replace(/&seed=\d+/g, "")
+        .replace("&nologo=true", "")
+        .trim();
+      
+      cleanSrc += `&model=flux&nologo=true&seed=${uniqueSeed}`;
       setCurrentSrc(cleanSrc);
     } else {
       setCurrentSrc(src);
     }
-  }, [src]);
+  }, [src, alt, index]);
 
   const handleImageError = () => {
     setIsLoading(false);
     if (!hasError) {
       setHasError(true);
       // Fallback dynamically to a unique photo matching the exact image caption/keywords
-      const matchedPhotoUrl = getTopicMatchedImageUrl(alt, src);
+      const matchedPhotoUrl = getTopicMatchedImageUrl(alt, src, index);
       setCurrentSrc(matchedPhotoUrl);
     }
   };
@@ -180,19 +205,102 @@ function SmartImage({ src, alt }: { src: string; alt: string }) {
   );
 }
 
+// Cleans up raw AI Mermaid diagram string so it parses properly in Mermaid.js
+function sanitizeMermaidCode(rawChart: string): string {
+  if (!rawChart) return "graph TD\n  A[\"Prozess\"]";
+  
+  let lines = rawChart.trim().split("\n");
+  
+  // Ensure diagram starts with graph TD/LR or flowchart
+  const firstLine = lines[0]?.trim() || "";
+  if (!firstLine.startsWith("graph") && !firstLine.startsWith("flowchart") && !firstLine.startsWith("sequenceDiagram") && !firstLine.startsWith("classDiagram") && !firstLine.startsWith("gantt")) {
+    lines.unshift("graph TD");
+  }
+
+  // Auto-fix node labels containing unquoted special characters
+  const processedLines = lines.map(line => {
+    let l = line.trim();
+    if (!l || l.startsWith("graph") || l.startsWith("flowchart") || l.startsWith("subgraph") || l.startsWith("end") || l.startsWith("style") || l.startsWith("classDef")) {
+      return l;
+    }
+    
+    // Convert unquoted bracket labels e.g. A[1. /gamemode <Modus>] -> A["1. /gamemode <Modus>"]
+    l = l.replace(/([A-Za-z0-9_]+)\[([^"\]]+)\]/g, (match, id, text) => {
+      const cleanText = text.replace(/<[^>]*>/g, "").replace(/"/g, "'").trim();
+      return `${id}["${cleanText}"]`;
+    });
+
+    l = l.replace(/([A-Za-z0-9_]+)\(([^"\)]+)\)/g, (match, id, text) => {
+      const cleanText = text.replace(/<[^>]*>/g, "").replace(/"/g, "'").trim();
+      return `${id}("${cleanText}")`;
+    });
+
+    return l;
+  });
+
+  return processedLines.join("\n");
+}
+
+// Clean visual step flowchart fallback if Mermaid syntax fails
+function ProcessListFallback({ chart }: { chart: string }) {
+  const stepMatches: string[] = [];
+  const regex = /(?:\[|\()(?:"|')?([^"\]\)\n\r]+)(?:"|')?(?:\]|\))/g;
+  let match;
+  while ((match = regex.exec(chart)) !== null) {
+    const text = match[1].trim();
+    if (text && !stepMatches.includes(text) && text.length > 1) {
+      stepMatches.push(text);
+    }
+  }
+
+  if (stepMatches.length === 0) {
+    return (
+      <div className="my-6 p-4 rounded-xl border border-line bg-paper-2 font-mono text-xs text-ink-2 overflow-x-auto">
+        <pre>{chart}</pre>
+      </div>
+    );
+  }
+
+  return (
+    <div className="my-8 rounded-2xl border border-line/80 bg-paper shadow-xs overflow-hidden">
+      <div className="px-4 py-2.5 bg-paper-2 border-b border-line flex items-center justify-between">
+        <div className="flex items-center gap-2 text-xs font-bold text-ink-2">
+          <Workflow className="w-3.5 h-3.5 text-blue" />
+          <span className="uppercase tracking-wider font-mono text-[10px]">Prozess- & Ablauf-Schritte</span>
+        </div>
+      </div>
+      <div className="p-6 bg-paper flex flex-col md:flex-row flex-wrap items-center justify-center gap-3">
+        {stepMatches.map((step, idx) => (
+          <React.Fragment key={idx}>
+            <div className="px-4 py-3 bg-paper-2 border border-line rounded-xl text-xs font-semibold text-ink shadow-xs text-center max-w-xs">
+              <span className="text-blue font-mono font-bold mr-2">{idx + 1}.</span>
+              {step}
+            </div>
+            {idx < stepMatches.length - 1 && (
+              <div className="text-blue font-bold text-lg rotate-90 md:rotate-0">→</div>
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // Client-side Mermaid Diagram Renderer
 function MermaidDiagram({ chart, id }: { chart: string; id: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [svg, setSvg] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const cleanChart = sanitizeMermaidCode(chart);
 
   useEffect(() => {
     let isMounted = true;
     const renderChart = async () => {
       try {
         setIsLoading(true);
-        setError(null);
+        setError(false);
 
         // Dynamically load Mermaid.js if not present
         if (!(window as any).mermaid) {
@@ -205,6 +313,7 @@ function MermaidDiagram({ chart, id }: { chart: string; id: string }) {
                   startOnLoad: false,
                   theme: "neutral",
                   securityLevel: "loose",
+                  suppressError: true,
                   fontFamily: "inherit",
                 });
                 resolve();
@@ -218,9 +327,16 @@ function MermaidDiagram({ chart, id }: { chart: string; id: string }) {
         }
 
         const mermaid = (window as any).mermaid;
-        const cleanChart = chart.trim();
         const uniqueId = `mermaid-svg-${id}-${Math.random().toString(36).substring(2, 7)}`;
         
+        // Validate syntax with parse first
+        if (typeof mermaid.parse === "function") {
+          const isValid = await mermaid.parse(cleanChart);
+          if (!isValid) {
+            throw new Error("Mermaid syntax invalid");
+          }
+        }
+
         const { svg: renderedSvg } = await mermaid.render(uniqueId, cleanChart);
         
         if (isMounted) {
@@ -229,8 +345,14 @@ function MermaidDiagram({ chart, id }: { chart: string; id: string }) {
         }
       } catch (err: any) {
         if (isMounted) {
-          console.warn("Mermaid render error:", err);
-          setError(err?.message || "Diagramm konnte nicht gerendert werden");
+          console.warn("Mermaid render fallback triggered:", err);
+          // Remove any orphaned error elements injected by Mermaid into document.body
+          if (typeof document !== "undefined") {
+            document.querySelectorAll("[id^='dmermaid'], .mermaid-error").forEach(el => {
+              if (el.parentNode === document.body) el.remove();
+            });
+          }
+          setError(true);
           setIsLoading(false);
         }
       }
@@ -238,7 +360,7 @@ function MermaidDiagram({ chart, id }: { chart: string; id: string }) {
 
     renderChart();
     return () => { isMounted = false; };
-  }, [chart, id]);
+  }, [cleanChart, id]);
 
   if (isLoading) {
     return (
@@ -250,17 +372,7 @@ function MermaidDiagram({ chart, id }: { chart: string; id: string }) {
   }
 
   if (error || !svg) {
-    return (
-      <div className="my-8 p-6 border border-line rounded-2xl bg-paper-2 text-ink-2">
-        <div className="flex items-center gap-2 text-amber-600 text-xs font-bold mb-2">
-          <AlertCircle className="w-4 h-4" />
-          <span>Prozess-Struktur (Textansicht):</span>
-        </div>
-        <pre className="p-3 bg-paper border border-line rounded-xl text-xs font-mono text-ink-2 overflow-x-auto whitespace-pre-wrap">
-          {chart}
-        </pre>
-      </div>
-    );
+    return <ProcessListFallback chart={cleanChart} />;
   }
 
   return (
@@ -337,7 +449,6 @@ function formatInlineMarkdown(text: string) {
 export function RichContentRenderer({ content }: { content: string }) {
   if (!content) return null;
 
-  // Preprocess text to ensure clean line breaks before headings, images, and code blocks
   const normalizedContent = normalizeMarkdownNewlines(content);
   const lines = normalizedContent.split("\n");
   
@@ -348,30 +459,32 @@ export function RichContentRenderer({ content }: { content: string }) {
   let inCode = false;
   let codeBuffer: string[] = [];
   let codeLang = "";
+  let imageCounter = 0;
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
+    const rawLine = lines[i];
+    const trimmedLine = rawLine.trim();
 
     // Mermaid code block start/end
-    if (line.trim().startsWith("```mermaid") || line.trim().startsWith("```diagram")) {
+    if (trimmedLine.startsWith("```mermaid") || trimmedLine.startsWith("```diagram")) {
       inMermaid = true;
       mermaidBuffer = [];
       continue;
     }
     if (inMermaid) {
-      if (line.trim() === "```") {
+      if (trimmedLine === "```") {
         inMermaid = false;
         const chartCode = mermaidBuffer.join("\n");
         elements.push(<MermaidDiagram key={`mermaid-${i}`} id={`m-${i}`} chart={chartCode} />);
         mermaidBuffer = [];
       } else {
-        mermaidBuffer.push(line);
+        mermaidBuffer.push(rawLine);
       }
       continue;
     }
 
     // Generic Code block start/end
-    if (line.trim().startsWith("```")) {
+    if (trimmedLine.startsWith("```")) {
       if (inCode) {
         inCode = false;
         elements.push(<CodeBlock key={`code-${i}`} code={codeBuffer.join("\n")} language={codeLang} />);
@@ -379,66 +492,79 @@ export function RichContentRenderer({ content }: { content: string }) {
         codeLang = "";
       } else {
         inCode = true;
-        codeLang = line.trim().replace("```", "");
+        codeLang = trimmedLine.replace("```", "");
         codeBuffer = [];
       }
       continue;
     }
     if (inCode) {
-      codeBuffer.push(line);
+      codeBuffer.push(rawLine);
       continue;
     }
 
     // Standalone or extracted Markdown Images: ![alt](url)
-    const imgMatch = line.match(/!\[(.*?)\]\((.*?)\)/);
+    const imgMatch = trimmedLine.match(/!\[(.*?)\]\((.*?)\)/);
     if (imgMatch) {
       const alt = imgMatch[1];
       const src = imgMatch[2];
-      elements.push(<SmartImage key={`img-${i}`} src={src} alt={alt} />);
+      imageCounter++;
+      elements.push(<SmartImage key={`img-${i}`} src={src} alt={alt} index={imageCounter} />);
+      continue;
+    }
+
+    // Skip empty or orphaned heading lines like "#", "##", "###"
+    if (trimmedLine === "#" || trimmedLine === "##" || trimmedLine === "###") {
       continue;
     }
 
     // Headings (with stripEmojis for clean typography)
-    if (line.startsWith("### ")) {
-      const titleText = stripEmojis(line.replace("### ", ""));
-      elements.push(
-        <h4 key={`h3-${i}`} className="text-base font-extrabold mt-8 mb-4 text-ink leading-snug flex items-center gap-2 border-b pb-2 border-line-soft">
-          {formatInlineMarkdown(titleText)}
-        </h4>
-      );
+    if (trimmedLine.startsWith("### ")) {
+      const titleText = stripEmojis(trimmedLine.substring(4).trim());
+      if (titleText) {
+        elements.push(
+          <h4 key={`h3-${i}`} className="text-base font-extrabold mt-8 mb-4 text-ink leading-snug flex items-center gap-2 border-b pb-2 border-line-soft">
+            {formatInlineMarkdown(titleText)}
+          </h4>
+        );
+      }
       continue;
     }
-    if (line.startsWith("## ")) {
-      const titleText = stripEmojis(line.replace("## ", ""));
-      elements.push(
-        <h3 key={`h2-${i}`} className="text-lg font-extrabold mt-10 mb-5 text-ink leading-tight flex items-center gap-2 border-b pb-2 border-line">
-          {formatInlineMarkdown(titleText)}
-        </h3>
-      );
+    if (trimmedLine.startsWith("## ")) {
+      const titleText = stripEmojis(trimmedLine.substring(3).trim());
+      if (titleText) {
+        elements.push(
+          <h3 key={`h2-${i}`} className="text-lg font-extrabold mt-10 mb-5 text-ink leading-tight flex items-center gap-2 border-b pb-2 border-line">
+            {formatInlineMarkdown(titleText)}
+          </h3>
+        );
+      }
       continue;
     }
-    if (line.startsWith("# ")) {
-      const titleText = stripEmojis(line.replace("# ", ""));
-      elements.push(
-        <h2 key={`h1-${i}`} className="text-xl font-extrabold mt-12 mb-6 text-blue uppercase tracking-tight">
-          {formatInlineMarkdown(titleText)}
-        </h2>
-      );
+    if (trimmedLine.startsWith("# ")) {
+      const titleText = stripEmojis(trimmedLine.substring(2).trim());
+      if (titleText) {
+        elements.push(
+          <h2 key={`h1-${i}`} className="text-xl font-extrabold mt-12 mb-6 text-blue uppercase tracking-tight">
+            {formatInlineMarkdown(titleText)}
+          </h2>
+        );
+      }
       continue;
     }
 
-    // Bullet Lists
-    if (line.startsWith("- ") || line.startsWith("* ")) {
+    // Bullet Lists (support -, *, +, ^)
+    if (trimmedLine.startsWith("- ") || trimmedLine.startsWith("* ") || trimmedLine.startsWith("+ ") || trimmedLine.startsWith("^ ")) {
+      const listContent = trimmedLine.startsWith("^ ") ? trimmedLine.substring(2) : trimmedLine.substring(2);
       elements.push(
         <li key={`li-${i}`} className="ml-5 list-disc text-sm text-ink-2 mb-2 leading-relaxed">
-          {formatInlineMarkdown(line.substring(2))}
+          {formatInlineMarkdown(listContent)}
         </li>
       );
       continue;
     }
 
     // Numbered Lists
-    const numMatch = line.match(/^(\d+)\.\s+(.*)/);
+    const numMatch = trimmedLine.match(/^(\d+)[\.\)]\s+(.*)/);
     if (numMatch) {
       elements.push(
         <li key={`nli-${i}`} className="ml-5 list-decimal text-sm text-ink-2 mb-2 leading-relaxed">
@@ -449,17 +575,17 @@ export function RichContentRenderer({ content }: { content: string }) {
     }
 
     // Blockquotes / Callouts
-    if (line.startsWith("> ")) {
+    if (trimmedLine.startsWith("> ")) {
       elements.push(
         <blockquote key={`bq-${i}`} className="my-5 p-4 border-l-4 border-blue bg-blue/5 rounded-r-xl text-sm italic text-ink-2">
-          {formatInlineMarkdown(line.replace("> ", ""))}
+          {formatInlineMarkdown(trimmedLine.substring(2))}
         </blockquote>
       );
       continue;
     }
 
     // Blank lines
-    if (line.trim() === "") {
+    if (trimmedLine === "") {
       elements.push(<div key={`space-${i}`} className="h-3" />);
       continue;
     }
@@ -467,10 +593,11 @@ export function RichContentRenderer({ content }: { content: string }) {
     // Standard paragraph text
     elements.push(
       <p key={`p-${i}`} className="text-sm text-ink-2 mb-4 leading-relaxed font-sans">
-        {formatInlineMarkdown(line)}
+        {formatInlineMarkdown(trimmedLine)}
       </p>
     );
   }
 
   return <div className="rich-content space-y-1">{elements}</div>;
 }
+

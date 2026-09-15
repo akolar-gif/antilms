@@ -138,17 +138,18 @@ For each module:
 CRITICAL VISUAL & FORMATTING INSTRUCTIONS FOR TEXT BLOCKS:
 1. TYPOGRAPHY & EMOJIS: DO NOT use emojis in module titles, block titles, or section headings (###). Keep titles clean, professional, and elegant.
 2. NEWLINES: ALWAYS place empty double newlines (\n\n) before and after EVERY heading (###), image, bullet point list, and code/diagram block. NEVER merge headings or image URLs inline into a paragraph string!
-3. STANDALONE IMAGES: Include a relevant visual illustration or photograph per text block on its own line:
+3. UNIQUE STANDALONE IMAGES: Include a unique, topic-specific visual illustration per text block on its own line:
 
-   ![Deutscher Untertitel/Beschreibung](https://image.pollinations.ai/prompt/Detailed_English_prompt_describing_a_modern_flat_vector_or_realistic_scene_about_topic?width=1200&height=675&model=flux&nologo=true)
+   ![Deutscher Untertitel/Beschreibung](https://image.pollinations.ai/prompt/Detailed_English_prompt_describing_topic?width=1200&height=675&model=flux&nologo=true&seed=12345)
 
-   (Ensure the image prompt inside the URL is written in descriptive English matching the specific topic, e.g. "hd_photography_minecraft_building_structure_crafting_guide").
-4. PROCESS DIAGRAMS / FLOWCHARTS: Include a process, framework, or decision flow diagram as a standalone Mermaid code block whenever introducing a workflow, cycle, or taxonomy:
+   (Ensure every image prompt is unique English matching that exact block, e.g. "hd_photography_minecraft_crafting_table_tools", with a different 5-digit seed like &seed=48192 or &seed=92014 so images never duplicate).
+4. PROCESS DIAGRAMS / FLOWCHARTS: Include a process or decision flow diagram as a standalone Mermaid block when explaining a workflow.
+   CRITICAL MERMAID RULE: ALL node labels MUST be wrapped in double quotes e.g.:
 
    \`\`\`mermaid
    graph TD
-     A[Input / Problem] --> B[Analyse & Prozess]
-     B --> C[Ergebnis & Transfer]
+     A["Input & Problem"] --> B["Analyse & Prozess"]
+     B --> C["Ergebnis & Transfer"]
    \`\`\`
 
 Ensure that the blocks form a logical sequence (e.g. text -> quiz/reflection -> punk_game/project_task) and that the contents of quiz, reflection, punk_game, and project_task are valid, stringified JSON strings matching their respective schemas exactly.
@@ -189,16 +190,18 @@ You must generate:
 CRITICAL VISUAL & FORMATTING INSTRUCTIONS FOR TEXT BLOCKS:
 1. TYPOGRAPHY & EMOJIS: DO NOT use emojis in module titles, block titles, or section headings (###). Keep titles clean, professional, and elegant.
 2. NEWLINES: ALWAYS place empty double newlines (\n\n) before and after EVERY heading (###), image, bullet point list, and code/diagram block. NEVER merge headings or image URLs inline into a paragraph string!
-3. STANDALONE IMAGES: Include a relevant visual illustration per text block on its own line:
+3. UNIQUE STANDALONE IMAGES: Include a unique visual illustration per text block on its own line:
 
-   ![Deutscher Untertitel/Beschreibung](https://image.pollinations.ai/prompt/Detailed_English_prompt_describing_a_modern_flat_vector_or_realistic_scene_about_topic?width=1200&height=675&model=flux&nologo=true)
+   ![Deutscher Untertitel/Beschreibung](https://image.pollinations.ai/prompt/Detailed_English_prompt_describing_topic?width=1200&height=675&model=flux&nologo=true&seed=12345)
 
-4. PROCESS DIAGRAMS / FLOWCHARTS: Include a process, framework, or decision flow diagram as a standalone Mermaid code block whenever introducing a workflow or structure:
+   (Use unique English prompts and a distinct 5-digit seed e.g. &seed=38491 for each block).
+4. PROCESS DIAGRAMS / FLOWCHARTS: Include a process or decision flow diagram as a standalone Mermaid block.
+   CRITICAL MERMAID RULE: ALL node labels MUST be wrapped in double quotes e.g.:
 
    \`\`\`mermaid
    graph TD
-     A[Input / Problem] --> B[Analyse & Prozess]
-     B --> C[Ergebnis & Transfer]
+     A["Input & Problem"] --> B["Analyse & Prozess"]
+     B --> C["Ergebnis & Transfer"]
    \`\`\`
 
 Ensure that the blocks form a logical sequence (e.g. text -> quiz/reflection -> punk_game/project_task) and that the contents of quiz, reflection, punk_game, and project_task are valid, stringified JSON strings matching their respective schemas exactly.
