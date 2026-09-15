@@ -1,7 +1,16 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Maximize2, X, RefreshCw, Image as ImageIcon, Sparkles, AlertCircle, FileCode, Copy, Check, Workflow } from "lucide-react";
+import { Maximize2, X, RefreshCw, AlertCircle, FileCode, Copy, Check, Workflow } from "lucide-react";
+
+// Strip emojis from heading strings for a clean, elegant typography look
+function stripEmojis(str: string): string {
+  if (!str) return "";
+  return str
+    .replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]/gu, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 // Preprocesses markdown text so headings, images, and mermaid blocks are ALWAYS separated by double newlines
 function normalizeMarkdownNewlines(rawText: string): string {
@@ -19,56 +28,52 @@ function normalizeMarkdownNewlines(rawText: string): string {
     .replace(/\n{3,}/g, "\n\n");
 }
 
-// Standalone Smart Image Component with card layout, zoom modal, and Pollinations/Unsplash support
+// High-definition Editorial Image Component
 function SmartImage({ src, alt }: { src: string; alt: string }) {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [currentSrc, setCurrentSrc] = useState(src);
+
+  useEffect(() => {
+    // Upgrade pollinations URLs to use high quality flux model without logos
+    if (src.includes("image.pollinations.ai") && !src.includes("model=flux")) {
+      const cleanSrc = src.replace("&nologo=true", "") + "&model=flux&nologo=true";
+      setCurrentSrc(cleanSrc);
+    } else {
+      setCurrentSrc(src);
+    }
+  }, [src]);
+
+  const handleImageError = () => {
+    setIsLoading(false);
+    // If original source fails, fallback to curated high-res Unsplash photographic visual
+    if (!hasError) {
+      setHasError(true);
+      setCurrentSrc("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&auto=format&fit=crop&q=80");
+    }
+  };
 
   return (
     <>
-      <div className="my-8 rounded-2xl border border-line bg-paper shadow-sm overflow-hidden group transition-all">
-        {/* Card Header */}
-        <div className="px-4 py-3 bg-paper-2 border-b border-line flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs font-bold text-blue">
-            <Sparkles className="w-4 h-4 text-blue animate-pulse" />
-            <span className="uppercase tracking-wider font-mono text-[11px]">Visualisierung & Infografik</span>
-          </div>
-          <span className="text-[10px] font-mono text-ink-3 bg-paper px-2.5 py-0.5 rounded-full border border-line">Grafik-Block</span>
-        </div>
-
-        {/* Image Frame */}
-        <div className="relative overflow-hidden bg-paper-3 min-h-[220px] flex items-center justify-center">
-          {isLoading && !hasError && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-ink-3 text-xs bg-paper-2 p-6 text-center">
+      <figure className="my-8 group relative flex flex-col items-center">
+        <div className="relative w-full overflow-hidden rounded-2xl border border-line/80 bg-paper-2 shadow-xs transition-all duration-300">
+          {isLoading && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-ink-3 text-xs bg-paper-2 p-8 text-center min-h-[220px]">
               <RefreshCw className="w-5 h-5 animate-spin text-blue" />
-              <span>Visuelle Darstellung wird aufbereitet...</span>
+              <span>Hochauflösende Visualisierung wird geladen...</span>
             </div>
           )}
 
-          {hasError ? (
-            <div className="p-8 text-center flex flex-col items-center gap-2 text-ink-3 bg-paper-2 w-full">
-              <ImageIcon className="w-8 h-8 text-ink-3/40" />
-              <p className="text-xs font-medium text-ink-2">{alt || "Visualisierung zum Thema"}</p>
-              <button 
-                type="button"
-                onClick={() => { setHasError(false); setIsLoading(true); }}
-                className="text-[11px] text-blue hover:underline flex items-center gap-1 mt-1 cursor-pointer"
-              >
-                <RefreshCw className="w-3 h-3" /> Grafik neu laden
-              </button>
-            </div>
-          ) : (
-            <img 
-              src={src} 
-              alt={alt || "Inhaltsgrafik"} 
-              onLoad={() => setIsLoading(false)}
-              onError={() => { setIsLoading(false); setHasError(true); }}
-              className={`w-full max-h-[520px] object-cover transition-all duration-300 group-hover:scale-[1.01] ${isLoading ? "opacity-0" : "opacity-100"}`}
-            />
-          )}
+          <img 
+            src={currentSrc} 
+            alt={alt || "Illustration zum Thema"} 
+            onLoad={() => setIsLoading(false)}
+            onError={handleImageError}
+            className={`w-full max-h-[500px] object-cover rounded-2xl transition-all duration-300 group-hover:scale-[1.008] ${isLoading ? "opacity-0" : "opacity-100"}`}
+          />
 
-          {!hasError && !isLoading && (
+          {!isLoading && (
             <button
               type="button"
               onClick={() => setIsZoomed(true)}
@@ -80,13 +85,12 @@ function SmartImage({ src, alt }: { src: string; alt: string }) {
           )}
         </div>
 
-        {/* Caption */}
         {alt && (
-          <div className="p-4 bg-paper border-t border-line text-center">
-            <p className="text-xs text-ink-2 font-medium leading-relaxed">{alt}</p>
-          </div>
+          <figcaption className="mt-3 text-center text-xs text-ink-3 italic font-sans max-w-2xl leading-relaxed">
+            {alt}
+          </figcaption>
         )}
-      </div>
+      </figure>
 
       {/* Lightbox / Zoom Modal */}
       {isZoomed && (
@@ -102,7 +106,7 @@ function SmartImage({ src, alt }: { src: string; alt: string }) {
             >
               <X className="w-6 h-6" />
             </button>
-            <img src={src} alt={alt} className="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl" />
+            <img src={currentSrc} alt={alt} className="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl" />
             {alt && <p className="text-white text-sm font-medium mt-4 text-center">{alt}</p>}
           </div>
         </div>
@@ -111,7 +115,7 @@ function SmartImage({ src, alt }: { src: string; alt: string }) {
   );
 }
 
-// Client-side Mermaid Diagram Renderer as Standalone Visual Block
+// Client-side Mermaid Diagram Renderer
 function MermaidDiagram({ chart, id }: { chart: string; id: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [svg, setSvg] = useState<string>("");
@@ -175,7 +179,7 @@ function MermaidDiagram({ chart, id }: { chart: string; id: string }) {
     return (
       <div className="my-8 p-8 border border-line rounded-2xl bg-paper-2 flex flex-col items-center justify-center gap-3 text-ink-3 text-xs">
         <RefreshCw className="w-5 h-5 animate-spin text-blue" />
-        <span>Ablaufschema & Diagramm wird gerendert...</span>
+        <span>Prozess-Diagramm wird aufbereitet...</span>
       </div>
     );
   }
@@ -185,7 +189,7 @@ function MermaidDiagram({ chart, id }: { chart: string; id: string }) {
       <div className="my-8 p-6 border border-line rounded-2xl bg-paper-2 text-ink-2">
         <div className="flex items-center gap-2 text-amber-600 text-xs font-bold mb-2">
           <AlertCircle className="w-4 h-4" />
-          <span>Prozess-Struktur (Text-Ansicht):</span>
+          <span>Prozess-Struktur (Textansicht):</span>
         </div>
         <pre className="p-3 bg-paper border border-line rounded-xl text-xs font-mono text-ink-2 overflow-x-auto whitespace-pre-wrap">
           {chart}
@@ -195,13 +199,12 @@ function MermaidDiagram({ chart, id }: { chart: string; id: string }) {
   }
 
   return (
-    <div className="my-8 rounded-2xl border border-line bg-paper shadow-sm overflow-hidden">
-      <div className="px-4 py-3 bg-paper-2 border-b border-line flex items-center justify-between">
-        <div className="flex items-center gap-2 text-xs font-bold text-emerald-green">
-          <Workflow className="w-4 h-4 text-emerald-green" />
-          <span className="uppercase tracking-wider font-mono text-[11px]">Prozess- & Ablauf-Diagramm</span>
+    <div className="my-8 rounded-2xl border border-line/80 bg-paper shadow-xs overflow-hidden">
+      <div className="px-4 py-2.5 bg-paper-2 border-b border-line flex items-center justify-between">
+        <div className="flex items-center gap-2 text-xs font-bold text-ink-2">
+          <Workflow className="w-3.5 h-3.5 text-blue" />
+          <span className="uppercase tracking-wider font-mono text-[10px]">Prozess- & Ablauf-Diagramm</span>
         </div>
-        <span className="text-[10px] font-mono text-ink-3 bg-paper px-2.5 py-0.5 rounded-full border border-line">Diagramm-Block</span>
       </div>
       <div className="p-6 bg-paper overflow-x-auto flex flex-col items-center">
         <div 
@@ -330,27 +333,30 @@ export function RichContentRenderer({ content }: { content: string }) {
       continue;
     }
 
-    // Headings
+    // Headings (with stripEmojis for clean typography)
     if (line.startsWith("### ")) {
+      const titleText = stripEmojis(line.replace("### ", ""));
       elements.push(
         <h4 key={`h3-${i}`} className="text-base font-extrabold mt-8 mb-4 text-ink leading-snug flex items-center gap-2 border-b pb-2 border-line-soft">
-          {formatInlineMarkdown(line.replace("### ", ""))}
+          {formatInlineMarkdown(titleText)}
         </h4>
       );
       continue;
     }
     if (line.startsWith("## ")) {
+      const titleText = stripEmojis(line.replace("## ", ""));
       elements.push(
         <h3 key={`h2-${i}`} className="text-lg font-extrabold mt-10 mb-5 text-ink leading-tight flex items-center gap-2 border-b pb-2 border-line">
-          {formatInlineMarkdown(line.replace("## ", ""))}
+          {formatInlineMarkdown(titleText)}
         </h3>
       );
       continue;
     }
     if (line.startsWith("# ")) {
+      const titleText = stripEmojis(line.replace("# ", ""));
       elements.push(
         <h2 key={`h1-${i}`} className="text-xl font-extrabold mt-12 mb-6 text-blue uppercase tracking-tight">
-          {formatInlineMarkdown(line.replace("# ", ""))}
+          {formatInlineMarkdown(titleText)}
         </h2>
       );
       continue;

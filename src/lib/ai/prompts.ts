@@ -135,14 +135,14 @@ For each module:
    - "code": For technical, programming, or scripting concepts. Content is raw code.
    - "audio": For audio content, podcasts, or spoken explanations. Content MUST be a valid MP3 file URL, e.g. "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3".
 
-CRITICAL VISUAL, EMOJI & FORMATTING INSTRUCTIONS FOR TEXT BLOCKS:
-1. EMOJIS: Use emojis liberally in titles, headings (### 🎯 ...), and key points to make the content visual, scannable, and lively.
+CRITICAL VISUAL & FORMATTING INSTRUCTIONS FOR TEXT BLOCKS:
+1. TYPOGRAPHY & EMOJIS: DO NOT use emojis in module titles, block titles, or section headings (###). Keep titles clean, professional, and elegant.
 2. NEWLINES: ALWAYS place empty double newlines (\n\n) before and after EVERY heading (###), image, bullet point list, and code/diagram block. NEVER merge headings or image URLs inline into a paragraph string!
-3. STANDALONE IMAGES: Include at least one relevant context image per text block on its own line:
+3. STANDALONE IMAGES: Include a relevant visual illustration or photograph per text block on its own line:
 
-   ![Deutscher Untertitel/Beschreibung](https://image.pollinations.ai/prompt/Detailed_English_prompt_describing_a_modern_flat_vector_or_realistic_scene_about_topic?width=800&height=450&nologo=true)
+   ![Deutscher Untertitel/Beschreibung](https://image.pollinations.ai/prompt/Detailed_English_prompt_describing_a_modern_flat_vector_or_realistic_scene_about_topic?width=1200&height=675&model=flux&nologo=true)
 
-   (Ensure the image prompt inside the URL is written in descriptive English matching the specific topic, e.g. "minecraft_building_structure_crafting_guide_illustration").
+   (Ensure the image prompt inside the URL is written in descriptive English matching the specific topic, e.g. "hd_photography_minecraft_building_structure_crafting_guide").
 4. PROCESS DIAGRAMS / FLOWCHARTS: Include a process, framework, or decision flow diagram as a standalone Mermaid code block whenever introducing a workflow, cycle, or taxonomy:
 
    \`\`\`mermaid
@@ -186,12 +186,12 @@ You must generate:
    - "code": Raw code snippet.
    - "audio": Audio content or podcast. Content MUST be a valid MP3 file URL, e.g. "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3".
 
-CRITICAL VISUAL, EMOJI & FORMATTING INSTRUCTIONS FOR TEXT BLOCKS:
-1. EMOJIS: Use emojis liberally in titles, headings (### 🎯 ...), and key points to make the content visual, scannable, and lively.
+CRITICAL VISUAL & FORMATTING INSTRUCTIONS FOR TEXT BLOCKS:
+1. TYPOGRAPHY & EMOJIS: DO NOT use emojis in module titles, block titles, or section headings (###). Keep titles clean, professional, and elegant.
 2. NEWLINES: ALWAYS place empty double newlines (\n\n) before and after EVERY heading (###), image, bullet point list, and code/diagram block. NEVER merge headings or image URLs inline into a paragraph string!
-3. STANDALONE IMAGES: Include at least one relevant context image per text block on its own line:
+3. STANDALONE IMAGES: Include a relevant visual illustration per text block on its own line:
 
-   ![Deutscher Untertitel/Beschreibung](https://image.pollinations.ai/prompt/Detailed_English_prompt_describing_a_modern_flat_vector_or_realistic_scene_about_topic?width=800&height=450&nologo=true)
+   ![Deutscher Untertitel/Beschreibung](https://image.pollinations.ai/prompt/Detailed_English_prompt_describing_a_modern_flat_vector_or_realistic_scene_about_topic?width=1200&height=675&model=flux&nologo=true)
 
 4. PROCESS DIAGRAMS / FLOWCHARTS: Include a process, framework, or decision flow diagram as a standalone Mermaid code block whenever introducing a workflow or structure:
 

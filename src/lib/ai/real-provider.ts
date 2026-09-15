@@ -195,11 +195,11 @@ export class RealAIProvider implements AIProvider {
       }),
       prompt: `Generate a comprehensive learning text block for a course about "${input.courseTopic}". The module objective is "${input.moduleObjective}". Context: ${input.context || "none"}. 
 
-CRITICAL VISUAL, EMOJI & FORMATTING INSTRUCTIONS:
-1. EMOJIS: Use emojis in the title and headings (### 🎯 ...) to make the block visual and engaging.
+CRITICAL VISUAL & FORMATTING INSTRUCTIONS:
+1. TYPOGRAPHY & EMOJIS: DO NOT use emojis in titles or headings (###). Keep titles clean, professional, and elegant.
 2. NEWLINES: ALWAYS place empty double newlines (\n\n) before and after EVERY heading (###), image, and diagram block. NEVER merge headings or image URLs inline into a paragraph string!
-3. STANDALONE IMAGES: Include at least 1 image on its own line using Markdown syntax:
-   ![Deutscher Untertitel](https://image.pollinations.ai/prompt/Detailed_English_prompt_matching_topic?width=800&height=450&nologo=true)
+3. STANDALONE IMAGES: Include at least 1 visual illustration or photograph on its own line using Markdown syntax:
+   ![Deutscher Untertitel](https://image.pollinations.ai/prompt/Detailed_English_prompt_matching_topic?width=1200&height=675&model=flux&nologo=true)
 4. PROCESS DIAGRAMS / FLOWCHARTS: Include a Mermaid flowchart as a standalone code block if explaining a workflow, structure, or decision framework:
 \`\`\`mermaid
 graph TD
