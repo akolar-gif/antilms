@@ -20,6 +20,8 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/components/layout/language-context";
 
+import { RichContentRenderer } from "@/components/common/rich-content-renderer";
+
 export function LearnerModuleClient({
   moduleTitle,
   moduleDescription,
@@ -155,9 +157,7 @@ export function LearnerModuleClient({
                       <div className="cell border border-line rounded-2xl bg-paper p-6 flex flex-col gap-4">
                         <span className="corner-no">0{index + 1}</span>
                         <h3 className="font-display font-extrabold text-xl text-ink leading-tight pr-8">{block.title}</h3>
-                        <div className="text-ink-2 leading-relaxed text-sm whitespace-pre-wrap font-sans">
-                          {block.content}
-                        </div>
+                        <RichContentRenderer content={block.content} />
                       </div>
                     )}
                     

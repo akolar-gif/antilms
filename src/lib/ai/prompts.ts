@@ -135,8 +135,20 @@ For each module:
    - "code": For technical, programming, or scripting concepts. Content is raw code.
    - "audio": For audio content, podcasts, or spoken explanations. Content MUST be a valid MP3 file URL, e.g. "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3".
 
+CRITICAL VISUAL & DIAGRAM INSTRUCTIONS FOR TEXT BLOCKS:
+Every "text" learning block MUST contain rich Markdown formatting AND contextually matching visuals:
+1. IMAGES: Include at least one relevant context image per text block using Markdown image syntax:
+   ![Deutscher Untertitel/Beschreibung](https://image.pollinations.ai/prompt/Detailed_English_prompt_describing_a_modern_flat_vector_or_realistic_scene_about_topic?width=800&height=450&nologo=true)
+   (Ensure the image prompt in the URL is written in descriptive English matching the specific topic, e.g. "agile_scrum_team_board_meeting_modern_office_illustration").
+2. PROCESS DIAGRAMS / FLOWCHARTS: Include a process, framework, or decision flow diagram using Mermaid code blocks whenever introducing a workflow, cycle, or taxonomy:
+   \`\`\`mermaid
+   graph TD
+     A[Input / Problem] --> B[Analyse & Prozess]
+     B --> C[Ergebnis & Transfer]
+   \`\`\`
+
 Ensure that the blocks form a logical sequence (e.g. text -> quiz/reflection -> punk_game/project_task) and that the contents of quiz, reflection, punk_game, and project_task are valid, stringified JSON strings matching their respective schemas exactly.
-The overall curriculum should feel premium, engaging, and modern. Make the block contents detailed and fully complete (do NOT use placeholders like "Write your text here" or "TODO").
+The overall curriculum should feel premium, engaging, dynamic, and visually rich. Make the block contents detailed and fully complete (do NOT use placeholders like "Write your text here" or "TODO").
 `,
   generateModule: `
 You are an expert instructional designer and AI learning architect.
@@ -170,8 +182,20 @@ You must generate:
    - "code": Raw code snippet.
    - "audio": Audio content or podcast. Content MUST be a valid MP3 file URL, e.g. "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3".
 
+CRITICAL VISUAL & DIAGRAM INSTRUCTIONS FOR TEXT BLOCKS:
+Every "text" learning block MUST contain rich Markdown formatting AND contextually matching visuals:
+1. IMAGES: Include at least one relevant context image per text block using Markdown image syntax:
+   ![Deutscher Untertitel/Beschreibung](https://image.pollinations.ai/prompt/Detailed_English_prompt_describing_a_modern_flat_vector_or_realistic_scene_about_topic?width=800&height=450&nologo=true)
+   (Ensure the image prompt in the URL is written in descriptive English matching the specific topic).
+2. PROCESS DIAGRAMS / FLOWCHARTS: Include a process, framework, or decision flow diagram using Mermaid code blocks whenever introducing a workflow or structure:
+   \`\`\`mermaid
+   graph TD
+     A[Input / Problem] --> B[Analyse & Prozess]
+     B --> C[Ergebnis & Transfer]
+   \`\`\`
+
 Ensure that the blocks form a logical sequence (e.g. text -> quiz/reflection -> punk_game/project_task) and that the contents of quiz, reflection, punk_game, and project_task are valid, stringified JSON strings matching their respective schemas exactly.
-Make the block contents detailed and fully complete (do NOT use placeholders like "Write your text here" or "TODO").
+Make the block contents detailed, visually rich, and fully complete (do NOT use placeholders like "Write your text here" or "TODO").
 `,
   reviewSubmission: `
 You are Anka AI, an expert educational coach and mentor. Review the learner's solution and reflection for a Project Task.

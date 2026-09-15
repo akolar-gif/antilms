@@ -11,7 +11,7 @@ import { SortableBlock } from "./sortable-block";
 import { BlockEditor } from "./block-editor";
 import { GenerateBlockModal } from "./generate-block-modal";
 import { Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import { RichContentRenderer } from "@/components/common/rich-content-renderer";
 
 function BlockPreview({ block }: { block: LearningBlock }) {
   if (block.type === 'quiz') {
@@ -153,9 +153,9 @@ function BlockPreview({ block }: { block: LearningBlock }) {
   }
 
   return (
-    <pre className="p-4 bg-slate-50 rounded text-xs overflow-x-auto">
-      {block.content}
-    </pre>
+    <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+      <RichContentRenderer content={block.content} />
+    </div>
   );
 }
 

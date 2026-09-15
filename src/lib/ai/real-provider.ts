@@ -193,7 +193,19 @@ export class RealAIProvider implements AIProvider {
         title: z.string(),
         content: z.string(),
       }),
-      prompt: `Generate a learning block for a course about "${input.courseTopic}". The module objective is "${input.moduleObjective}". Context: ${input.context || "none"}. ${customPromptStr}`,
+      prompt: `Generate a comprehensive learning text block for a course about "${input.courseTopic}". The module objective is "${input.moduleObjective}". Context: ${input.context || "none"}. 
+
+CRITICAL VISUAL & DIAGRAM INSTRUCTIONS:
+Include rich Markdown formatting (headers, bold key terms) AND contextually matching visuals:
+1. Include at least 1 image using Markdown syntax: ![Deutscher Untertitel](https://image.pollinations.ai/prompt/Detailed_English_prompt_matching_topic?width=800&height=450&nologo=true)
+2. Include a Mermaid flowchart or process diagram if explaining a workflow, structure, or decision framework:
+\`\`\`mermaid
+graph TD
+  A[Input] --> B[Prozess]
+  B --> C[Ergebnis]
+\`\`\`
+
+${customPromptStr}`,
     });
 
     return {

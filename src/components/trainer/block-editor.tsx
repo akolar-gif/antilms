@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { generateBlockAction } from "@/app/actions/ai";
+import { RichContentRenderer } from "@/components/common/rich-content-renderer";
 
 interface BlockEditorProps {
   block: LearningBlock;
@@ -345,12 +346,20 @@ export function BlockEditor({
         </div>
       ) : (
         // Generic Text / Fallback Editor
-        <textarea 
-          className="w-full p-3 border border-slate-300 rounded text-sm font-mono"
-          rows={8}
-          value={textContent}
-          onChange={e => setTextContent(e.target.value)}
-        />
+        <div className="space-y-3">
+          <textarea 
+            className="w-full p-3 border border-slate-300 rounded text-sm font-mono"
+            rows={8}
+            value={textContent}
+            onChange={e => setTextContent(e.target.value)}
+          />
+          {textContent && (
+            <div className="p-4 border border-slate-200 rounded-xl bg-white space-y-2">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">Live-Vorschau (Bilder & Diagramme):</span>
+              <RichContentRenderer content={textContent} />
+            </div>
+          )}
+        </div>
       )}
 
       <div className="flex space-x-2 mt-4 pt-4 border-t border-slate-200">
