@@ -212,10 +212,16 @@ graph TD
 ${customPromptStr}`,
     });
 
+    let finalContent = object.content;
+    if (!finalContent.includes("![")) {
+      const caption = object.title || input.courseTopic;
+      finalContent += `\n\n![${caption}](https://image.pollinations.ai/prompt/${encodeURIComponent(caption)}?width=1200&height=675&seed=999)`;
+    }
+
     return {
       type: "text",
       title: object.title,
-      content: object.content,
+      content: finalContent,
       learningMode: "understand",
       source: "ai_assisted"
     };
@@ -309,6 +315,18 @@ Format your reply in Markdown.` + getLanguageInstruction(input.language);
       prompt,
     });
 
+    // Ensure EVERY text block contains a valid standalone Markdown image tag
+    object.modules.forEach((mod, modIdx) => {
+      mod.blocks.forEach((block, blockIdx) => {
+        if (block.type === "text" && !block.content.includes("![")) {
+          const caption = block.title || mod.title;
+          const promptQuery = `${caption} - educational illustration`;
+          const seed = (modIdx + 1) * 100 + blockIdx * 10 + 42;
+          block.content += `\n\n![${caption}](https://image.pollinations.ai/prompt/${encodeURIComponent(promptQuery)}?width=1200&height=675&seed=${seed})`;
+        }
+      });
+    });
+
     return object as GeneratedCurriculumResult;
   }
 
@@ -341,6 +359,16 @@ Format your reply in Markdown.` + getLanguageInstruction(input.language);
         })).min(1)
       }),
       prompt,
+    });
+
+    // Ensure EVERY text block contains a valid standalone Markdown image tag
+    object.blocks.forEach((block, blockIdx) => {
+      if (block.type === "text" && !block.content.includes("![")) {
+        const caption = block.title || object.title;
+        const promptQuery = `${caption} - educational illustration`;
+        const seed = blockIdx * 17 + 88;
+        block.content += `\n\n![${caption}](https://image.pollinations.ai/prompt/${encodeURIComponent(promptQuery)}?width=1200&height=675&seed=${seed})`;
+      }
     });
 
     return object as GeneratedModule;

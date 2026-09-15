@@ -138,11 +138,11 @@ For each module:
 CRITICAL VISUAL & FORMATTING INSTRUCTIONS FOR TEXT BLOCKS:
 1. TYPOGRAPHY & EMOJIS: DO NOT use emojis in module titles, block titles, or section headings (###). Keep titles clean, professional, and elegant.
 2. NEWLINES: ALWAYS place empty double newlines (\n\n) before and after EVERY heading (###), image, bullet point list, and code/diagram block. NEVER merge headings or image URLs inline into a paragraph string!
-3. UNIQUE STANDALONE IMAGES: Include a unique, topic-specific visual illustration per text block on its own line:
+3. MANDATORY STANDALONE IMAGES: EVERY text block MUST include a unique visual illustration on its own line using Markdown syntax:
 
-   ![Deutscher Untertitel/Beschreibung](https://image.pollinations.ai/prompt/Detailed_English_prompt_describing_topic?width=1200&height=675&model=flux&nologo=true&seed=12345)
+   ![Deutscher Untertitel/Beschreibung](https://image.pollinations.ai/prompt/Detailed_English_prompt_describing_topic?width=1200&height=675&seed=12345)
 
-   (Ensure every image prompt is unique English matching that exact block, e.g. "hd_photography_minecraft_crafting_table_tools", with a different 5-digit seed like &seed=48192 or &seed=92014 so images never duplicate).
+   (Ensure every image prompt is unique English matching that exact block, e.g. "hd_photography_minecraft_crafting_table_tools", with a different 5-digit seed like &seed=48192 or &seed=92014 so images never duplicate). NEVER OMIT THE IMAGE TAG!
 4. PROCESS DIAGRAMS / FLOWCHARTS: Include a process or decision flow diagram as a standalone Mermaid block when explaining a workflow.
    CRITICAL MERMAID RULE: ALL node labels MUST be wrapped in double quotes e.g.:
 
