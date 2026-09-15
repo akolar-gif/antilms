@@ -28,6 +28,70 @@ function normalizeMarkdownNewlines(rawText: string): string {
     .replace(/\n{3,}/g, "\n\n");
 }
 
+// Topic-matched Unsplash Photo Library to guarantee relevant, high-definition fallbacks (never duplicate generic photos)
+const TOPIC_IMAGE_LIBRARY: { keywords: string[]; urls: string[] }[] = [
+  {
+    keywords: ["minecraft", "spieler", "landscape", "landschaft", "biome", "welt", "world", "game", "gaming", "block", "avatar", "spielfigur"],
+    urls: [
+      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=1200&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    keywords: ["holz", "wood", "ressource", "crafting", "werkzeug", "material", "bauen", "bauwerk", "struktur", "ofen", "stein"],
+    urls: [
+      "https://images.unsplash.com/photo-1546484475-7f7bd55792da?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1200&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    keywords: ["nacht", "überleben", "zombie", "gegner", "gefahr", "licht", "fackel", "dunkelheit", "night", "survival", "monster", "schlaf", "unterschlupf"],
+    urls: [
+      "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1510312305653-8ed496efae75?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?w=1200&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    keywords: ["agil", "scrum", "kanban", "team", "zusammenarbeit", "meeting", "workflow", "prozess", "management", "organisation"],
+    urls: [
+      "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    keywords: ["code", "programmierung", "software", "befehl", "cheat", "ki", "ai", "digital", "tech", "taste", "tastatur", "steuerung"],
+    urls: [
+      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    keywords: ["strategie", "planung", "problem", "lösung", "analyse", "denken", "kreativität", "ziel", "wissen"],
+    urls: [
+      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&auto=format&fit=crop&q=80"
+    ]
+  }
+];
+
+function getTopicMatchedImageUrl(altText: string, srcUrl?: string): string {
+  const text = (altText + " " + (srcUrl || "")).toLowerCase();
+  
+  for (const group of TOPIC_IMAGE_LIBRARY) {
+    if (group.keywords.some(kw => text.includes(kw))) {
+      const hash = text.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      return group.urls[hash % group.urls.length];
+    }
+  }
+
+  return "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&auto=format&fit=crop&q=80";
+}
+
 // High-definition Editorial Image Component
 function SmartImage({ src, alt }: { src: string; alt: string }) {
   const [hasError, setHasError] = useState(false);
@@ -36,8 +100,8 @@ function SmartImage({ src, alt }: { src: string; alt: string }) {
   const [currentSrc, setCurrentSrc] = useState(src);
 
   useEffect(() => {
-    // Upgrade pollinations URLs to use high quality flux model without logos
-    if (src.includes("image.pollinations.ai") && !src.includes("model=flux")) {
+    // Clean up pollinations URLs or fallback to topic matching
+    if (src.includes("image.pollinations.ai")) {
       const cleanSrc = src.replace("&nologo=true", "") + "&model=flux&nologo=true";
       setCurrentSrc(cleanSrc);
     } else {
@@ -47,10 +111,11 @@ function SmartImage({ src, alt }: { src: string; alt: string }) {
 
   const handleImageError = () => {
     setIsLoading(false);
-    // If original source fails, fallback to curated high-res Unsplash photographic visual
     if (!hasError) {
       setHasError(true);
-      setCurrentSrc("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&auto=format&fit=crop&q=80");
+      // Fallback dynamically to a unique photo matching the exact image caption/keywords
+      const matchedPhotoUrl = getTopicMatchedImageUrl(alt, src);
+      setCurrentSrc(matchedPhotoUrl);
     }
   };
 
