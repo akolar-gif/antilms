@@ -54,6 +54,7 @@ export default async function LearnerModulePage({
       blocks={blocks}
       completedBlocks={progress.completedBlocks}
       initialReflections={reflections}
+      userRole={userRole}
     />
   );
 }

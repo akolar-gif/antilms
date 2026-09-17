@@ -15,6 +15,7 @@ interface CurriculumWizardProps {
     category?: string;
     description: string;
     imageUrl?: string;
+    curriculumSyllabus?: string;
   };
   initialCurriculum: GeneratedCurriculumResult;
   onCancel: () => void;

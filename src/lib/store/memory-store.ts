@@ -65,6 +65,7 @@ export class MemoryStore implements LearningStore {
       createdBy: input.createdBy,
       isCustom: input.isCustom ?? false,
       learnerId: input.learnerId,
+      curriculumSyllabus: input.curriculumSyllabus,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

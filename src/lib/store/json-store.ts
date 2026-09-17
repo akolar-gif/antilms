@@ -91,6 +91,7 @@ export class JsonStore implements LearningStore {
       estimatedMinutes: input.estimatedMinutes,
       difficulty: input.difficulty,
       prerequisiteCourseIds: input.prerequisiteCourseIds || [],
+      curriculumSyllabus: input.curriculumSyllabus,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

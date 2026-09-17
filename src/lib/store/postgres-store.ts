@@ -26,6 +26,7 @@ function mapCourseFromDb(row: any): Course {
     estimatedMinutes: row.estimated_minutes !== null && row.estimated_minutes !== undefined ? parseInt(row.estimated_minutes) : undefined,
     difficulty: row.difficulty || undefined,
     prerequisiteCourseIds: Array.isArray(row.prerequisite_course_ids) ? row.prerequisite_course_ids : (typeof row.prerequisite_course_ids === "string" ? JSON.parse(row.prerequisite_course_ids || "[]") : (row.prerequisite_course_ids || [])),
+    curriculumSyllabus: row.curriculum_syllabus || undefined,
     createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
     updatedAt: row.updated_at instanceof Date ? row.updated_at.toISOString() : row.updated_at,
   };
@@ -137,8 +138,8 @@ export class PostgresStore implements LearningStore {
     const isCustom = input.isCustom ?? false;
     const learnerId = input.learnerId || null;
     const { rows } = await pool.query(
-      `INSERT INTO courses (id, title, description, target_group, category, image_url, status, type, sprint_course_ids, is_custom, learner_id, created_by, price, learning_outcomes, competency_tags, estimated_minutes, difficulty, prerequisite_course_ids, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, 'draft', $7, $8, $9, $10, $11, $12, $13::jsonb, $14::jsonb, $15, $16, $17::jsonb, NOW(), NOW())
+      `INSERT INTO courses (id, title, description, target_group, category, image_url, status, type, sprint_course_ids, is_custom, learner_id, created_by, price, learning_outcomes, competency_tags, estimated_minutes, difficulty, prerequisite_course_ids, curriculum_syllabus, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, 'draft', $7, $8, $9, $10, $11, $12, $13::jsonb, $14::jsonb, $15, $16, $17::jsonb, $18, NOW(), NOW())
        RETURNING *`,
       [
         id,
@@ -157,7 +158,8 @@ export class PostgresStore implements LearningStore {
         JSON.stringify(input.competencyTags || []),
         input.estimatedMinutes !== undefined ? input.estimatedMinutes : null,
         input.difficulty || null,
-        JSON.stringify(input.prerequisiteCourseIds || [])
+        JSON.stringify(input.prerequisiteCourseIds || []),
+        input.curriculumSyllabus || null
       ]
     );
     return mapCourseFromDb(rows[0]);
@@ -227,6 +229,10 @@ export class PostgresStore implements LearningStore {
     if (input.difficulty !== undefined) {
       setClause.push(`difficulty = $${paramIdx++}`);
       values.push(input.difficulty);
+    }
+    if (input.curriculumSyllabus !== undefined) {
+      setClause.push(`curriculum_syllabus = $${paramIdx++}`);
+      values.push(input.curriculumSyllabus);
     }
     if (input.prerequisiteCourseIds !== undefined) {
       setClause.push(`prerequisite_course_ids = $${paramIdx++}::jsonb`);

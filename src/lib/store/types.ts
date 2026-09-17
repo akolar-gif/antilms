@@ -17,6 +17,7 @@ export interface CreateCourseInput {
   estimatedMinutes?: number;
   difficulty?: Course["difficulty"];
   prerequisiteCourseIds?: string[];
+  curriculumSyllabus?: string;
 }
 
 export type UpdateCourseInput = Partial<CreateCourseInput> & {

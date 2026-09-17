@@ -38,6 +38,7 @@ export interface Course {
   estimatedMinutes?: number;
   difficulty?: "beginner" | "intermediate" | "advanced";
   prerequisiteCourseIds?: string[];
+  curriculumSyllabus?: string;
   createdAt: string;
   updatedAt: string;
 }

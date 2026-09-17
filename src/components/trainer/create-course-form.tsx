@@ -154,7 +154,14 @@ export function CreateCourseForm({ initialOpen, sprints = [] }: CreateCourseForm
         if (!res.success || !res.data) {
           throw new Error(res.error || "KI-Generierung fehlgeschlagen.");
         }
-        setTempCourseData({ title, description, category, imageUrl: finalImageUrl, type: courseType });
+        setTempCourseData({ 
+          title, 
+          description, 
+          category, 
+          imageUrl: finalImageUrl, 
+          type: courseType,
+          curriculumSyllabus: curriculumText || undefined
+        });
         setGeneratedCurriculum(res.data);
         toast.success(t("creator.toast_gen_success"), { id: toastId });
       } else {

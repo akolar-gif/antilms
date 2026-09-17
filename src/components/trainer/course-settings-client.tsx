@@ -2,14 +2,44 @@
 
 import { useState } from "react";
 import { Course } from "@/types";
-import { updateCourseSettingsAction } from "@/app/actions/course";
+import { updateCourseSettingsAction, regenerateCurriculumFromSyllabusAction } from "@/app/actions/course";
 import { ImagePicker } from "@/components/trainer/image-picker";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Sparkles, Loader2 } from "lucide-react";
 
 export function CourseSettingsClient({ course, readOnly }: { course: Course; readOnly?: boolean }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [syllabusText, setSyllabusText] = useState(course.curriculumSyllabus || "");
+  const [isRegeneratingCurriculum, setIsRegeneratingCurriculum] = useState(false);
   const router = useRouter();
+
+  const handleRegenerateCurriculum = async () => {
+    if (!syllabusText.trim()) {
+      toast.error("Bitte gib einen Kursplan / Syllabus ein.");
+      return;
+    }
+    const confirmed = window.confirm(
+      "Achtung: Dies ersetzt alle bestehenden Module und Lerneinheiten dieses Kurses durch neu von der KI generierte Module basierend auf deinem Kursplan. Möchtest du fortfahren?"
+    );
+    if (!confirmed) return;
+
+    setIsRegeneratingCurriculum(true);
+    const toastId = toast.loading("Erstelle neues Curriculum aus Lehrplan mit KI...");
+    try {
+      const res = await regenerateCurriculumFromSyllabusAction(course.id, syllabusText);
+      if (res.success) {
+        toast.success("Neues Curriculum wurde erfolgreich generiert!", { id: toastId });
+        router.refresh();
+      } else {
+        toast.error(res.error || "Regenerierung fehlgeschlagen.", { id: toastId });
+      }
+    } catch (err: any) {
+      toast.error("Fehler beim Regenerieren des Curriculums.", { id: toastId });
+    } finally {
+      setIsRegeneratingCurriculum(false);
+    }
+  };
 
   return (
     <div className="flex-1 overflow-y-auto p-8" style={{ background: "var(--paper)" }}>
@@ -178,6 +208,46 @@ export function CourseSettingsClient({ course, readOnly }: { course: Course; rea
                 className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all resize-none disabled:opacity-75 disabled:cursor-not-allowed"
                 style={{ background: "var(--paper)", color: "var(--ink)", fontSize: 14 }}
               />
+            </div>
+
+            <div>
+              <label htmlFor="curriculumSyllabus" className="block text-xs font-mono uppercase tracking-wider text-ink-3 mb-1.5">
+                Kursplan / Curriculum Syllabus Outline
+              </label>
+              <p className="text-xs text-ink-3 mb-2">
+                Hier ist der hinterlegte Kursplan sichtbar und anpassbar. Du kannst das Curriculum des Kurses jederzeit neu aus diesem Lehrplan generieren lassen.
+              </p>
+              <textarea 
+                id="curriculumSyllabus" 
+                name="curriculumSyllabus" 
+                rows={5}
+                disabled={readOnly}
+                value={syllabusText}
+                onChange={e => setSyllabusText(e.target.value)}
+                placeholder="Füge hier deine Agenda, PDF-Text oder Gliederung ein..."
+                className="w-full p-3 border border-line rounded-xl outline-none focus:border-blue transition-all resize-y disabled:opacity-75 disabled:cursor-not-allowed font-mono text-xs"
+                style={{ background: "var(--paper)", color: "var(--ink)" }}
+              />
+              {!readOnly && (
+                <div className="mt-2.5 flex justify-end">
+                  <button
+                    type="button"
+                    disabled={isRegeneratingCurriculum || isLoading || !syllabusText.trim()}
+                    onClick={handleRegenerateCurriculum}
+                    className="btn ghost sm flex items-center gap-1.5 text-xs text-blue border border-blue/30 hover:bg-blue/5"
+                  >
+                    {isRegeneratingCurriculum ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" /> Generiere Curriculum...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-3.5 h-3.5 text-blue animate-pulse" /> Kurs aus Kursplan neu generieren
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
 
             <div>

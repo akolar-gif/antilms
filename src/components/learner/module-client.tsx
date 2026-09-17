@@ -29,7 +29,8 @@ export function LearnerModuleClient({
   moduleId,
   blocks,
   completedBlocks,
-  initialReflections = []
+  initialReflections = [],
+  userRole
 }: {
   moduleTitle: string;
   moduleDescription: string;
@@ -38,6 +39,7 @@ export function LearnerModuleClient({
   blocks: LearningBlock[];
   completedBlocks: string[];
   initialReflections?: Reflection[];
+  userRole?: string;
 }) {
   const [activeBlock, setActiveBlock] = useState<LearningBlock | null>(null);
   const [completed, setCompleted] = useState<string[]>(completedBlocks);
@@ -105,6 +107,25 @@ export function LearnerModuleClient({
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden">
+      {/* Trainer Preview Sticky Navigation Bar */}
+      {userRole && (userRole === "trainer" || userRole === "admin") && (
+        <div className="bg-amber-500/15 border-b border-amber-500/30 px-6 py-2 flex items-center justify-between z-30 shrink-0 backdrop-blur-md">
+          <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300 text-xs font-bold uppercase tracking-wider">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+            </span>
+            <span>👁️ Trainer-Vorschau aktiv</span>
+          </div>
+          <Link 
+            href={`/trainer/courses/${courseId}/modules/${moduleId}`}
+            className="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <span>✏️</span> Zurück zum Editor
+          </Link>
+        </div>
+      )}
+
       {/* TopBar Header */}
       <TopBar title={moduleTitle} sub={language === "de" ? "LERNPFAD MODUL" : "LEARNING PATH MODULE"} />
 

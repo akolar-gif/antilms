@@ -7,6 +7,7 @@ import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { verifySession } from "@/lib/session";
 import { cookies } from "next/headers";
+import { generateAndSaveAIImage } from "@/lib/ai/image-generator";
 
 export async function createCourseAction(formData: FormData) {
   const title = formData.get("title") as string;
@@ -138,6 +139,10 @@ export async function updateCourseSettingsAction(formData: FormData) {
   if (prerequisiteCourseIdsRaw !== null) {
     updates.prerequisiteCourseIds = prerequisiteCourseIdsRaw ? JSON.parse(prerequisiteCourseIdsRaw) : [];
   }
+  const curriculumSyllabusRaw = formData.get("curriculumSyllabus") as string;
+  if (curriculumSyllabusRaw !== null) {
+    updates.curriculumSyllabus = curriculumSyllabusRaw;
+  }
 
   await store.updateCourse(courseId, updates);
   
@@ -197,10 +202,10 @@ export async function generateCurriculumAction(
 }
 
 export async function saveCurriculumAction(
-  courseData: { title: string; category?: string; description: string; imageUrl?: string },
+  courseData: { title: string; category?: string; description: string; imageUrl?: string; curriculumSyllabus?: string },
   curriculum: GeneratedCurriculumResult
 ) {
-  // Create Course
+  // Create Course with curriculumSyllabus
   const course = await store.createCourse({
     title: courseData.title,
     description: courseData.description,
@@ -208,6 +213,7 @@ export async function saveCurriculumAction(
     targetGroup: "General",
     imageUrl: courseData.imageUrl,
     createdBy: "Trainer",
+    curriculumSyllabus: courseData.curriculumSyllabus,
   });
 
   // Create Modules and Blocks
@@ -220,11 +226,26 @@ export async function saveCurriculumAction(
     });
 
     for (const block of mod.blocks) {
+      let blockContent = block.content;
+
+      // Process and permanently generate AI images for text blocks
+      if (block.type === "text") {
+        const imgMatch = blockContent.match(/!\[(.*?)\]\((.*?)\)/);
+        if (imgMatch) {
+          const caption = imgMatch[1] || block.title;
+          const staticUrl = await generateAndSaveAIImage(caption);
+          blockContent = blockContent.replace(/!\[(.*?)\]\((.*?)\)/, `![${caption}](${staticUrl})`);
+        } else {
+          const staticUrl = await generateAndSaveAIImage(block.title);
+          blockContent += `\n\n![${block.title}](${staticUrl})`;
+        }
+      }
+
       await store.createBlock({
         moduleId: createdModule.id,
         type: block.type,
         title: block.title,
-        content: block.content,
+        content: blockContent,
         learningMode: block.learningMode,
         source: "ai_assisted",
       });
@@ -236,6 +257,120 @@ export async function saveCurriculumAction(
   revalidatePath(`/trainer/courses/${course.id}`);
 
   return { courseId: course.id };
+}
+
+export async function regenerateBlockImageAction(
+  courseId: string,
+  moduleId: string,
+  blockId: string,
+  customPrompt?: string
+): Promise<{ success: boolean; newImageUrl?: string; error?: string }> {
+  try {
+    const blocks = await store.getBlocks(moduleId);
+    const block = blocks.find((b) => b.id === blockId);
+    if (!block) {
+      return { success: false, error: "Block not found" };
+    }
+
+    const prompt = customPrompt?.trim() || block.title;
+    const staticUrl = await generateAndSaveAIImage(prompt, "ai-img-regen");
+
+    let newContent = block.content;
+    const imgMatch = newContent.match(/!\[(.*?)\]\((.*?)\)/);
+    if (imgMatch) {
+      const caption = customPrompt?.trim() || imgMatch[1] || block.title;
+      newContent = newContent.replace(/!\[(.*?)\]\((.*?)\)/, `![${caption}](${staticUrl})`);
+    } else {
+      newContent += `\n\n![${prompt}](${staticUrl})`;
+    }
+
+    await store.updateBlock(blockId, { content: newContent });
+
+    const { revalidatePath } = await import("next/cache");
+    revalidatePath(`/trainer/courses/${courseId}`);
+    revalidatePath(`/trainer/courses/${courseId}/modules/${moduleId}`);
+    revalidatePath(`/learner/courses/${courseId}/modules/${moduleId}`);
+
+    return { success: true, newImageUrl: staticUrl };
+  } catch (err: any) {
+    console.error("regenerateBlockImageAction error:", err);
+    return { success: false, error: err?.message || "Fehler beim Generieren des Bildes." };
+  }
+}
+
+export async function regenerateCurriculumFromSyllabusAction(
+  courseId: string,
+  curriculumSyllabus: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const course = await store.getCourse(courseId);
+    if (!course) {
+      return { success: false, error: "Course not found" };
+    }
+
+    const cookieStore = await cookies();
+    const language = cookieStore.get("lang")?.value || "de";
+
+    // 1. Generate new curriculum structure with AI
+    const curriculum = await aiProvider.generateCurriculum({
+      title: course.title,
+      description: course.description,
+      language,
+      curriculumSyllabus
+    });
+
+    // 2. Delete existing modules
+    const existingModules = await store.getModules(courseId);
+    for (const mod of existingModules) {
+      await store.deleteModule(mod.id);
+    }
+
+    // 3. Update course's syllabus outline
+    await store.updateCourse(courseId, { curriculumSyllabus });
+
+    // 4. Create new modules and blocks with permanent images
+    for (const mod of curriculum.modules) {
+      const createdModule = await store.createModule({
+        courseId,
+        title: mod.title,
+        description: mod.description,
+        learningObjectives: mod.learningObjectives,
+      });
+
+      for (const block of mod.blocks) {
+        let blockContent = block.content;
+        if (block.type === "text") {
+          const imgMatch = blockContent.match(/!\[(.*?)\]\((.*?)\)/);
+          const caption = imgMatch ? imgMatch[1] : block.title;
+          const staticUrl = await generateAndSaveAIImage(caption);
+          if (imgMatch) {
+            blockContent = blockContent.replace(/!\[(.*?)\]\((.*?)\)/, `![${caption}](${staticUrl})`);
+          } else {
+            blockContent += `\n\n![${caption}](${staticUrl})`;
+          }
+        }
+
+        await store.createBlock({
+          moduleId: createdModule.id,
+          type: block.type,
+          title: block.title,
+          content: blockContent,
+          learningMode: block.learningMode,
+          source: "ai_assisted",
+        });
+      }
+    }
+
+    const { revalidatePath } = await import("next/cache");
+    revalidatePath("/trainer");
+    revalidatePath(`/trainer/courses/${courseId}`);
+    revalidatePath(`/learner/courses/${courseId}`);
+
+    return { success: true };
+  } catch (err: any) {
+    console.error("regenerateCurriculumFromSyllabusAction error:", err);
+    return { success: false, error: err?.message || "Fehler beim Regenerieren des Kurses." };
+  }
 }
 
 export async function deleteModuleAction(courseId: string, moduleId: string) {

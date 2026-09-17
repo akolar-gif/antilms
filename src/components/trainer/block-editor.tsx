@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { LearningBlock } from "@/types";
 import { Button } from "@/components/ui/button";
-import { Upload, Sparkles, Loader2 } from "lucide-react";
+import { Upload, Sparkles, Loader2, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import { generateBlockAction } from "@/app/actions/ai";
+import { regenerateBlockImageAction } from "@/app/actions/course";
 import { RichContentRenderer } from "@/components/common/rich-content-renderer";
 
 interface BlockEditorProps {
@@ -13,6 +14,8 @@ interface BlockEditorProps {
   courseTitle?: string;
   moduleTitle?: string;
   moduleDescription?: string;
+  courseId?: string;
+  moduleId?: string;
 }
 
 export function BlockEditor({ 
@@ -21,7 +24,9 @@ export function BlockEditor({
   onCancel,
   courseTitle,
   moduleTitle,
-  moduleDescription
+  moduleDescription,
+  courseId,
+  moduleId
 }: BlockEditorProps) {
   const [titleContent, setTitleContent] = useState(block.title);
   const [textContent, setTextContent] = useState(block.content);
@@ -40,6 +45,38 @@ export function BlockEditor({
 
   const [isAiGenerating, setIsAiGenerating] = useState(false);
   const [customPrompt, setCustomPrompt] = useState("");
+  const [isRegeneratingImage, setIsRegeneratingImage] = useState(false);
+  const [imagePrompt, setImagePrompt] = useState("");
+
+  const handleRegenerateImage = async () => {
+    if (!courseId || !moduleId) {
+      toast.error("Kurs- oder Modul-ID nicht verfügbar.");
+      return;
+    }
+    setIsRegeneratingImage(true);
+    const toastId = toast.loading("Generiere neues KI-Bild...");
+    try {
+      const promptToUse = imagePrompt.trim() || titleContent || block.title;
+      const res = await regenerateBlockImageAction(courseId, moduleId, block.id, promptToUse);
+      if (res.success && res.newImageUrl) {
+        toast.success("Bild mit KI neu generiert und dauerhaft gespeichert!", { id: toastId });
+        setTextContent(prev => {
+          const imgMatch = prev.match(/!\[(.*?)\]\((.*?)\)/);
+          if (imgMatch) {
+            return prev.replace(/!\[(.*?)\]\((.*?)\)/, `![${promptToUse}](${res.newImageUrl})`);
+          }
+          return `${prev}\n\n![${promptToUse}](${res.newImageUrl})`;
+        });
+        setImagePrompt("");
+      } else {
+        toast.error(res.error || "Bild-Generierung fehlgeschlagen.", { id: toastId });
+      }
+    } catch (err: any) {
+      toast.error("Fehler beim Generieren des Bildes.", { id: toastId });
+    } finally {
+      setIsRegeneratingImage(false);
+    }
+  };
 
   const handleAiGenerate = async () => {
     setIsAiGenerating(true);
@@ -347,6 +384,41 @@ export function BlockEditor({
       ) : (
         // Generic Text / Fallback Editor
         <div className="space-y-3">
+          {/* AI Image Generation / Regeneration Tool */}
+          <div className="p-3.5 rounded-xl border border-blue/20 bg-blue/5 flex flex-col gap-2.5">
+            <div className="flex items-center gap-2 text-blue text-xs font-bold uppercase tracking-wider">
+              <ImageIcon className="w-4 h-4" />
+              <span>Bild für diesen Block mit KI (neu) generieren</span>
+            </div>
+            <div className="flex gap-2">
+              <input 
+                type="text"
+                placeholder="Bildbeschreibung oder Prompt... (z.B. 'Ein minimalistisches Diagramm von Agilität')"
+                className="flex-1 px-3 py-1.5 border border-blue/20 rounded-lg text-xs outline-none focus:border-blue bg-white text-slate-700"
+                value={imagePrompt}
+                onChange={e => setImagePrompt(e.target.value)}
+                disabled={isRegeneratingImage}
+              />
+              <Button
+                type="button"
+                size="sm"
+                disabled={isRegeneratingImage}
+                onClick={handleRegenerateImage}
+                className="bg-blue hover:bg-blue/90 text-white flex items-center gap-1.5 text-xs shrink-0"
+              >
+                {isRegeneratingImage ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" /> Generiere Bild...
+                  </>
+                ) : (
+                  <>
+                    <ImageIcon className="w-3.5 h-3.5" /> Bild generieren
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+
           <textarea 
             className="w-full p-3 border border-slate-300 rounded text-sm font-mono"
             rows={8}

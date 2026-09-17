@@ -311,6 +311,8 @@ export function CourseBuilder({
                     courseTitle={course.title}
                     moduleTitle={module.title}
                     moduleDescription={module.description}
+                    courseId={course.id}
+                    moduleId={module.id}
                   />
                 ) : (
                   <div className="text-slate-600 prose prose-sm max-w-none">
