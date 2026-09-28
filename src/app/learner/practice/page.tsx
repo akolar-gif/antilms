@@ -119,7 +119,8 @@ export default async function LearnerPracticePage() {
     }
   ];
 
-  const activeQuizzes = quizzes.length > 0 ? quizzes : (lang === "en" ? fallbacksEn : fallbacksDe);
+  const pool = quizzes.length > 0 ? quizzes : (lang === "en" ? fallbacksEn : fallbacksDe);
+  const activeQuizzes = [...pool].sort(() => 0.5 - Math.random());
 
   return (
     <LearnerPracticeClient initialQuizzes={activeQuizzes} />
