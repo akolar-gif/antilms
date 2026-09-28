@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { AIglyph, I } from "@/components/layout/icons";
 import { useTranslation } from "@/components/layout/language-context";
+import { generatePracticeEvaluationAction, PracticeAnswerResult } from "@/app/actions/ai";
+import { Loader2 } from "lucide-react";
 
 interface QuizQuestion {
   id: string;
@@ -24,19 +26,20 @@ function getRandomSessionQuizzes(pool: QuizQuestion[], count = 3): QuizQuestion[
 
 function renderFormattedText(text: string) {
   if (!text) return null;
-  const parts = text.split(/(<b>.*?<\/b>|\*\*.*?\*\*)/g);
+  const parts = text.split(/(<b>.*?<\/b>|\*\*.*?\*\*|\n\n)/g);
   return (
-    <span>
+    <div className="space-y-3">
       {parts.map((part, i) => {
+        if (part === "\n\n") return null;
         if (part.startsWith("<b>") && part.endsWith("</b>")) {
           return <strong key={i} className="font-bold text-ink">{part.slice(3, -4)}</strong>;
         }
         if (part.startsWith("**") && part.endsWith("**")) {
           return <strong key={i} className="font-bold text-ink">{part.slice(2, -2)}</strong>;
         }
-        return part;
+        return <span key={i}>{part}</span>;
       })}
-    </span>
+    </div>
   );
 }
 
@@ -54,6 +57,9 @@ export function LearnerPracticeClient({
   const [done, setDone] = useState(false);
   const [score, setScore] = useState(0);
   const [answeredCount, setAnsweredCount] = useState(0);
+  const [userAnswers, setUserAnswers] = useState<Record<number, PracticeAnswerResult>>({});
+  const [aiEvaluation, setAiEvaluation] = useState<string | null>(null);
+  const [isGeneratingAiEval, setIsGeneratingAiEval] = useState(false);
   const { language, t } = useTranslation();
 
   const q = sessionQuizzes[idx] || sessionQuizzes[0];
@@ -61,15 +67,46 @@ export function LearnerPracticeClient({
   const isCorrect = q && picked === q.correct;
 
   const pick = (i: number) => {
-    if (picked !== null) return;
+    if (picked !== null || !q) return;
     setPicked(i);
     setAnsweredCount(prev => prev + 1);
-    if (q && i === q.correct) setScore((s) => s + 1);
+    const correct = i === q.correct;
+    if (correct) setScore((s) => s + 1);
+
+    setUserAnswers(prev => ({
+      ...prev,
+      [idx]: {
+        question: q.q,
+        options: q.opts,
+        userAnswer: q.opts[i] || "",
+        correctAnswer: q.opts[q.correct] || "",
+        isCorrect: correct,
+        explanation: correct ? q.fb : q.fbWrong
+      }
+    }));
+  };
+
+  const handleFinishSession = async (currentAnswers = userAnswers, currentScore = score) => {
+    setDone(true);
+    setIsGeneratingAiEval(true);
+    try {
+      const results = Object.values(currentAnswers);
+      const res = await generatePracticeEvaluationAction({
+        results,
+        score: currentScore,
+        total
+      });
+      setAiEvaluation(res.evaluation);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsGeneratingAiEval(false);
+    }
   };
 
   const next = () => {
     if (idx + 1 >= total) {
-      setDone(true);
+      handleFinishSession();
       return;
     }
     setIdx(idx + 1);
@@ -83,6 +120,9 @@ export function LearnerPracticeClient({
     setDone(false);
     setScore(0);
     setAnsweredCount(0);
+    setUserAnswers({});
+    setAiEvaluation(null);
+    setIsGeneratingAiEval(false);
   };
 
   if (!q) {
@@ -127,31 +167,20 @@ export function LearnerPracticeClient({
               <AIglyph size={18} />
               <span>AI Coach Auswertung</span>
             </div>
-            <div className="fb p-5 text-sm text-ink-2 leading-relaxed">
-              {pct >= 66 ? (
-                language === "de" ? (
-                  <span>
-                    <b>Hervorragende Leistung!</b> Du hast {score} von {total} Fragen richtig beantwortet ({pct}%). 
-                    Deine Kenntnisse in diesen Kernkonzepten sind sehr gut verankert.
-                  </span>
-                ) : (
-                  <span>
-                    <b>Excellent performance!</b> You answered {score} out of {total} questions correctly ({pct}%). 
-                    Your understanding of these core concepts is strong.
-                  </span>
-                )
+            <div className="fb p-6 text-sm text-ink-2 leading-relaxed">
+              {isGeneratingAiEval ? (
+                <div className="flex items-center gap-3 text-ink-3 py-4">
+                  <Loader2 className="w-5 h-5 animate-spin text-blue" />
+                  <span className="text-xs font-mono uppercase tracking-wider">AI Coach analysiert deine Antworten & berechnet Feedback...</span>
+                </div>
+              ) : aiEvaluation ? (
+                <div className="leading-relaxed whitespace-pre-line">
+                  {renderFormattedText(aiEvaluation)}
+                </div>
               ) : (
-                language === "de" ? (
-                  <span>
-                    <b>Guter Durchlauf!</b> Du hast {score} von {total} Fragen richtig beantwortet ({pct}%). 
-                    Wiederhole gerne ein weiteres 3-Fragen-Paket, um die Grundlagen noch weiter zu festigen.
-                  </span>
-                ) : (
-                  <span>
-                    <b>Good effort!</b> You answered {score} out of {total} questions correctly ({pct}%). 
-                    Feel free to start another 3-question set to strengthen your understanding.
-                  </span>
-                )
+                <span>
+                  <b>Leistung:</b> Du hast {score} von {total} Fragen ({pct}%) richtig beantwortet.
+                </span>
               )}
             </div>
           </div>

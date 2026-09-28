@@ -195,4 +195,63 @@ export async function testAiConnectionAction(): Promise<{
   }
 }
 
+export interface PracticeAnswerResult {
+  question: string;
+  options: string[];
+  userAnswer: string;
+  correctAnswer: string;
+  isCorrect: boolean;
+  explanation?: string;
+}
+
+export async function generatePracticeEvaluationAction(input: {
+  results: PracticeAnswerResult[];
+  score: number;
+  total: number;
+}): Promise<{ evaluation: string }> {
+  const cookieStore = await cookies();
+  const language = cookieStore.get("lang")?.value || "de";
+
+  try {
+    const model = google("gemini-2.5-flash");
+    const prompt = `Du bist ein hochkompetenter, motivierender KI-Coach für professionelle Weiterbildung.
+Ein Lerner hat gerade eine 3-Fragen-Sitzung ("Tägliches Training") absolviert.
+
+Hier sind die konkreten Ergebnisse der Sitzung:
+Ergebnis: ${input.score} von ${input.total} richtig.
+
+Fragen & Antworten des Lerners:
+${input.results.map((r, idx) => `
+Frage ${idx + 1}: "${r.question}"
+- Gewählte Antwort des Lerners: "${r.userAnswer}" (${r.isCorrect ? "RICHTIG ✓" : "FALSCH ✗"})
+- Richtige Antwort: "${r.correctAnswer}"
+${r.explanation ? `- Erklärung zum Thema: "${r.explanation}"` : ""}
+`).join("\n")}
+
+Erstelle eine individuelle, prägnante und didaktisch wertvolle Auswertung für den Lerner.
+
+Struktur der Auswertung (Verwende Markdown für Fettdruck und Absätze):
+1. **Beurteilung der Leistung**: Ein kurzes persönliches Lob / Bewertung (bezogen auf ${input.score}/${input.total}).
+2. **Stärken & Erkenntnisse**: Gehe konkret auf die Themen ein, die richtig beantwortet wurden.
+3. **Fokus-Empfehlung**: Falls Fragen falsch beantwortet wurden, erkläre in 1-2 verständlichen Sätzen das Kernkonzept hinter der falsch beantworteten Frage und gib einen praxistauglichen Lern-Tipp.
+
+Sprache: ${language === "en" ? "Englisch" : "Deutsch"}.
+Länge: ca. 80-120 Wörter. Antworte ohne Vorspann oder Floskeln direkt mit dem Auswertungstext.`;
+
+    const { text } = await generateText({
+      model,
+      prompt,
+    });
+
+    return { evaluation: text.trim() };
+  } catch (err) {
+    console.error("Failed to generate dynamic practice evaluation:", err);
+    const pct = input.total > 0 ? Math.round((input.score / input.total) * 100) : 0;
+    const fallback = language === "de"
+      ? `**Starke Leistung!** Du hast ${input.score} von ${input.total} Fragen (${pct}%) erfolgreich beantwortet. Wiederhole regelmäßig solche kurzen Einheiten, um dein Wissen langfristig zu festigen.`
+      : `**Great job!** You answered ${input.score} out of ${input.total} questions (${pct}%) correctly. Regular short practice sessions help solidify concepts over time.`;
+    return { evaluation: fallback };
+  }
+}
+
 
