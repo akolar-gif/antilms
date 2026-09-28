@@ -2,19 +2,42 @@ import { store } from "@/lib/store";
 import { cookies } from "next/headers";
 import { LearnerPracticeClient } from "./practice-client";
 
+import { verifySession } from "@/lib/session";
+
 export const dynamic = 'force-dynamic';
 
 export default async function LearnerPracticePage() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("user_session")?.value;
+  const user = token ? await verifySession(token) : null;
+  const userId = user?.id || "learner-1";
+  const userRole = user?.role || "learner";
+  const isApproved = user?.approved || false;
+  const lang = (cookieStore.get("lang")?.value || "de") as "de" | "en";
+
   const courses = await store.getCourses();
   const publishedCourses = courses.filter(c => c.status === "published");
 
-  const cookieStore = await cookies();
-  const lang = (cookieStore.get("lang")?.value || "de") as "de" | "en";
+  // Filter courses accessible to this specific user (booked, approved, or assigned)
+  const accessibleCourses = [];
+  for (const course of publishedCourses) {
+    const hasAccess = 
+      userRole === "trainer" || 
+      userRole === "admin" || 
+      isApproved || 
+      course.isCustom || 
+      (course.learnerId && course.learnerId === userId) ||
+      await store.isCourseBooked(userId, course.id);
 
-  // Fetch all quiz blocks in published courses
+    if (hasAccess) {
+      accessibleCourses.push(course);
+    }
+  }
+
+  // Fetch quiz blocks only from accessible courses
   const quizzes = [];
   
-  for (const course of publishedCourses) {
+  for (const course of accessibleCourses) {
     const modules = await store.getModules(course.id);
     for (const mod of modules) {
       const blocks = await store.getBlocks(mod.id);
